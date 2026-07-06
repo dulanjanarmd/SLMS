@@ -75,24 +75,17 @@ const BookDetail = () => {
       setIssuing(true);
       setError('');
       setSuccess('');
-      if (isLibrarian) {
-        // Librarian issues on behalf of another user
-        const targetUserId = userId ? parseInt(userId) : user?.id;
-        if (!targetUserId) {
-          setError('Please enter a user ID');
-          return;
-        }
-        await borrowAPI.issue({ userId: targetUserId, bookId: parseInt(id) });
-        setSuccess('Book issued successfully!');
-      } else {
-        // Student borrows for themselves
-        await borrowAPI.borrowSelf(parseInt(id));
-        setSuccess('Book borrowed successfully!');
+      const targetUserId = userId ? parseInt(userId) : user?.id;
+      if (!targetUserId) {
+        setError('Please enter a user ID');
+        return;
       }
+      await borrowAPI.issue({ userId: targetUserId, bookId: parseInt(id) });
+      setSuccess('Book issued successfully!');
       setShowBorrowModal(false);
       fetchBook();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to borrow book');
+      setError(err.response?.data?.message || 'Failed to issue book');
       setShowBorrowModal(false);
     } finally {
       setIssuing(false);
@@ -144,26 +137,23 @@ const BookDetail = () => {
       );
     }
 
-    // Member: show Borrow if available, Reserve always
+    // Member: only Reserve — students/faculty cannot directly borrow, must reserve first
     return (
       <>
         {book.availableCopies > 0 ? (
-          <Button variant="primary" className="w-100" onClick={() => setShowBorrowModal(true)}>
-            <i className="bi bi-book me-2"></i>Borrow Book
+          <Button variant="warning" className="w-100" onClick={() => setShowReserveModal(true)}>
+            <i className="bi bi-bookmark-plus me-2"></i>Reserve Book
           </Button>
         ) : (
-          <Alert variant="info" className="mb-2 py-2 small">
-            <i className="bi bi-info-circle me-1"></i>All copies are currently borrowed.
-          </Alert>
+          <>
+            <Alert variant="info" className="mb-2 py-2 small">
+              <i className="bi bi-info-circle me-1"></i>All copies are currently borrowed.
+            </Alert>
+            <Button variant="warning" className="w-100" onClick={() => setShowReserveModal(true)}>
+              <i className="bi bi-bookmark-plus me-2"></i>Join Waiting Queue
+            </Button>
+          </>
         )}
-        <Button
-          variant={book.availableCopies > 0 ? 'outline-warning' : 'warning'}
-          className="w-100"
-          onClick={() => setShowReserveModal(true)}
-        >
-          <i className="bi bi-bookmark-plus me-2"></i>
-          {book.availableCopies > 0 ? 'Reserve Book' : 'Join Waiting Queue'}
-        </Button>
       </>
     );
   };

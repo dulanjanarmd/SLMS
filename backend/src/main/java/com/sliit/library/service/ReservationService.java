@@ -62,11 +62,19 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
 
-        // Only count as reserved copy when book is unavailable (actual queue reservation)
+        // Only count as reserved copy when book is unavailable
         if (book.getAvailableCopies() <= 0) {
             book.setReservedCopies(book.getReservedCopies() + 1);
             bookRepository.save(book);
         }
+
+        // Notify all librarians about the new reservation
+        String notifTitle = "New Reservation: " + book.getTitle();
+        String notifMsg = user.getFullName() + " (" + user.getStudentStaffId() + ") has reserved \"" +
+                book.getTitle() + "\". Reservation #" + reservation.getId() + ".";
+        userRepository.findByRole(Role.LIBRARIAN).forEach(librarian ->
+                notificationService.sendNotification(librarian, NotificationType.NEW_RESERVATION, notifTitle, notifMsg)
+        );
 
         return mapToReservationResponse(reservation);
     }

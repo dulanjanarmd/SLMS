@@ -75,7 +75,6 @@ export const categoryAPI = {
 
 export const borrowAPI = {
   issue: (data) => api.post('/librarian/borrow/issue', data),
-  borrowSelf: (bookId) => api.post('/borrow/self', { bookId }),
   return: (borrowId) => api.post(`/librarian/borrow/return/${borrowId}`),
   renew: (borrowId) => api.post(`/borrow/renew/${borrowId}`),
   getUserHistory: (userId) => api.get(`/borrow/user/${userId}`),

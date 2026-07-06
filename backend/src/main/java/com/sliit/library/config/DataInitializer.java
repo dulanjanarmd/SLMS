@@ -4,6 +4,7 @@ import com.sliit.library.entity.*;
 import com.sliit.library.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -19,14 +20,24 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired private FacultyRepository facultyRepository;
     @Autowired private MemberTypeRepository memberTypeRepository;
     @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) {
+        patchNotificationTypeColumn();
         seedFaculties();
         seedMemberTypes();
         seedCategories();
         seedUsers();
         seedBooks();
+    }
+
+    private void patchNotificationTypeColumn() {
+        try {
+            jdbcTemplate.execute("ALTER TABLE notifications MODIFY COLUMN type VARCHAR(50)");
+        } catch (Exception ignored) {
+            // Column already correct or table doesn't exist yet — safe to ignore
+        }
     }
 
     private void seedFaculties() {
