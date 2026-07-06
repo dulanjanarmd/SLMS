@@ -43,22 +43,21 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [statsRes, overdueRes, todayLoansRes, todayReturnsRes, pendingRes, membershipsRes] = await Promise.all([
+      const [statsRes, overdueRes, todayLoansRes, pendingRes, membershipsRes] = await Promise.allSettled([
         reportAPI.getDashboardStats(),
         borrowAPI.getOverdue(),
         borrowAPI.getTodayLoans(),
-        borrowAPI.getTodayReturns(),
         reservationAPI.getPending(),
         membershipAPI.getPending(),
       ]);
 
-      setStats(statsRes.data);
-      setOverdueLoans(overdueRes.data);
-      setTodayLoans(todayLoansRes.data);
-      setPendingReservations(pendingRes.data);
-      setPendingMemberships(membershipsRes.data);
+      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
+      if (overdueRes.status === 'fulfilled') setOverdueLoans(overdueRes.value.data || []);
+      if (todayLoansRes.status === 'fulfilled') setTodayLoans(todayLoansRes.value.data || []);
+      if (pendingRes.status === 'fulfilled') setPendingReservations(pendingRes.value.data || []);
+      if (membershipsRes.status === 'fulfilled') setPendingMemberships(membershipsRes.value.data || []);
     } catch (err) {
-      console.error('Failed to fetch dashboard data');
+      console.error('Failed to fetch dashboard data', err);
     } finally {
       setLoading(false);
     }
@@ -68,7 +67,11 @@ const Dashboard = () => {
     labels: ['Available', 'Issued', 'Reserved'],
     datasets: [
       {
-        data: [stats?.totalBooks - stats?.activeLoans || 0, stats?.activeLoans || 0, stats?.pendingReservations || 0],
+        data: [
+          Math.max(0, (stats?.totalBooks || 0) - (stats?.activeLoans || 0)),
+          stats?.activeLoans || 0,
+          stats?.pendingReservations || 0,
+        ],
         backgroundColor: ['#198754', '#dc3545', '#ffc107'],
         borderWidth: 0,
       },
@@ -431,8 +434,9 @@ const Dashboard = () => {
                                   try {
                                     await membershipAPI.review(m.id, { approved: true, adminComments: '' });
                                     setMembershipMsg(`Membership approved for ${m.userFullName}`);
+                                    setTimeout(() => setMembershipMsg(''), 4000);
                                     setPendingMemberships(prev => prev.filter(x => x.id !== m.id));
-                                  } catch { setMembershipMsg('Action failed'); }
+                                  } catch { setMembershipMsg('Action failed'); setTimeout(() => setMembershipMsg(''), 4000); }
                                 }}
                               >
                                 <i className="bi bi-check-lg"></i> Approve
@@ -445,8 +449,9 @@ const Dashboard = () => {
                                   try {
                                     await membershipAPI.review(m.id, { approved: false, adminComments: reason });
                                     setMembershipMsg(`Membership rejected for ${m.userFullName}`);
+                                    setTimeout(() => setMembershipMsg(''), 4000);
                                     setPendingMemberships(prev => prev.filter(x => x.id !== m.id));
-                                  } catch { setMembershipMsg('Action failed'); }
+                                  } catch { setMembershipMsg('Action failed'); setTimeout(() => setMembershipMsg(''), 4000); }
                                 }}
                               >
                                 <i className="bi bi-x-lg"></i> Reject

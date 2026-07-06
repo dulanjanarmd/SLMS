@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { borrowAPI, bookAPI, userAPI } from '../services/api';
-import api from '../services/api';
 import {
   Container, Row, Col, Card, Form, Button, Alert, Spinner,
   Table, Badge, Modal

@@ -44,8 +44,12 @@ export const userAPI = {
   updateProfile: (data) => api.put('/user/profile', data),
   changePassword: (oldPassword, newPassword) =>
     api.post('/user/change-password', null, { params: { oldPassword, newPassword } }),
-  searchUsers: (keyword) => api.get('/admin/users', { params: { keyword, size: 10 } }),
+  searchUsers: (keyword) => api.get('/librarian/users', { params: { keyword, size: 10 } }),
   getUserById: (id) => api.get(`/user/${id}`),
+  getAllUsers: (params) => api.get('/admin/users', { params }),
+  activateUser: (id) => api.put(`/admin/users/${id}/activate`),
+  deactivateUser: (id) => api.put(`/admin/users/${id}/deactivate`),
+  changeRole: (id, role) => api.put(`/admin/users/${id}/role`, null, { params: { role } }),
 };
 
 export const bookAPI = {
@@ -98,7 +102,7 @@ export const fineAPI = {
   getAllUnpaid: () => api.get('/librarian/fines/unpaid'),
   getStats: () => api.get('/librarian/fines/stats'),
   waive: (fineId, amount, reason) =>
-    api.post(`/admin/fines/${fineId}/waive`, null, { params: { amount, reason } }),
+    api.post(`/librarian/fines/${fineId}/waive`, null, { params: { amount, reason } }),
 };
 
 export const notificationAPI = {
@@ -110,7 +114,12 @@ export const notificationAPI = {
 };
 
 export const reportAPI = {
-  getDashboardStats: () => api.get('/admin/dashboard/stats'),
+  getDashboardStats: () => api.get('/librarian/dashboard/stats'),
+  getPopularBooks: (limit = 10) => api.get('/librarian/reports/popular-books', { params: { limit } }),
+  getOverdueItems: () => api.get('/librarian/reports/overdue-items'),
+  getInventory: () => api.get('/librarian/reports/inventory'),
+  getFineCollection: () => api.get('/librarian/reports/fine-collection'),
+  getUserActivity: () => api.get('/librarian/reports/user-activity'),
 };
 
 export const ebookAPI = {

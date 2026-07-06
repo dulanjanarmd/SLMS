@@ -62,8 +62,11 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
 
-        book.setReservedCopies(book.getReservedCopies() + 1);
-        bookRepository.save(book);
+        // Only count as reserved copy when book is unavailable (actual queue reservation)
+        if (book.getAvailableCopies() <= 0) {
+            book.setReservedCopies(book.getReservedCopies() + 1);
+            bookRepository.save(book);
+        }
 
         return mapToReservationResponse(reservation);
     }
@@ -110,6 +113,13 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public List<ReservationResponse> getPendingReservations() {
         return reservationRepository.findByStatus(ReservationStatus.PENDING).stream()
+                .map(this::mapToReservationResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponse> getAllReservations() {
+        return reservationRepository.findAll().stream()
                 .map(this::mapToReservationResponse)
                 .toList();
     }

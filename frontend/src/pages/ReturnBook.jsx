@@ -48,7 +48,7 @@ const ReturnBook = () => {
     const due = new Date(dueDate);
     if (today <= due) return { overdue: false, days: 0, amount: 0 };
     const days = Math.ceil((today - due) / (1000 * 60 * 60 * 24));
-    return { overdue: true, days, amount: days * 10 };
+    return { overdue: true, days, amount: days * 5 };
   };
 
   const handleReturn = async () => {

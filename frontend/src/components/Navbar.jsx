@@ -149,7 +149,7 @@ const AppNavbar = () => {
                   >
                     <div className="fw-semibold" style={{ fontSize: '0.85rem' }}>{notif.title}</div>
                     <div className="text-muted" style={{ fontSize: '0.75rem' }}>
-                      {notif.message.substring(0, 60)}...
+                      {(notif.message || '').substring(0, 60)}...
                     </div>
                   </NavDropdown.Item>
                 ))

@@ -34,7 +34,7 @@ const Books = () => {
   const fetchCategories = async () => {
     try {
       const response = await categoryAPI.getAll();
-      setCategories(response.data);
+      setCategories(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error('Failed to fetch categories');
     }
@@ -48,8 +48,8 @@ const Books = () => {
         size: pageSize,
         sort: 'createdAt,desc',
       });
-      setBooks(response.data.content);
-      setTotalPages(response.data.totalPages);
+      setBooks(response.data.content || response.data || []);
+      setTotalPages(response.data.totalPages || 0);
       setError('');
     } catch (err) {
       setError('Failed to load books');
@@ -67,8 +67,8 @@ const Books = () => {
           page: 0,
           size: pageSize,
         });
-        setBooks(response.data.content);
-        setTotalPages(response.data.totalPages);
+        setBooks(response.data.content || response.data || []);
+        setTotalPages(response.data.totalPages || 0);
       } else {
         fetchBooks();
       }
@@ -90,8 +90,8 @@ const Books = () => {
         page: 0,
         size: pageSize,
       });
-      setBooks(response.data.content);
-      setTotalPages(response.data.totalPages);
+      setBooks(response.data.content || response.data || []);
+      setTotalPages(response.data.totalPages || 0);
     } catch (err) {
       setError('Advanced search failed');
     } finally {
@@ -211,7 +211,7 @@ const Books = () => {
                 <Col md={6}>
                   <Form.Group className="mb-2">
                     <Form.Label>Category</Form.Label>
-                    <Form.Select value={selectedCategory} onChange={(e) => handleCategoryFilter(e.target.value)}>
+                    <Form.Select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
                       <option value="">All Categories</option>
                       {categories.map((cat) => (
                         <option key={cat.id} value={cat.id}>{cat.name}</option>

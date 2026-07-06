@@ -29,11 +29,7 @@ const Home = () => {
       setPopularBooks(booksRes.data);
 
       if (user) {
-        const [loansRes, overdueRes] = await Promise.all([
-          borrowAPI.getActiveLoans(user.id),
-          borrowAPI.getActiveLoans(user.id),
-        ]);
-        // Filter overdue loans on the client side
+        const loansRes = await borrowAPI.getActiveLoans(user.id);
         const today = new Date().toISOString().split('T')[0];
         const overdue = loansRes.data.filter(l => l.dueDate < today);
         setStats({

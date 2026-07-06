@@ -18,7 +18,7 @@ const MyReservations = () => {
     try {
       setLoading(true);
       const response = await reservationAPI.getUserReservations(user.id);
-      setReservations(response.data);
+      setReservations(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       setError('Failed to load reservations');
     } finally {
@@ -65,6 +65,20 @@ const MyReservations = () => {
 
       {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
       {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
+
+      {reservations.filter(r => r.status === 'NOTIFIED').map(r => (
+        <Alert key={r.id} variant="success" className="d-flex align-items-center gap-2">
+          <i className="bi bi-bell-fill fs-5"></i>
+          <div>
+            <strong>Book Ready to Collect!</strong> "{r.bookTitle}" is now available for pickup.
+            {r.expiryDate && (
+              <span className="ms-2 text-muted small">
+                Collect before: {new Date(r.expiryDate).toLocaleString()}
+              </span>
+            )}
+          </div>
+        </Alert>
+      ))}
 
       <Card>
         <Card.Header className="fw-semibold">

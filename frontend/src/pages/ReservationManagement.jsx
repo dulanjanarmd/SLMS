@@ -30,8 +30,7 @@ const ReservationManagement = () => {
         res = await reservationAPI.getPending();
         setReservations(res.data || []);
       } else {
-        // Get all reservations via book reservations — use all-active workaround
-        const allRes = await api.get('/librarian/reservations/pending');
+        const allRes = await api.get('/librarian/reservations/all');
         setReservations(allRes.data || []);
       }
     } catch {

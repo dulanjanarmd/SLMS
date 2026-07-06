@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { bookAPI, borrowAPI, reservationAPI } from '../services/api';
+import { bookAPI, borrowAPI, reservationAPI, userAPI } from '../services/api';
 import { Container, Row, Col, Card, Button, Badge, Alert, Spinner, Modal, Form } from 'react-bootstrap';
 
 const BookDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isStudent } = useAuth();
+  const { user } = useAuth();
   const [book, setBook] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [showBorrowModal, setShowBorrowModal] = useState(false);
   const [showReserveModal, setShowReserveModal] = useState(false);
   const [userId, setUserId] = useState('');
+  const [reserving, setReserving] = useState(false);
+  const [issuing, setIssuing] = useState(false);
 
   useEffect(() => {
     fetchBook();
+    if (user) fetchProfile();
   }, [id]);
 
   const fetchBook = async () => {
@@ -32,29 +36,43 @@ const BookDetail = () => {
     }
   };
 
+  const fetchProfile = async () => {
+    try {
+      const res = await userAPI.getProfile();
+      setProfile(res.data);
+    } catch {
+      // fallback to stale user
+      setProfile(user);
+    }
+  };
+
+  // Use live profile isMember, fallback to stored user
+  const isMember = profile?.isMember ?? user?.isMember ?? false;
+  const isLibrarian = user?.role === 'LIBRARIAN';
+
   const handleReserve = async () => {
     try {
+      setReserving(true);
       setError('');
       setSuccess('');
-      if (!user) {
-        navigate('/login');
-        return;
-      }
       await reservationAPI.create({
         bookId: parseInt(id),
         userId: user.id,
       });
-      setSuccess('Book reserved successfully! You will be notified when it becomes available.');
+      setSuccess('Added to reservation queue! You will be notified when the book becomes available.');
       setShowReserveModal(false);
       fetchBook();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to reserve book');
       setShowReserveModal(false);
+    } finally {
+      setReserving(false);
     }
   };
 
   const handleIssue = async () => {
     try {
+      setIssuing(true);
       setError('');
       setSuccess('');
       const targetUserId = userId ? parseInt(userId) : user?.id;
@@ -72,6 +90,8 @@ const BookDetail = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to issue book');
       setShowBorrowModal(false);
+    } finally {
+      setIssuing(false);
     }
   };
 
@@ -93,6 +113,56 @@ const BookDetail = () => {
       </Container>
     );
   }
+
+  const renderActionButtons = () => {
+    if (!user) return null;
+
+    // Librarian: always show Issue button
+    if (isLibrarian) {
+      return (
+        <Button variant="primary" onClick={() => setShowBorrowModal(true)}>
+          <i className="bi bi-book me-2"></i>Issue Book
+        </Button>
+      );
+    }
+
+    // Non-member: show membership prompt with option to join queue
+    if (!isMember) {
+      return (
+        <>
+          <Alert variant="warning" className="mb-2 py-2 small">
+            <i className="bi bi-lock me-1"></i>Library membership required to borrow or reserve books.
+          </Alert>
+          <Button as={Link} to="/membership" variant="outline-primary" size="sm">
+            <i className="bi bi-person-badge me-1"></i>Apply for Membership
+          </Button>
+        </>
+      );
+    }
+
+    // Member: show Borrow if available, Reserve/Wishlist always
+    return (
+      <>
+        {book.availableCopies > 0 ? (
+          <Button variant="primary" className="w-100" onClick={() => setShowBorrowModal(true)}>
+            <i className="bi bi-book me-2"></i>Borrow Book
+          </Button>
+        ) : (
+          <Alert variant="info" className="mb-2 py-2 small">
+            <i className="bi bi-info-circle me-1"></i>All copies are currently borrowed.
+          </Alert>
+        )}
+        <Button
+          variant={book.availableCopies > 0 ? 'outline-warning' : 'warning'}
+          className="w-100"
+          onClick={() => setShowReserveModal(true)}
+        >
+          <i className="bi bi-bookmark-plus me-2"></i>
+          {book.availableCopies > 0 ? 'Add to Wishlist Queue' : 'Reserve / Join Queue'}
+        </Button>
+      </>
+    );
+  };
 
   return (
     <Container className="py-4">
@@ -129,44 +199,26 @@ const BookDetail = () => {
           </Card>
 
           {/* Action Buttons */}
-          {user && (
-            <Card className="mt-3">
-              <Card.Body className="d-grid gap-2">
-                {user.role === 'LIBRARIAN' || user.role === 'ADMIN' ? (
-                  <Button variant="primary" onClick={() => setShowBorrowModal(true)}>
-                    <i className="bi bi-book me-2"></i>Issue Book
-                  </Button>
-                ) : book.availableCopies > 0 ? (
-                  user.isMember ? (
-                    <Button variant="primary" onClick={() => setShowBorrowModal(true)}>
-                      <i className="bi bi-book me-2"></i>Borrow Book
-                    </Button>
-                  ) : (
-                    <>
-                      <Alert variant="warning" className="mb-2 py-2 small">
-                        <i className="bi bi-lock me-1"></i>Library membership required to borrow books.
-                      </Alert>
-                      <Button as={Link} to="/membership" variant="outline-primary" size="sm">
-                        Apply for Membership
-                      </Button>
-                    </>
-                  )
-                ) : user.isMember ? (
-                  <Button variant="warning" onClick={() => setShowReserveModal(true)}>
-                    <i className="bi bi-bookmark me-2"></i>Reserve Book
-                  </Button>
-                ) : (
-                  <>
-                    <Alert variant="warning" className="mb-2 py-2 small">
-                      <i className="bi bi-lock me-1"></i>Library membership required to reserve books.
-                    </Alert>
-                    <Button as={Link} to="/membership" variant="outline-primary" size="sm">
-                      Apply for Membership
-                    </Button>
-                  </>
-                )}
-              </Card.Body>
-            </Card>
+          <Card className="mt-3">
+            <Card.Body className="d-grid gap-2">
+              {renderActionButtons()}
+            </Card.Body>
+          </Card>
+
+          {/* Membership status indicator */}
+          {user && !isLibrarian && (
+            <div className="mt-2 text-center">
+              {isMember ? (
+                <small className="text-success">
+                  <i className="bi bi-patch-check-fill me-1"></i>Active Member
+                  {profile?.membershipId && ` · ${profile.membershipId}`}
+                </small>
+              ) : (
+                <small className="text-muted">
+                  <i className="bi bi-person-x me-1"></i>Not a member yet
+                </small>
+              )}
+            </div>
           )}
         </Col>
 
@@ -274,33 +326,49 @@ const BookDetail = () => {
         </Col>
       </Row>
 
-      {/* Reserve Modal */}
+      {/* Reserve / Wishlist Modal */}
       <Modal show={showReserveModal} onHide={() => setShowReserveModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Reservation</Modal.Title>
+          <Modal.Title>
+            <i className="bi bi-bookmark-plus me-2"></i>
+            {book?.availableCopies > 0 ? 'Add to Wishlist Queue' : 'Reserve Book'}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>You are about to reserve <strong>"{book?.title}"</strong> by {book?.author}.</p>
-          <p className="text-muted">
-            You will be notified when the book becomes available. You have 48 hours to collect it after notification.
+          <p>
+            You are about to {book?.availableCopies > 0 ? 'add to wishlist queue' : 'reserve'}{' '}
+            <strong>"{book?.title}"</strong> by {book?.author}.
           </p>
+          {book?.availableCopies > 0 ? (
+            <Alert variant="info" className="py-2 small">
+              <i className="bi bi-info-circle me-1"></i>
+              This book is currently available. Adding to wishlist queue means you will be notified
+              when a copy becomes available after the current ones are borrowed.
+            </Alert>
+          ) : (
+            <Alert variant="warning" className="py-2 small">
+              <i className="bi bi-clock me-1"></i>
+              You will be notified when this book becomes available. You have 48 hours to collect it after notification.
+            </Alert>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowReserveModal(false)}>Cancel</Button>
-          <Button variant="warning" onClick={handleReserve}>
-            <i className="bi bi-bookmark me-2"></i>Confirm Reservation
+          <Button variant="warning" onClick={handleReserve} disabled={reserving}>
+            {reserving ? <Spinner size="sm" className="me-2" /> : <i className="bi bi-bookmark-plus me-2"></i>}
+            {book?.availableCopies > 0 ? 'Add to Queue' : 'Confirm Reservation'}
           </Button>
         </Modal.Footer>
       </Modal>
 
-      {/* Borrow Modal */}
+      {/* Borrow / Issue Modal */}
       <Modal show={showBorrowModal} onHide={() => setShowBorrowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Issue Book</Modal.Title>
+          <Modal.Title>{isLibrarian ? 'Issue Book' : 'Borrow Book'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>You are about to issue <strong>"{book?.title}"</strong>.</p>
-          {user?.role === 'ADMIN' || user?.role === 'LIBRARIAN' ? (
+          <p>You are about to {isLibrarian ? 'issue' : 'borrow'} <strong>"{book?.title}"</strong>.</p>
+          {isLibrarian && (
             <Form.Group className="mb-3">
               <Form.Label>User ID (leave blank for self)</Form.Label>
               <Form.Control
@@ -310,15 +378,16 @@ const BookDetail = () => {
                 onChange={(e) => setUserId(e.target.value)}
               />
               <Form.Text className="text-muted">
-                As a librarian/admin, you can issue books on behalf of other users.
+                As a librarian, you can issue books on behalf of other users.
               </Form.Text>
             </Form.Group>
-          ) : null}
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowBorrowModal(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleIssue}>
-            <i className="bi bi-book me-2"></i>Issue Now
+          <Button variant="primary" onClick={handleIssue} disabled={issuing}>
+            {issuing ? <Spinner size="sm" className="me-2" /> : <i className="bi bi-book me-2"></i>}
+            {isLibrarian ? 'Issue Now' : 'Borrow Now'}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -28,87 +28,75 @@ import FineManagement from './pages/FineManagement';
 import LibrarianReports from './pages/LibrarianReports';
 import NotFound from './pages/NotFound';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h3 style={{ color: '#dc3545' }}>Something went wrong</h3>
+          <pre style={{ color: '#666', fontSize: '0.85rem', whiteSpace: 'pre-wrap' }}>
+            {this.state.error?.message}
+          </pre>
+          <button onClick={() => window.location.href = '/'} style={{ marginTop: '1rem', padding: '0.5rem 1.5rem' }}>
+            Go Home
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route
-            path="/*"
+            path="/"
             element={
-              <>
+              <PrivateRoute>
                 <AppNavbar />
                 <div className="pt-3">
-                  <Routes>
-                    <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-                    <Route path="/books" element={<PrivateRoute><Books /></PrivateRoute>} />
-                    <Route path="/books/:id" element={<PrivateRoute><BookDetail /></PrivateRoute>} />
-                    <Route path="/ebooks" element={<PrivateRoute><EBooks /></PrivateRoute>} />
-                    <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-                    <Route path="/my-books" element={<PrivateRoute><MyBooks /></PrivateRoute>} />
-                    <Route path="/my-reservations" element={<PrivateRoute><MyReservations /></PrivateRoute>} />
-                    <Route path="/my-fines" element={<PrivateRoute><MyFines /></PrivateRoute>} />
-                    <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
-                    <Route
-                      path="/membership"
-                      element={<PrivateRoute allowedRoles={['STUDENT', 'FACULTY']}><MembershipApplication /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/dashboard"
-                      element={<PrivateRoute allowedRoles={['LIBRARIAN']}><Dashboard /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/librarian/issue"
-                      element={<PrivateRoute allowedRoles={['LIBRARIAN']}><IssueBook /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/librarian/return"
-                      element={<PrivateRoute allowedRoles={['LIBRARIAN']}><ReturnBook /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/librarian/inventory"
-                      element={<PrivateRoute allowedRoles={['LIBRARIAN']}><Inventory /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/librarian/reservations"
-                      element={<PrivateRoute allowedRoles={['LIBRARIAN']}><ReservationManagement /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/librarian/fines"
-                      element={<PrivateRoute allowedRoles={['LIBRARIAN']}><FineManagement /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/librarian/reports"
-                      element={<PrivateRoute allowedRoles={['LIBRARIAN']}><LibrarianReports /></PrivateRoute>}
-                    />
-                    <Route
-                      path="/student/dashboard"
-                      element={
-                        <PrivateRoute allowedRoles={['STUDENT']}>
-                          <StudentDashboard />
-                        </PrivateRoute>
-                      }
-                    />
-                    <Route
-                      path="/faculty/dashboard"
-                      element={
-                        <PrivateRoute allowedRoles={['FACULTY']}>
-                          <FacultyDashboard />
-                        </PrivateRoute>
-                      }
-                    />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
+                  <Home />
                 </div>
-              </>
+              </PrivateRoute>
             }
           />
+          <Route path="/books" element={<PrivateRoute><AppNavbar /><div className="pt-3"><Books /></div></PrivateRoute>} />
+          <Route path="/books/:id" element={<PrivateRoute><AppNavbar /><div className="pt-3"><BookDetail /></div></PrivateRoute>} />
+          <Route path="/ebooks" element={<PrivateRoute><AppNavbar /><div className="pt-3"><EBooks /></div></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><AppNavbar /><div className="pt-3"><Profile /></div></PrivateRoute>} />
+          <Route path="/my-books" element={<PrivateRoute><AppNavbar /><div className="pt-3"><MyBooks /></div></PrivateRoute>} />
+          <Route path="/my-reservations" element={<PrivateRoute><AppNavbar /><div className="pt-3"><MyReservations /></div></PrivateRoute>} />
+          <Route path="/my-fines" element={<PrivateRoute><AppNavbar /><div className="pt-3"><MyFines /></div></PrivateRoute>} />
+          <Route path="/notifications" element={<PrivateRoute><AppNavbar /><div className="pt-3"><Notifications /></div></PrivateRoute>} />
+          <Route path="/membership" element={<PrivateRoute allowedRoles={['STUDENT','FACULTY']}><AppNavbar /><div className="pt-3"><MembershipApplication /></div></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><Dashboard /></div></PrivateRoute>} />
+          <Route path="/librarian/issue" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><IssueBook /></div></PrivateRoute>} />
+          <Route path="/librarian/return" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><ReturnBook /></div></PrivateRoute>} />
+          <Route path="/librarian/inventory" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><Inventory /></div></PrivateRoute>} />
+          <Route path="/librarian/reservations" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><ReservationManagement /></div></PrivateRoute>} />
+          <Route path="/librarian/fines" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><FineManagement /></div></PrivateRoute>} />
+          <Route path="/librarian/reports" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><LibrarianReports /></div></PrivateRoute>} />
+          <Route path="/student/dashboard" element={<PrivateRoute allowedRoles={['STUDENT']}><AppNavbar /><div className="pt-3"><StudentDashboard /></div></PrivateRoute>} />
+          <Route path="/faculty/dashboard" element={<PrivateRoute allowedRoles={['FACULTY']}><AppNavbar /><div className="pt-3"><FacultyDashboard /></div></PrivateRoute>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

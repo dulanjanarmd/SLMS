@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { reportAPI, borrowAPI } from '../services/api';
-import api from '../services/api';
 import {
   Container, Row, Col, Card, Table, Badge, Button, Alert, Spinner, Tab, Tabs
 } from 'react-bootstrap';
@@ -30,10 +29,10 @@ const LibrarianReports = () => {
     try {
       const [statsRes, popularRes, overdueRes, inventoryRes, fineRes, todayLRes, todayRRes] = await Promise.all([
         reportAPI.getDashboardStats(),
-        api.get('/admin/reports/popular-books', { params: { limit: 10 } }),
-        api.get('/admin/reports/overdue-items'),
-        api.get('/admin/reports/inventory'),
-        api.get('/admin/reports/fine-collection'),
+        reportAPI.getPopularBooks(10),
+        reportAPI.getOverdueItems(),
+        reportAPI.getInventory(),
+        reportAPI.getFineCollection(),
         borrowAPI.getTodayLoans(),
         borrowAPI.getTodayReturns(),
       ]);

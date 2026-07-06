@@ -30,6 +30,9 @@ public class BorrowService {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private ReservationService reservationService;
+
     @Value("${library.fine.rate-per-day:5.0}")
     private double fineRatePerDay;
 
@@ -180,6 +183,8 @@ public class BorrowService {
                 NotificationType.BOOK_RETURNED,
                 "Book Returned: " + book.getTitle(),
                 "\"" + book.getTitle() + "\" has been successfully returned.");
+
+        reservationService.processReturnedBookNotifications(book.getId());
 
         return mapToBorrowResponse(borrowRecord);
     }

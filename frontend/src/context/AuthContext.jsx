@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../services/api';
+import { authAPI, userAPI } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -42,7 +42,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
-    return userData;
+    // Fetch fresh profile to get live isMember status
+    try {
+      const profileRes = await userAPI.getProfile();
+      const freshUser = { ...userData, ...profileRes.data };
+      localStorage.setItem('user', JSON.stringify(freshUser));
+      setUser(freshUser);
+      return freshUser;
+    } catch {
+      return userData;
+    }
   };
 
   const register = async (userData) => {

@@ -10,12 +10,10 @@ const EBooks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     fetchEBooks();
-  }, [currentPage]);
+  }, []);
 
   const fetchEBooks = async () => {
     try {

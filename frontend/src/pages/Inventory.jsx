@@ -38,7 +38,7 @@ const Inventory = () => {
   const [newStatus, setNewStatus] = useState('');
 
   useEffect(() => { fetchCategories(); }, []);
-  useEffect(() => { fetchBooks(); }, [page, statusFilter]);
+  useEffect(() => { fetchBooks(); }, [page, statusFilter, categoryFilter]);
 
   const fetchCategories = async () => {
     try {
@@ -52,9 +52,20 @@ const Inventory = () => {
     try {
       let res;
       if (keyword.trim()) {
-        res = await bookAPI.search(keyword, { page, size: PAGE_SIZE });
+        res = await bookAPI.search(keyword, {
+          page,
+          size: PAGE_SIZE,
+          ...(statusFilter && { status: statusFilter }),
+          ...(categoryFilter && { categoryId: categoryFilter }),
+        });
       } else {
-        res = await bookAPI.getAll({ page, size: PAGE_SIZE, sort: 'createdAt,desc' });
+        res = await bookAPI.getAll({
+          page,
+          size: PAGE_SIZE,
+          sort: 'createdAt,desc',
+          ...(statusFilter && { status: statusFilter }),
+          ...(categoryFilter && { categoryId: categoryFilter }),
+        });
       }
       setBooks(res.data.content || []);
       setTotalPages(res.data.totalPages || 0);
@@ -138,11 +149,7 @@ const Inventory = () => {
     return <Badge bg={map[status] || 'secondary'} text={status === 'RESERVED' ? 'dark' : undefined}>{status}</Badge>;
   };
 
-  const filteredBooks = statusFilter
-    ? books.filter(b => b.status === statusFilter)
-    : categoryFilter
-    ? books.filter(b => String(b.categoryId) === categoryFilter)
-    : books;
+  const filteredBooks = books;
 
   return (
     <Container fluid className="px-4">

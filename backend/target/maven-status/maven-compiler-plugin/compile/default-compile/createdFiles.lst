@@ -30,6 +30,7 @@ com\sliit\library\scheduler\LibraryScheduler.class
 com\sliit\library\entity\BorrowStatus.class
 com\sliit\library\dto\BorrowResponse.class
 com\sliit\library\entity\MembershipStatus.class
+com\sliit\library\repository\MemberTypeRepository.class
 com\sliit\library\controller\CategoryController.class
 com\sliit\library\entity\ReservationStatus.class
 com\sliit\library\dto\UpdateProfileRequest.class
@@ -48,6 +49,7 @@ com\sliit\library\entity\BorrowRecord.class
 com\sliit\library\service\ReportService.class
 com\sliit\library\repository\UserRepository.class
 com\sliit\library\dto\BookRequestDTO.class
+com\sliit\library\entity\MemberType$MemberTypeBuilder.class
 com\sliit\library\repository\NotificationRepository.class
 com\sliit\library\dto\SignupRequest.class
 com\sliit\library\exception\GlobalExceptionHandler.class
@@ -62,6 +64,7 @@ com\sliit\library\entity\BookStatus.class
 com\sliit\library\controller\NotificationController.class
 com\sliit\library\dto\MessageResponse.class
 com\sliit\library\entity\FineStatus.class
+com\sliit\library\controller\ConfigController.class
 com\sliit\library\repository\MembershipRepository.class
 com\sliit\library\dto\LoginRequest.class
 com\sliit\library\dto\OverdueItemDTO$OverdueItemDTOBuilder.class
@@ -75,8 +78,10 @@ com\sliit\library\dto\FineResponse$FineResponseBuilder.class
 com\sliit\library\entity\Membership$MembershipBuilder.class
 com\sliit\library\controller\ReservationController.class
 com\sliit\library\dto\DashboardStats$DashboardStatsBuilder.class
+com\sliit\library\entity\MemberType.class
 com\sliit\library\service\FineService.class
 com\sliit\library\security\AuthTokenFilter.class
+com\sliit\library\repository\FacultyRepository.class
 com\sliit\library\service\CategoryService.class
 com\sliit\library\dto\PopularBookDTO$PopularBookDTOBuilder.class
 com\sliit\library\entity\Notification.class
@@ -84,6 +89,7 @@ com\sliit\library\dto\BookResponse$BookResponseBuilder.class
 com\sliit\library\repository\BookRequestRepository.class
 com\sliit\library\entity\User$UserBuilder.class
 com\sliit\library\dto\BookResponse.class
+com\sliit\library\entity\Faculty.class
 com\sliit\library\dto\UserProfileResponse.class
 com\sliit\library\dto\MembershipResponse$MembershipResponseBuilder.class
 com\sliit\library\entity\Reservation.class
@@ -103,5 +109,6 @@ com\sliit\library\security\UserDetailsServiceImpl.class
 com\sliit\library\repository\BorrowRecordRepository.class
 com\sliit\library\config\DataInitializer.class
 com\sliit\library\dto\ReservationResponse$ReservationResponseBuilder.class
+com\sliit\library\entity\Faculty$FacultyBuilder.class
 com\sliit\library\dto\EBookResponse.class
 com\sliit\library\service\UserService.class

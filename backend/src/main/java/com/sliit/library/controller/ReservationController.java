@@ -49,6 +49,12 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getPendingReservations());
     }
 
+    @GetMapping("/librarian/reservations/all")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<List<ReservationResponse>> getAllReservations() {
+        return ResponseEntity.ok(reservationService.getAllReservations());
+    }
+
     @PutMapping("/librarian/reservations/{id}/fulfill")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<ReservationResponse> fulfillReservation(@PathVariable Long id) {

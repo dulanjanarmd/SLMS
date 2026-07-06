@@ -23,7 +23,7 @@ const MyBooks = () => {
         borrowAPI.getUserHistory(user.id),
       ]);
       setActiveLoans(activeRes.data);
-      setBorrowHistory(historyRes.data);
+      setBorrowHistory(historyRes.data.filter(loan => loan.status === 'RETURNED' || loan.status === 'OVERDUE'));
     } catch (err) {
       setError('Failed to load your books');
     } finally {

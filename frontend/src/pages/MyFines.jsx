@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { fineAPI } from '../services/api';
-import { Container, Table, Badge, Button, Alert, Spinner, Card, Modal, Form } from 'react-bootstrap';
+import { Container, Row, Col, Table, Badge, Button, Alert, Spinner, Card, Modal, Form } from 'react-bootstrap';
 
 const MyFines = () => {
   const { user } = useAuth();
