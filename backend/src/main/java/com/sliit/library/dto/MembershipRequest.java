@@ -7,18 +7,43 @@ import lombok.Data;
 @Data
 public class MembershipRequest {
 
- @NotBlank
- @Size(max = 100)
- private String faculty;
+    @NotBlank
+    private String title;
 
- @NotBlank
- @Size(max = 100)
- private String programme;
+    @NotBlank
+    @Size(max = 150)
+    private String nameWithInitials;
 
- @NotBlank
- @Size(max = 50)
- private String academicYear;
+    @NotBlank
+    @Size(max = 300)
+    private String address;
 
- @Size(max = 500)
- private String reason;
+    @NotBlank
+    @Size(max = 20)
+    private String contactNumber;
+
+    @Size(max = 20)
+    private String whatsappNumber;
+
+    @NotBlank
+    @Size(max = 150)
+    private String memberEmail;
+
+    @NotBlank
+    private String memberType;
+
+    @NotBlank
+    @Size(max = 100)
+    private String faculty;
+
+    @NotBlank
+    @Size(max = 100)
+    private String programme;
+
+    @NotBlank
+    @Size(max = 50)
+    private String academicYear;
+
+    @Size(max = 500)
+    private String reason;
 }

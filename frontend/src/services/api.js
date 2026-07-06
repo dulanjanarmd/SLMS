@@ -126,11 +126,21 @@ export const ebookAPI = {
 };
 
 export const membershipAPI = {
-  apply: (data) => api.post('/membership/apply', data),
+  apply: (data, photo) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (photo) formData.append('photo', photo);
+    return api.post('/membership/apply', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
   getMy: () => api.get('/membership/my'),
   getPending: () => api.get('/librarian/memberships/pending'),
   getAll: () => api.get('/librarian/memberships/all'),
   review: (id, data) => api.post(`/librarian/memberships/${id}/review`, data),
+};
+
+export const configAPI = {
+  getFaculties: () => api.get('/config/faculties'),
+  getMemberTypes: () => api.get('/config/member-types'),
 };
 
 export default api;

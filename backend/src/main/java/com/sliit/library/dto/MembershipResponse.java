@@ -15,6 +15,14 @@ public class MembershipResponse {
  private String userFullName;
  private String userEmail;
  private String userStudentStaffId;
+ private String title;
+ private String nameWithInitials;
+ private String address;
+ private String contactNumber;
+ private String whatsappNumber;
+ private String memberEmail;
+ private String memberType;
+ private String photoPath;
  private String faculty;
  private String programme;
  private String academicYear;

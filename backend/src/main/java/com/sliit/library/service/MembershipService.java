@@ -31,7 +31,7 @@ public class MembershipService {
     private NotificationService notificationService;
 
     @Transactional
-    public MembershipResponse applyForMembership(MembershipRequest request) {
+    public MembershipResponse applyForMembership(MembershipRequest request, String photoPath) {
         User user = getCurrentUser();
 
         if (membershipRepository.existsByUserIdAndStatus(user.getId(), MembershipStatus.PENDING)) {
@@ -43,6 +43,14 @@ public class MembershipService {
 
         Membership membership = Membership.builder()
                 .user(user)
+                .title(request.getTitle())
+                .nameWithInitials(request.getNameWithInitials())
+                .address(request.getAddress())
+                .contactNumber(request.getContactNumber())
+                .whatsappNumber(request.getWhatsappNumber())
+                .memberEmail(request.getMemberEmail())
+                .memberType(request.getMemberType())
+                .photoPath(photoPath)
                 .faculty(request.getFaculty())
                 .programme(request.getProgramme())
                 .academicYear(request.getAcademicYear())
@@ -143,6 +151,14 @@ public class MembershipService {
                 .userFullName(m.getUser().getFullName())
                 .userEmail(m.getUser().getEmail())
                 .userStudentStaffId(m.getUser().getStudentStaffId())
+                .title(m.getTitle())
+                .nameWithInitials(m.getNameWithInitials())
+                .address(m.getAddress())
+                .contactNumber(m.getContactNumber())
+                .whatsappNumber(m.getWhatsappNumber())
+                .memberEmail(m.getMemberEmail())
+                .memberType(m.getMemberType())
+                .photoPath(m.getPhotoPath())
                 .faculty(m.getFaculty())
                 .programme(m.getProgramme())
                 .academicYear(m.getAcademicYear())

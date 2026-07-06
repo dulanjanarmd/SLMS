@@ -21,6 +21,15 @@ public class Membership {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    private String title;
+    private String nameWithInitials;
+    private String address;
+    private String contactNumber;
+    private String whatsappNumber;
+    private String memberEmail;
+    private String memberType;
+    private String photoPath;
+
     private String faculty;
     private String programme;
     private String academicYear;

@@ -1,3 +1,4 @@
+C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\entity\Faculty.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\controller\FineController.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\dto\FineResponse.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\entity\BorrowRecord.java
@@ -21,6 +22,7 @@ C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\controller\AuthController.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\security\JwtUtils.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\repository\BorrowRecordRepository.java
+C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\repository\FacultyRepository.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\repository\ReservationRepository.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\security\AuthTokenFilter.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\entity\BookStatus.java
@@ -45,11 +47,13 @@ C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\repository\UserRepository.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\security\UserDetailsImpl.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\security\UserDetailsServiceImpl.java
+C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\repository\MemberTypeRepository.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\service\NotificationService.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\dto\UserProfileResponse.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\service\EBookService.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\service\ReservationService.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\controller\CategoryController.java
+C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\entity\MemberType.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\repository\MembershipRepository.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\entity\Book.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\entity\Membership.java
@@ -57,6 +61,7 @@ C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\scheduler\LibraryScheduler.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\dto\MessageResponse.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\dto\ReservationRequest.java
+C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\controller\ConfigController.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\entity\BorrowStatus.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\security\AuthEntryPointJwt.java
 C:\Users\damin\Documents\Online_Library_Management_System\backend\src\main\java\com\sliit\library\service\BorrowService.java
