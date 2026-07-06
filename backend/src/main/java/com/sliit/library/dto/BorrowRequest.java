@@ -13,4 +13,6 @@ public class BorrowRequest {
     private Long bookId;
 
     private Long issuedById;
+
+    private Long reservationId; // optional: fulfill a specific reservation when issuing
 }

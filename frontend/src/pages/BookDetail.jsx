@@ -140,7 +140,7 @@ const BookDetail = () => {
       );
     }
 
-    // Member: show Borrow if available, Reserve/Wishlist always
+    // Member: show Borrow if available, Reserve always
     return (
       <>
         {book.availableCopies > 0 ? (
@@ -158,7 +158,7 @@ const BookDetail = () => {
           onClick={() => setShowReserveModal(true)}
         >
           <i className="bi bi-bookmark-plus me-2"></i>
-          {book.availableCopies > 0 ? 'Add to Wishlist Queue' : 'Reserve / Join Queue'}
+          {book.availableCopies > 0 ? 'Reserve Book' : 'Join Waiting Queue'}
         </Button>
       </>
     );
@@ -326,29 +326,27 @@ const BookDetail = () => {
         </Col>
       </Row>
 
-      {/* Reserve / Wishlist Modal */}
       <Modal show={showReserveModal} onHide={() => setShowReserveModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>
             <i className="bi bi-bookmark-plus me-2"></i>
-            {book?.availableCopies > 0 ? 'Add to Wishlist Queue' : 'Reserve Book'}
+            {book?.availableCopies > 0 ? 'Reserve Book' : 'Join Waiting Queue'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
-            You are about to {book?.availableCopies > 0 ? 'add to wishlist queue' : 'reserve'}{' '}
-            <strong>"{book?.title}"</strong> by {book?.author}.
+            You are about to reserve <strong>"{book?.title}"</strong> by {book?.author}.
           </p>
           {book?.availableCopies > 0 ? (
             <Alert variant="info" className="py-2 small">
               <i className="bi bi-info-circle me-1"></i>
-              This book is currently available. Adding to wishlist queue means you will be notified
-              when a copy becomes available after the current ones are borrowed.
+              This book is available. Your reservation will appear in the librarian's queue.
+              Visit the library and give your <strong>Student ID or Reservation number</strong> to collect it.
             </Alert>
           ) : (
             <Alert variant="warning" className="py-2 small">
               <i className="bi bi-clock me-1"></i>
-              You will be notified when this book becomes available. You have 48 hours to collect it after notification.
+              All copies are borrowed. You will be notified when a copy becomes available.
             </Alert>
           )}
         </Modal.Body>
@@ -356,7 +354,7 @@ const BookDetail = () => {
           <Button variant="secondary" onClick={() => setShowReserveModal(false)}>Cancel</Button>
           <Button variant="warning" onClick={handleReserve} disabled={reserving}>
             {reserving ? <Spinner size="sm" className="me-2" /> : <i className="bi bi-bookmark-plus me-2"></i>}
-            {book?.availableCopies > 0 ? 'Add to Queue' : 'Confirm Reservation'}
+            Confirm Reservation
           </Button>
         </Modal.Footer>
       </Modal>

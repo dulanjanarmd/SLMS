@@ -49,6 +49,18 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getPendingReservations());
     }
 
+    @GetMapping("/librarian/reservations/active")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<List<ReservationResponse>> getPendingAndNotifiedReservations() {
+        return ResponseEntity.ok(reservationService.getPendingAndNotifiedReservations());
+    }
+
+    @GetMapping("/librarian/reservations/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<ReservationResponse> getReservationById(@PathVariable Long id) {
+        return ResponseEntity.ok(reservationService.getReservationById(id));
+    }
+
     @GetMapping("/librarian/reservations/all")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<List<ReservationResponse>> getAllReservations() {

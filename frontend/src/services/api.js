@@ -92,6 +92,9 @@ export const reservationAPI = {
   getUserReservations: (userId) => api.get(`/reservations/user/${userId}`),
   getBookReservations: (bookId) => api.get(`/reservations/book/${bookId}`),
   getPending: () => api.get('/librarian/reservations/pending'),
+  getActive: () => api.get('/librarian/reservations/active'),
+  getById: (id) => api.get(`/librarian/reservations/${id}`),
+  fulfill: (id) => api.put(`/librarian/reservations/${id}/fulfill`),
 };
 
 export const fineAPI = {

@@ -31,6 +31,9 @@ public class BorrowService {
     private NotificationService notificationService;
 
     @Autowired
+    private ReservationRepository reservationRepository;
+
+    @Autowired
     private ReservationService reservationService;
 
     @Value("${library.fine.rate-per-day:5.0}")
@@ -67,8 +70,30 @@ public class BorrowService {
         Book book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        if (book.getAvailableCopies() <= 0) {
-            throw new RuntimeException("Book is not available for borrowing");
+        // If issuing against a reservation, verify it belongs to this user and book
+        Reservation reservation = null;
+        if (request.getReservationId() != null) {
+            reservation = reservationRepository.findById(request.getReservationId())
+                    .orElseThrow(() -> new RuntimeException("Reservation not found"));
+            if (!reservation.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException("Reservation does not belong to this user");
+            }
+            if (!reservation.getBook().getId().equals(book.getId())) {
+                throw new RuntimeException("Reservation does not match this book");
+            }
+            if (reservation.getStatus() == ReservationStatus.FULFILLED ||
+                reservation.getStatus() == ReservationStatus.CANCELLED) {
+                throw new RuntimeException("Reservation is already " + reservation.getStatus().name().toLowerCase());
+            }
+            // For reservation-based issue, book must have at least 1 available copy
+            // (the reserved copy is held for this user)
+            if (book.getAvailableCopies() <= 0) {
+                throw new RuntimeException("No available copies to issue");
+            }
+        } else {
+            if (book.getAvailableCopies() <= 0) {
+                throw new RuntimeException("Book is not available for borrowing");
+            }
         }
 
         if (Boolean.FALSE.equals(user.getIsActive())) {
@@ -108,6 +133,15 @@ public class BorrowService {
         borrowRecordRepository.save(borrowRecord);
         bookRepository.save(book);
         userRepository.save(user);
+
+        // Auto-fulfill the reservation
+        if (reservation != null) {
+            reservation.setStatus(ReservationStatus.FULFILLED);
+            reservation.setFulfilledDate(java.time.LocalDateTime.now());
+            book.setReservedCopies(Math.max(0, book.getReservedCopies() - 1));
+            reservationRepository.save(reservation);
+            bookRepository.save(book);
+        }
 
         notificationService.sendNotification(
                 user,

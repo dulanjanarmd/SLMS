@@ -152,6 +152,14 @@ public class ReservationService {
     public ReservationResponse fulfillReservation(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        if (reservation.getStatus() == ReservationStatus.FULFILLED) {
+            throw new RuntimeException("Reservation is already fulfilled");
+        }
+        if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+            throw new RuntimeException("Cannot fulfill a cancelled reservation");
+        }
+
         reservation.setStatus(ReservationStatus.FULFILLED);
         reservation.setFulfilledDate(LocalDateTime.now());
         reservationRepository.save(reservation);
@@ -161,6 +169,22 @@ public class ReservationService {
         bookRepository.save(book);
 
         return mapToReservationResponse(reservation);
+    }
+
+    @Transactional(readOnly = true)
+    public ReservationResponse getReservationById(Long reservationId) {
+        return reservationRepository.findById(reservationId)
+                .map(this::mapToReservationResponse)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReservationResponse> getPendingAndNotifiedReservations() {
+        List<Reservation> pending = reservationRepository.findByStatus(ReservationStatus.PENDING);
+        List<Reservation> notified = reservationRepository.findByStatus(ReservationStatus.NOTIFIED);
+        return java.util.stream.Stream.concat(pending.stream(), notified.stream())
+                .map(this::mapToReservationResponse)
+                .toList();
     }
 
     private ReservationResponse mapToReservationResponse(Reservation reservation) {
