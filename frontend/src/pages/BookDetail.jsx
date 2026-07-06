@@ -75,20 +75,24 @@ const BookDetail = () => {
       setIssuing(true);
       setError('');
       setSuccess('');
-      const targetUserId = userId ? parseInt(userId) : user?.id;
-      if (!targetUserId) {
-        setError('Please enter a user ID');
-        return;
+      if (isLibrarian) {
+        // Librarian issues on behalf of another user
+        const targetUserId = userId ? parseInt(userId) : user?.id;
+        if (!targetUserId) {
+          setError('Please enter a user ID');
+          return;
+        }
+        await borrowAPI.issue({ userId: targetUserId, bookId: parseInt(id) });
+        setSuccess('Book issued successfully!');
+      } else {
+        // Student borrows for themselves
+        await borrowAPI.borrowSelf(parseInt(id));
+        setSuccess('Book borrowed successfully!');
       }
-      await borrowAPI.issue({
-        userId: targetUserId,
-        bookId: parseInt(id),
-      });
-      setSuccess('Book issued successfully!');
       setShowBorrowModal(false);
       fetchBook();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to issue book');
+      setError(err.response?.data?.message || 'Failed to borrow book');
       setShowBorrowModal(false);
     } finally {
       setIssuing(false);

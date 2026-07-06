@@ -27,6 +27,17 @@ public class BorrowController {
         return ResponseEntity.ok(borrowService.issueBook(request));
     }
 
+    @PostMapping("/borrow/self")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<BorrowResponse> borrowSelf(@RequestBody BorrowRequest request,
+            org.springframework.security.core.Authentication authentication) {
+        com.sliit.library.security.UserDetailsImpl userDetails =
+                (com.sliit.library.security.UserDetailsImpl) authentication.getPrincipal();
+        // Force userId to the authenticated user — students cannot borrow on behalf of others
+        request.setUserId(userDetails.getId());
+        return ResponseEntity.ok(borrowService.issueBook(request));
+    }
+
     @PostMapping("/librarian/borrow/return/{borrowId}")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<BorrowResponse> returnBook(@PathVariable Long borrowId) {
