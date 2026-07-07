@@ -3,6 +3,7 @@ package com.sliit.library.service;
 import com.sliit.library.dto.*;
 import com.sliit.library.entity.*;
 import com.sliit.library.repository.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -11,8 +12,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BookService {
@@ -28,6 +33,12 @@ public class BookService {
 
     @Autowired
     private ReservationRepository reservationRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Value("${app.upload.book-covers:uploads/book-covers}")
+    private String coverUploadDir;
 
     @Value("${library.loan.undergraduate.max-books:4}")
     private int undergradMaxBooks;
@@ -73,6 +84,37 @@ public class BookService {
 
         bookRepository.save(book);
         return mapToBookResponse(book);
+    }
+
+    @Transactional
+    public BookResponse addBookWithImage(String dataJson, MultipartFile coverImage) throws IOException {
+        BookRequestDTO request = objectMapper.readValue(dataJson, BookRequestDTO.class);
+        if (coverImage != null && !coverImage.isEmpty()) {
+            request.setCoverImageUrl(saveImage(coverImage));
+        }
+        return addBook(request);
+    }
+
+    @Transactional
+    public BookResponse updateBookWithImage(Long id, String dataJson, MultipartFile coverImage) throws IOException {
+        BookRequestDTO request = objectMapper.readValue(dataJson, BookRequestDTO.class);
+        if (coverImage != null && !coverImage.isEmpty()) {
+            request.setCoverImageUrl(saveImage(coverImage));
+        }
+        return updateBook(id, request);
+    }
+
+    private String saveImage(MultipartFile file) throws IOException {
+        String ext = "";
+        String original = file.getOriginalFilename();
+        if (original != null && original.contains(".")) {
+            ext = original.substring(original.lastIndexOf("."));
+        }
+        String fileName = UUID.randomUUID() + ext;
+        Path dir = Paths.get(coverUploadDir);
+        if (!Files.exists(dir)) Files.createDirectories(dir);
+        Files.copy(file.getInputStream(), dir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+        return "/api/uploads/book-covers/" + fileName;
     }
 
     @Transactional

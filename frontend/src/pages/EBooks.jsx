@@ -2,14 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ebookAPI } from '../services/api';
-import { Container, Row, Col, Card, Form, Button, Badge, Spinner, Alert, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Badge, Spinner, Alert, Modal } from 'react-bootstrap';
+
+const emptyEbookForm = {
+  title: '', author: '', isbn: '', description: '',
+  publisher: '', publicationYear: '', language: 'English',
+};
 
 const EBooks = () => {
   const { user } = useAuth();
   const [ebooks, setEbooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
+
+  const isLibrarian = user?.role === 'LIBRARIAN' || user?.role === 'ADMIN';
+
+  // Upload modal state
+  const [showUpload, setShowUpload] = useState(false);
+  const [ebookForm, setEbookForm] = useState(emptyEbookForm);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchEBooks();
@@ -34,7 +48,6 @@ const EBooks = () => {
       if (searchKeyword.trim()) {
         const response = await ebookAPI.search(searchKeyword, { page: 0, size: 12 });
         setEbooks(response.data.content);
-        setTotalPages(response.data.totalPages);
       } else {
         fetchEBooks();
       }
@@ -42,6 +55,45 @@ const EBooks = () => {
       setError('Search failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpload = async (e) => {
+    e.preventDefault();
+    if (!pdfFile) { setError('Please select a PDF file.'); return; }
+    setUploading(true);
+    setError('');
+    try {
+      const formData = new FormData();
+      formData.append('title', ebookForm.title);
+      formData.append('author', ebookForm.author);
+      if (ebookForm.isbn) formData.append('isbn', ebookForm.isbn);
+      if (ebookForm.description) formData.append('description', ebookForm.description);
+      if (ebookForm.publisher) formData.append('publisher', ebookForm.publisher);
+      if (ebookForm.publicationYear) formData.append('publicationYear', ebookForm.publicationYear);
+      if (ebookForm.language) formData.append('language', ebookForm.language);
+      formData.append('file', pdfFile);
+      await ebookAPI.upload(formData);
+      setSuccess('eBook uploaded successfully.');
+      setShowUpload(false);
+      setEbookForm(emptyEbookForm);
+      setPdfFile(null);
+      fetchEBooks();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Upload failed.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this eBook?')) return;
+    try {
+      await ebookAPI.delete(id);
+      setSuccess('eBook deleted.');
+      fetchEBooks();
+    } catch {
+      setError('Delete failed.');
     }
   };
 
@@ -85,11 +137,19 @@ const EBooks = () => {
 
   return (
     <Container>
-      <h2 className="fw-bold mb-4">
-        <i className="bi bi-file-earmark-pdf me-2"></i>eBooks & Digital Resources
-      </h2>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold mb-0">
+          <i className="bi bi-file-earmark-pdf me-2"></i>eBooks & Digital Resources
+        </h2>
+        {isLibrarian && (
+          <Button variant="dark" className="btn-pill" onClick={() => { setShowUpload(true); setEbookForm(emptyEbookForm); setPdfFile(null); }}>
+            <i className="bi bi-upload me-2"></i>Upload eBook
+          </Button>
+        )}
+      </div>
 
       {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
+      {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
 
       {/* Search */}
       <Card className="mb-4">
@@ -104,12 +164,12 @@ const EBooks = () => {
                 onChange={(e) => setSearchKeyword(e.target.value)}
               />
             </div>
-            <Button type="submit" variant="primary">
-              <i className="bi bi-search me-1"></i>Search
+            <Button type="submit" variant="dark" className="btn-pill">
+              Search
             </Button>
             {searchKeyword && (
-              <Button variant="outline-danger" onClick={() => { setSearchKeyword(''); fetchEBooks(); }}>
-                <i className="bi bi-x-lg"></i>
+              <Button variant="dark" className="btn-pill" onClick={() => { setSearchKeyword(''); fetchEBooks(); }}>
+                Clear
               </Button>
             )}
           </Form>
@@ -158,17 +218,24 @@ const EBooks = () => {
                     </small>
                   </div>
                   {user?.isMember || user?.role === 'LIBRARIAN' || user?.role === 'ADMIN' ? (
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      className="w-100 mt-2"
-                      onClick={() => handleDownload(ebook.id, ebook.title)}
-                    >
-                      <i className="bi bi-download me-1"></i>Download
-                    </Button>
+                    <div className="d-grid gap-1 mt-2">
+                      <Button
+                        variant="dark"
+                        size="sm"
+                        className="btn-pill"
+                        onClick={() => handleDownload(ebook.id, ebook.title)}
+                      >
+                        <i className="bi bi-download me-1"></i>Download
+                      </Button>
+                      {isLibrarian && (
+                        <Button variant="outline-danger" size="sm" className="btn-pill" onClick={() => handleDelete(ebook.id)}>
+                          <i className="bi bi-trash me-1"></i>Delete
+                        </Button>
+                      )}
+                    </div>
                   ) : (
-                    <Button as={Link} to="/membership" variant="outline-warning" size="sm" className="w-100 mt-2">
-                      <i className="bi bi-lock me-1"></i>Members Only
+                    <Button as={Link} to="/membership" variant="dark" size="sm" className="w-100 mt-2 btn-pill">
+                      Members Only
                     </Button>
                   )}
                 </Card.Body>

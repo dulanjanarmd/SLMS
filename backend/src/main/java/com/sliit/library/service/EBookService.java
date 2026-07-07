@@ -53,16 +53,16 @@ public class EBookService {
 
     @Transactional
     public EBookResponse uploadEBook(String title, String author, String isbn, String description,
-                                      String publisher, Integer publicationYear, String language,
-                                      MultipartFile file) throws IOException {
+            String publisher, Integer publicationYear, String language,
+            MultipartFile file) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userRepository.findById(userDetails.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename != null ?
-                originalFilename.substring(originalFilename.lastIndexOf(".") + 1) : "pdf";
+        String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf(".") + 1)
+                : "pdf";
         String fileName = UUID.randomUUID() + "." + extension;
 
         Path uploadDir = Paths.get(uploadPath);

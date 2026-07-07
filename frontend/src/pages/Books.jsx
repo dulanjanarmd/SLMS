@@ -144,15 +144,15 @@ const Books = () => {
               />
             </div>
             <div className="d-flex gap-2">
-              <Button type="submit" variant="primary">
-                <i className="bi bi-search me-1"></i>Search
+              <Button type="submit" variant="dark" className="btn-pill">
+                Search
               </Button>
-              <Button variant="outline-secondary" onClick={() => setShowAdvanced(!showAdvanced)}>
+              <Button variant="dark" className="btn-pill" onClick={() => setShowAdvanced(!showAdvanced)}>
                 <i className="bi bi-sliders me-1"></i>Advanced
               </Button>
               {searchKeyword && (
-                <Button variant="outline-danger" onClick={() => { setSearchKeyword(''); fetchBooks(); }}>
-                  <i className="bi bi-x-lg me-1"></i>Clear
+                <Button variant="dark" className="btn-pill" onClick={() => { setSearchKeyword(''); fetchBooks(); }}>
+                  Clear
                 </Button>
               )}
             </div>
@@ -231,8 +231,8 @@ const Books = () => {
                   </Form.Group>
                 </Col>
               </Row>
-              <Button type="submit" variant="primary" size="sm">
-                <i className="bi bi-funnel me-1"></i>Apply Filters
+              <Button type="submit" variant="dark" size="sm" className="btn-pill">
+                Apply Filters
               </Button>
             </Form>
           )}

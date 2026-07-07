@@ -131,8 +131,8 @@ const IssueBook = () => {
                     onChange={e => setStudentQuery(e.target.value)}
                     required
                   />
-                  <Button type="submit" variant="primary" disabled={studentLoading}>
-                    {studentLoading ? <Spinner size="sm" /> : <i className="bi bi-search"></i>}
+                  <Button type="submit" variant="dark" className="btn-pill" disabled={studentLoading}>
+                    {studentLoading ? <Spinner size="sm" /> : 'Search'}
                   </Button>
                 </div>
               </Form>
@@ -196,8 +196,8 @@ const IssueBook = () => {
                     onChange={e => setBookQuery(e.target.value)}
                     required
                   />
-                  <Button type="submit" variant="primary" disabled={bookLoading}>
-                    {bookLoading ? <Spinner size="sm" /> : <i className="bi bi-search"></i>}
+                  <Button type="submit" variant="dark" className="btn-pill" disabled={bookLoading}>
+                    {bookLoading ? <Spinner size="sm" /> : 'Search'}
                   </Button>
                 </div>
               </Form>
@@ -230,7 +230,7 @@ const IssueBook = () => {
                           </td>
                           <td>
                             <Button
-                              size="sm" variant="outline-primary"
+                              size="sm" variant="dark" className="btn-pill"
                               disabled={b.availableCopies === 0}
                               onClick={() => { setSelectedBook(b); setBookResults([]); }}
                             >
@@ -256,7 +256,7 @@ const IssueBook = () => {
                       <Badge bg={selectedBook.availableCopies > 0 ? 'success' : 'danger'} className="d-block mb-1">
                         {selectedBook.availableCopies} avail.
                       </Badge>
-                      <Button size="sm" variant="outline-secondary" onClick={() => setSelectedBook(null)}>
+                      <Button size="sm" variant="dark" className="btn-pill" onClick={() => setSelectedBook(null)}>
                         Change
                       </Button>
                     </div>
@@ -293,11 +293,11 @@ const IssueBook = () => {
               </Col>
               <Col md={2} className="text-end">
                 <Button
-                  variant="success" size="lg"
+                  variant="dark" size="lg" className="btn-pill"
                   disabled={!canIssue || issuing}
                   onClick={() => setShowConfirm(true)}
                 >
-                  <i className="bi bi-book me-2"></i>Issue
+                  Issue
                 </Button>
                 {!canIssue && selectedBook.availableCopies === 0 && (
                   <div className="text-danger small mt-1">Not available</div>
@@ -317,8 +317,8 @@ const IssueBook = () => {
           <div className="text-muted small mt-1">Due date: {getDueDate()}</div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirm(false)}>Cancel</Button>
-          <Button variant="success" onClick={handleIssue} disabled={issuing}>
+          <Button variant="secondary" className="btn-pill" onClick={() => setShowConfirm(false)}>Cancel</Button>
+          <Button variant="dark" className="btn-pill" onClick={handleIssue} disabled={issuing}>
             {issuing && <Spinner size="sm" className="me-2" />}Confirm
           </Button>
         </Modal.Footer>

@@ -173,9 +173,9 @@ const Register = () => {
           </Row>
 
           <Button
-            variant="primary"
+            variant="dark"
             type="submit"
-            className="w-100 py-2 fw-semibold"
+            className="w-100 py-2 fw-semibold btn-pill"
             disabled={loading}
           >
             {loading ? (
@@ -183,9 +183,7 @@ const Register = () => {
                 <Spinner size="sm" className="me-2" /> Creating Account...
               </>
             ) : (
-              <>
-                <i className="bi bi-person-plus me-2"></i>Create Account
-              </>
+              "Create Account"
             )}
           </Button>
         </Form>

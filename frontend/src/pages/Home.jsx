@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
 import { bookAPI, borrowAPI, notificationAPI } from '../services/api';
 import { Container, Row, Col, Card, Button, Badge, Spinner } from 'react-bootstrap';
@@ -53,25 +54,24 @@ const Home = () => {
         <Container>
           <Row className="align-items-center">
             <Col lg={8}>
-              <h1 className="display-5 fw-bold mb-3">
-                <i className="bi bi-book-half me-3"></i>
-                SLIIT Library
+              <h1 className="display-5 fw-bold mb-3 animate-fade-in">
+                Welcome to <span style={{ color: 'var(--sliit-orange)' }}>LibraryHub</span>
               </h1>
               <p className="lead mb-4">
                 Your gateway to knowledge. Browse our extensive collection of physical books and eBooks,
                 manage your loans, reservations, and stay updated with notifications.
               </p>
               <div className="d-flex gap-3">
-                <Button as={Link} to="/books" variant="warning" size="lg">
-                  <i className="bi bi-search me-2"></i>Browse Catalog
+                <Button as={Link} to="/books" variant="dark" size="lg" className="btn-pill">
+                  Browse Catalog
                 </Button>
-                <Button as={Link} to="/ebooks" variant="outline-light" size="lg">
-                  <i className="bi bi-file-earmark-pdf me-2"></i>eBooks
+                <Button as={Link} to="/ebooks" variant="dark" size="lg" className="btn-pill">
+                  eBooks
                 </Button>
               </div>
             </Col>
             <Col lg={4} className="text-center d-none d-lg-block">
-              <i className="bi bi-book" style={{ fontSize: '12rem', opacity: 0.3 }}></i>
+              <img src={logo} alt="Library Hub Logo" style={{ width: '200px', opacity: 0.8 }} />
             </Col>
           </Row>
         </Container>
@@ -84,7 +84,6 @@ const Home = () => {
             <Col md={3}>
               <Card className="stat-card primary text-center">
                 <Card.Body>
-                  <i className="bi bi-book fs-2 text-primary mb-2"></i>
                   <h4 className="mb-0">{stats.activeLoans}</h4>
                   <small className="text-muted">Active Loans</small>
                 </Card.Body>
@@ -93,7 +92,6 @@ const Home = () => {
             <Col md={3}>
               <Card className="stat-card danger text-center">
                 <Card.Body>
-                  <i className="bi bi-exclamation-triangle fs-2 text-danger mb-2"></i>
                   <h4 className="mb-0">{stats.overdueLoans}</h4>
                   <small className="text-muted">Overdue</small>
                 </Card.Body>
@@ -102,7 +100,6 @@ const Home = () => {
             <Col md={3}>
               <Card className="stat-card warning text-center">
                 <Card.Body>
-                  <i className="bi bi-bookmark fs-2 text-warning mb-2"></i>
                   <h4 className="mb-0">{stats.pendingReservations}</h4>
                   <small className="text-muted">Reservations</small>
                 </Card.Body>
@@ -111,7 +108,6 @@ const Home = () => {
             <Col md={3}>
               <Card className="stat-card info text-center">
                 <Card.Body>
-                  <i className="bi bi-cash-coin fs-2 text-info mb-2"></i>
                   <h4 className="mb-0">LKR {stats.outstandingFines.toFixed(2)}</h4>
                   <small className="text-muted">Outstanding Fines</small>
                 </Card.Body>
@@ -122,10 +118,8 @@ const Home = () => {
 
         {/* Popular Books */}
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 className="fw-bold">
-            <i className="bi bi-fire text-danger me-2"></i>Popular Books
-          </h3>
-          <Button as={Link} to="/books" variant="outline-primary" size="sm">
+          <h3 className="fw-bold">Popular Now</h3>
+          <Button as={Link} to="/books" variant="dark" className="btn-pill">
             View All <i className="bi bi-arrow-right ms-1"></i>
           </Button>
         </div>
@@ -136,9 +130,14 @@ const Home = () => {
           </div>
         ) : (
           <Row>
-            {popularBooks.map((book) => (
+            {popularBooks.map((book, index) => (
               <Col key={book.id} lg={2} md={4} sm={6} className="mb-4">
-                <Card as={Link} to={`/books/${book.id}`} className="book-card text-decoration-none h-100">
+                <Card
+                  as={Link}
+                  to={`/books/${book.id}`}
+                  className="book-card text-decoration-none h-100 animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
                   <div
                     className="card-img-top d-flex align-items-center justify-content-center text-white"
                     style={{

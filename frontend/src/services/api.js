@@ -61,7 +61,19 @@ export const bookAPI = {
   getByCategory: (categoryId) => api.get(`/books/category/${categoryId}`),
   getByStatus: (status) => api.get(`/books/status/${status}`),
   add: (data) => api.post('/librarian/books', data),
+  addWithImage: (data, coverImage) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (coverImage) formData.append('coverImage', coverImage);
+    return api.post('/librarian/books/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
   update: (id, data) => api.put(`/librarian/books/${id}`, data),
+  updateWithImage: (id, data, coverImage) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (coverImage) formData.append('coverImage', coverImage);
+    return api.put(`/librarian/books/${id}/upload`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
   delete: (id) => api.delete(`/librarian/books/${id}`),
 };
 

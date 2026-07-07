@@ -127,12 +127,12 @@ const FineManagement = () => {
           <Card className="text-center h-100">
             <Card.Body className="d-flex align-items-center justify-content-center gap-2">
               <Button
-                variant={filter === 'UNPAID' ? 'danger' : 'outline-danger'}
-                size="sm" onClick={() => setFilter('UNPAID')}
+                variant={filter === 'UNPAID' ? 'dark' : 'outline-dark'}
+                size="sm" className="btn-pill" onClick={() => setFilter('UNPAID')}
               >Unpaid</Button>
               <Button
-                variant={filter === 'ALL' ? 'secondary' : 'outline-secondary'}
-                size="sm" onClick={() => setFilter('ALL')}
+                variant={filter === 'ALL' ? 'dark' : 'outline-dark'}
+                size="sm" className="btn-pill" onClick={() => setFilter('ALL')}
               >All</Button>
             </Card.Body>
           </Card>
@@ -181,15 +181,15 @@ const FineManagement = () => {
                     <td>
                       {(fine.status === 'UNPAID' || fine.status === 'PARTIALLY_PAID') && (
                         <div className="d-flex gap-1">
-                          <Button size="sm" variant="success" onClick={() => handlePayClick(fine)}>
-                            <i className="bi bi-cash me-1"></i>Collect
+                          <Button size="sm" variant="dark" className="btn-pill" onClick={() => handlePayClick(fine)}>
+                            Collect
                           </Button>
                           <Button
-                            size="sm" variant="outline-secondary"
+                            size="sm" variant="dark" className="btn-pill"
                             onClick={() => { setSelectedFine(fine); setShowWaiveModal(true); }}
                             title="Waive fine"
                           >
-                            <i className="bi bi-slash-circle"></i>
+                            Waive
                           </Button>
                         </div>
                       )}
@@ -231,10 +231,10 @@ const FineManagement = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowPayModal(false)}>Cancel</Button>
-          <Button variant="success" onClick={handlePay} disabled={paying || !payAmount}>
+          <Button variant="secondary" className="btn-pill" onClick={() => setShowPayModal(false)}>Cancel</Button>
+          <Button variant="dark" className="btn-pill" onClick={handlePay} disabled={paying || !payAmount}>
             {paying && <Spinner size="sm" className="me-2" />}
-            <i className="bi bi-check-lg me-1"></i>Record Payment
+            Record Payment
           </Button>
         </Modal.Footer>
       </Modal>
@@ -265,8 +265,8 @@ const FineManagement = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowWaiveModal(false)}>Cancel</Button>
-          <Button variant="warning" onClick={handleWaive} disabled={waiving}>
+          <Button variant="secondary" className="btn-pill" onClick={() => setShowWaiveModal(false)}>Cancel</Button>
+          <Button variant="dark" className="btn-pill" onClick={handleWaive} disabled={waiving}>
             {waiving && <Spinner size="sm" className="me-2" />}
             Waive Full Amount
           </Button>

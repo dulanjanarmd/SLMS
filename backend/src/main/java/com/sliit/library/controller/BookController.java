@@ -4,11 +4,14 @@ import com.sliit.library.dto.*;
 import com.sliit.library.entity.BookStatus;
 import com.sliit.library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -72,6 +75,23 @@ public class BookController {
         return ResponseEntity.ok(bookService.addBook(request));
     }
 
+    @PostMapping(value = "/librarian/books/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<BookResponse> addBookWithImage(
+            @RequestPart("data") String dataJson,
+            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage) throws Exception {
+        return ResponseEntity.ok(bookService.addBookWithImage(dataJson, coverImage));
+    }
+
+    @PutMapping(value = "/librarian/books/{id}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<BookResponse> updateBookWithImage(
+            @PathVariable Long id,
+            @RequestPart("data") String dataJson,
+            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage) throws Exception {
+        return ResponseEntity.ok(bookService.updateBookWithImage(id, dataJson, coverImage));
+    }
+
     @PutMapping("/librarian/books/{id}")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<BookResponse> updateBook(@PathVariable Long id, @RequestBody BookRequestDTO request) {
@@ -83,5 +103,19 @@ public class BookController {
     public ResponseEntity<MessageResponse> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.ok(new MessageResponse("Book deleted successfully"));
+    }
+
+    @GetMapping("/uploads/book-covers/{filename:.+}")
+    public ResponseEntity<org.springframework.core.io.Resource> getBookCover(
+            @PathVariable String filename,
+            @Value("${app.upload.book-covers:uploads/book-covers}") String uploadDir) throws java.net.MalformedURLException {
+        java.nio.file.Path file = java.nio.file.Paths.get(uploadDir).resolve(filename);
+        org.springframework.core.io.Resource resource = new org.springframework.core.io.UrlResource(file.toUri());
+        if (!resource.exists()) return ResponseEntity.notFound().build();
+        String contentType = "image/jpeg";
+        try { contentType = java.nio.file.Files.probeContentType(file); } catch (Exception ignored) {}
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType != null ? contentType : "image/jpeg"))
+                .body(resource);
     }
 }

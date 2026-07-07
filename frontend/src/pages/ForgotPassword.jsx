@@ -71,7 +71,7 @@ const ForgotPassword = () => {
               />
             </Form.Group>
             {message && <Alert variant="info">{message}</Alert>}
-            <Button variant="primary" type="submit" className="w-100" disabled={loading}>
+            <Button variant="dark" type="submit" className="w-100 btn-pill" disabled={loading}>
               {loading ? <Spinner size="sm" /> : 'Send Reset Token'}
             </Button>
           </Form>
@@ -97,7 +97,7 @@ const ForgotPassword = () => {
                 required
               />
             </Form.Group>
-            <Button variant="primary" type="submit" className="w-100" disabled={loading}>
+            <Button variant="dark" type="submit" className="w-100 btn-pill" disabled={loading}>
               {loading ? <Spinner size="sm" /> : 'Reset Password'}
             </Button>
           </Form>

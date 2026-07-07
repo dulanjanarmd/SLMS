@@ -115,12 +115,12 @@ const Users = () => {
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
             />
-            <Button type="submit" variant="primary">
-              <i className="bi bi-search"></i>
+            <Button type="submit" variant="dark" className="btn-pill">
+              Search
             </Button>
             {searchKeyword && (
-              <Button variant="outline-danger" onClick={() => { setSearchKeyword(''); fetchUsers(); }}>
-                <i className="bi bi-x-lg"></i>
+              <Button variant="dark" className="btn-pill" onClick={() => { setSearchKeyword(''); fetchUsers(); }}>
+                Clear
               </Button>
             )}
           </Form>
@@ -161,8 +161,9 @@ const Users = () => {
                   <td>
                     <div className="d-flex gap-1">
                       <Button
-                        variant={u.isActive ? "outline-danger" : "outline-success"}
+                        variant="dark"
                         size="sm"
+                        className="btn-pill"
                         onClick={() => handleToggleActive(u.id, u.isActive)}
                       >
                         {u.isActive ? 'Deactivate' : 'Activate'}

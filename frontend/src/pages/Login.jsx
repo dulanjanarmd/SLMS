@@ -90,9 +90,9 @@ const Login = () => {
           </div>
 
           <Button
-            variant="primary"
+            variant="dark"
             type="submit"
-            className="w-100 py-2 fw-semibold"
+            className="w-100 py-2 fw-semibold btn-pill"
             disabled={loading}
           >
             {loading ? (
@@ -100,9 +100,7 @@ const Login = () => {
                 <Spinner size="sm" className="me-2" /> Signing in...
               </>
             ) : (
-              <>
-                <i className="bi bi-box-arrow-in-right me-2"></i>Sign In
-              </>
+              "Sign In"
             )}
           </Button>
         </Form>

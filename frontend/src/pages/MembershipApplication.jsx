@@ -309,10 +309,9 @@ const MembershipApplication = () => {
                 />
               </Form.Group>
 
-              <Button variant="primary" type="submit" className="w-100" disabled={submitting}>
-                {submitting ? <Spinner size="sm" className="me-2" /> : <i className="bi bi-send me-2"></i>}
-                Submit Application
-              </Button>
+              <Button variant="dark" type="submit" className="w-100 btn-pill" disabled={submitting}>
+                  {submitting ? <Spinner size="sm" className="me-2" /> : "Submit Application"}
+                </Button>
             </Form>
           </Card.Body>
         </Card>

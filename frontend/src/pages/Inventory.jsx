@@ -11,7 +11,7 @@ const emptyForm = {
   language: 'English', format: 'Physical', shelfLocation: '',
   totalCopies: 1, replacementCost: '', ddcNumber: '',
   subjectHeadings: '', accessionNumber: '', categoryId: '',
-  coverImageUrl: '', acquisitionDate: '',
+  acquisitionDate: '',
 };
 
 const Inventory = () => {
@@ -31,6 +31,8 @@ const Inventory = () => {
   const [showModal, setShowModal] = useState(false);
   const [editBook, setEditBook] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [coverImage, setCoverImage] = useState(null);
+  const [coverPreview, setCoverPreview] = useState('');
   const [saving, setSaving] = useState(false);
 
   const [showStatusModal, setShowStatusModal] = useState(false);
@@ -85,6 +87,8 @@ const Inventory = () => {
   const openAdd = () => {
     setEditBook(null);
     setForm(emptyForm);
+    setCoverImage(null);
+    setCoverPreview('');
     setShowModal(true);
   };
 
@@ -100,9 +104,18 @@ const Inventory = () => {
       totalCopies: book.totalCopies || 1, replacementCost: book.replacementCost || '',
       ddcNumber: book.ddcNumber || '', subjectHeadings: book.subjectHeadings || '',
       accessionNumber: book.accessionNumber || '', categoryId: book.categoryId || '',
-      coverImageUrl: book.coverImageUrl || '', acquisitionDate: book.acquisitionDate || '',
+      acquisitionDate: book.acquisitionDate || '',
     });
+    setCoverImage(null);
+    setCoverPreview(book.coverImageUrl || '');
     setShowModal(true);
+  };
+
+  const handleCoverChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setCoverImage(file);
+    setCoverPreview(URL.createObjectURL(file));
   };
 
   const handleSave = async (e) => {
@@ -118,10 +131,10 @@ const Inventory = () => {
         categoryId: form.categoryId ? parseInt(form.categoryId) : null,
       };
       if (editBook) {
-        await bookAPI.update(editBook.id, payload);
+        await bookAPI.updateWithImage(editBook.id, payload, coverImage);
         setSuccess('Book updated successfully.');
       } else {
-        await bookAPI.add(payload);
+        await bookAPI.addWithImage(payload, coverImage);
         setSuccess('Book added successfully.');
       }
       setShowModal(false);
@@ -157,8 +170,8 @@ const Inventory = () => {
         <h2 className="fw-bold mb-0">
           <i className="bi bi-collection me-2 text-primary"></i>Inventory Management
         </h2>
-        <Button variant="primary" onClick={openAdd}>
-          <i className="bi bi-plus-lg me-2"></i>Add New Book
+        <Button variant="dark" className="btn-pill" onClick={openAdd}>
+          Add New Book
         </Button>
       </div>
 
@@ -195,14 +208,14 @@ const Inventory = () => {
                 </Form.Select>
               </Col>
               <Col md={2}>
-                <Button type="submit" variant="primary" className="w-100">
-                  <i className="bi bi-search me-1"></i>Search
+                <Button type="submit" variant="dark" className="w-100 btn-pill">
+                  Search
                 </Button>
               </Col>
               <Col md={2}>
-                <Button variant="outline-secondary" className="w-100"
+                <Button variant="dark" className="w-100 btn-pill"
                   onClick={() => { setKeyword(''); setStatusFilter(''); setCategoryFilter(''); setPage(0); fetchBooks(); }}>
-                  <i className="bi bi-x-lg me-1"></i>Clear
+                  Clear
                 </Button>
               </Col>
             </Row>
@@ -250,15 +263,15 @@ const Inventory = () => {
                     <td>{statusBadge(book.status)}</td>
                     <td>
                       <div className="d-flex gap-1">
-                        <Button size="sm" variant="outline-primary" onClick={() => openEdit(book)} title="Edit">
-                          <i className="bi bi-pencil"></i>
+                        <Button size="sm" variant="dark" className="btn-pill" onClick={() => openEdit(book)} title="Edit">
+                          Edit
                         </Button>
                         <Button
-                          size="sm" variant="outline-warning"
+                          size="sm" variant="dark" className="btn-pill"
                           title="Mark Lost/Damaged"
                           onClick={() => { setStatusBook(book); setNewStatus('LOST'); setShowStatusModal(true); }}
                         >
-                          <i className="bi bi-exclamation-triangle"></i>
+                          Update Status
                         </Button>
                       </div>
                     </td>
@@ -391,15 +404,23 @@ const Inventory = () => {
               </Col>
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>Cover Image URL</Form.Label>
-                  <Form.Control value={form.coverImageUrl} onChange={e => setForm({ ...form, coverImageUrl: e.target.value })} />
+                  <Form.Label>Cover Image</Form.Label>
+                  <Form.Control type="file" accept="image/*" onChange={handleCoverChange} />
+                  {coverPreview && (
+                    <img
+                      src={coverPreview}
+                      alt="Cover preview"
+                      className="mt-2 rounded"
+                      style={{ height: 100, objectFit: 'cover' }}
+                    />
+                  )}
                 </Form.Group>
               </Col>
             </Row>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button variant="primary" type="submit" disabled={saving}>
+            <Button variant="secondary" className="btn-pill" onClick={() => setShowModal(false)}>Cancel</Button>
+            <Button variant="dark" className="btn-pill" type="submit" disabled={saving}>
               {saving && <Spinner size="sm" className="me-2" />}
               {editBook ? 'Update Book' : 'Add Book'}
             </Button>
@@ -422,8 +443,8 @@ const Inventory = () => {
           </Form.Select>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowStatusModal(false)}>Cancel</Button>
-          <Button variant="warning" onClick={handleStatusChange}>Update Status</Button>
+          <Button variant="secondary" className="btn-pill" onClick={() => setShowStatusModal(false)}>Cancel</Button>
+          <Button variant="dark" className="btn-pill" onClick={handleStatusChange}>Update Status</Button>
         </Modal.Footer>
       </Modal>
     </Container>

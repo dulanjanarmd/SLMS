@@ -107,8 +107,8 @@ const LibrarianReports = () => {
         <h2 className="fw-bold mb-0">
           <i className="bi bi-bar-chart-line me-2 text-primary"></i>Reports
         </h2>
-        <Button variant="outline-primary" onClick={fetchAll}>
-          <i className="bi bi-arrow-clockwise me-1"></i>Refresh
+        <Button variant="dark" className="btn-pill" onClick={fetchAll}>
+          Refresh
         </Button>
       </div>
 
@@ -189,8 +189,8 @@ const LibrarianReports = () => {
                 <Col md={6}>
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h6 className="fw-semibold mb-0">Today's Loans ({todayLoans.length})</h6>
-                    <Button size="sm" variant="outline-primary" onClick={() => exportCSV(todayLoans, 'today_loans.csv')}>
-                      <i className="bi bi-download me-1"></i>CSV
+                    <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(todayLoans, 'today_loans.csv')}>
+                      CSV
                     </Button>
                   </div>
                   <div style={{ maxHeight: 300, overflowY: 'auto' }}>
@@ -216,8 +216,8 @@ const LibrarianReports = () => {
                 <Col md={6}>
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <h6 className="fw-semibold mb-0">Today's Returns ({todayReturns.length})</h6>
-                    <Button size="sm" variant="outline-success" onClick={() => exportCSV(todayReturns, 'today_returns.csv')}>
-                      <i className="bi bi-download me-1"></i>CSV
+                    <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(todayReturns, 'today_returns.csv')}>
+                      CSV
                     </Button>
                   </div>
                   <div style={{ maxHeight: 300, overflowY: 'auto' }}>
@@ -248,8 +248,8 @@ const LibrarianReports = () => {
             {/* Popular Books */}
             <Tab eventKey="popular" title={<><i className="bi bi-fire me-1"></i>Popular Books</>}>
               <div className="d-flex justify-content-end mb-2">
-                <Button size="sm" variant="outline-primary" onClick={() => exportCSV(popularBooks, 'popular_books.csv')}>
-                  <i className="bi bi-download me-1"></i>Export CSV
+                <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(popularBooks, 'popular_books.csv')}>
+                  Export CSV
                 </Button>
               </div>
               <Table striped hover responsive>
@@ -280,8 +280,8 @@ const LibrarianReports = () => {
             {/* Overdue */}
             <Tab eventKey="overdue" title={<><i className="bi bi-exclamation-triangle me-1"></i>Overdue ({overdueItems.length})</>}>
               <div className="d-flex justify-content-end mb-2">
-                <Button size="sm" variant="outline-danger" onClick={() => exportCSV(overdueItems, 'overdue_books.csv')}>
-                  <i className="bi bi-download me-1"></i>Export CSV
+                <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(overdueItems, 'overdue_books.csv')}>
+                  Export CSV
                 </Button>
               </div>
               <Table striped hover responsive>

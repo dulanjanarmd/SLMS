@@ -104,8 +104,8 @@ const BookDetail = () => {
     return (
       <Container className="py-5">
         <Alert variant="danger">{error}</Alert>
-        <Button variant="primary" onClick={() => navigate('/books')}>
-          <i className="bi bi-arrow-left me-2"></i>Back to Catalog
+        <Button variant="dark" className="btn-pill" onClick={() => navigate('/books')}>
+          Back to Catalog
         </Button>
       </Container>
     );
@@ -117,8 +117,8 @@ const BookDetail = () => {
     // Librarian: always show Issue button
     if (isLibrarian) {
       return (
-        <Button variant="primary" onClick={() => setShowBorrowModal(true)}>
-          <i className="bi bi-book me-2"></i>Issue Book
+        <Button variant="dark" className="btn-pill" onClick={() => setShowBorrowModal(true)}>
+          Issue Book
         </Button>
       );
     }
@@ -130,8 +130,8 @@ const BookDetail = () => {
           <Alert variant="warning" className="mb-2 py-2 small">
             <i className="bi bi-lock me-1"></i>Library membership required to borrow or reserve books.
           </Alert>
-          <Button as={Link} to="/membership" variant="outline-primary" size="sm">
-            <i className="bi bi-person-badge me-1"></i>Apply for Membership
+          <Button as={Link} to="/membership" variant="dark" size="sm" className="btn-pill">
+            Apply for Membership
           </Button>
         </>
       );
@@ -141,16 +141,16 @@ const BookDetail = () => {
     return (
       <>
         {book.availableCopies > 0 ? (
-          <Button variant="warning" className="w-100" onClick={() => setShowReserveModal(true)}>
-            <i className="bi bi-bookmark-plus me-2"></i>Reserve Book
+          <Button variant="dark" className="w-100 btn-pill" onClick={() => setShowReserveModal(true)}>
+            Reserve Book
           </Button>
         ) : (
           <>
             <Alert variant="info" className="mb-2 py-2 small">
               <i className="bi bi-info-circle me-1"></i>All copies are currently borrowed.
             </Alert>
-            <Button variant="warning" className="w-100" onClick={() => setShowReserveModal(true)}>
-              <i className="bi bi-bookmark-plus me-2"></i>Join Waiting Queue
+            <Button variant="dark" className="w-100 btn-pill" onClick={() => setShowReserveModal(true)}>
+              Join Waiting Queue
             </Button>
           </>
         )}
@@ -163,8 +163,8 @@ const BookDetail = () => {
       {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
       {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
 
-      <Button variant="outline-primary" size="sm" className="mb-3" onClick={() => navigate('/books')}>
-        <i className="bi bi-arrow-left me-2"></i>Back to Catalog
+      <Button variant="dark" size="sm" className="mb-3 btn-pill" onClick={() => navigate('/books')}>
+        Back to Catalog
       </Button>
 
       <Row>
@@ -345,9 +345,9 @@ const BookDetail = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowReserveModal(false)}>Cancel</Button>
-          <Button variant="warning" onClick={handleReserve} disabled={reserving}>
-            {reserving ? <Spinner size="sm" className="me-2" /> : <i className="bi bi-bookmark-plus me-2"></i>}
+          <Button variant="secondary" className="btn-pill" onClick={() => setShowReserveModal(false)}>Cancel</Button>
+          <Button variant="dark" className="btn-pill" onClick={handleReserve} disabled={reserving}>
+            {reserving ? <Spinner size="sm" className="me-2" /> : null}
             Confirm Reservation
           </Button>
         </Modal.Footer>
@@ -376,9 +376,9 @@ const BookDetail = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowBorrowModal(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleIssue} disabled={issuing}>
-            {issuing ? <Spinner size="sm" className="me-2" /> : <i className="bi bi-book me-2"></i>}
+          <Button variant="secondary" className="btn-pill" onClick={() => setShowBorrowModal(false)}>Cancel</Button>
+          <Button variant="dark" className="btn-pill" onClick={handleIssue} disabled={issuing}>
+            {issuing ? <Spinner size="sm" className="me-2" /> : null}
             {isLibrarian ? 'Issue Now' : 'Borrow Now'}
           </Button>
         </Modal.Footer>

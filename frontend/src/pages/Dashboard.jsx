@@ -114,23 +114,23 @@ const Dashboard = () => {
         <Col>
           <Card>
             <Card.Body className="d-flex gap-3 flex-wrap">
-              <Button as={Link} to="/librarian/issue" variant="primary">
-                <i className="bi bi-book me-2"></i>Issue Book
+              <Button as={Link} to="/librarian/issue" variant="dark" className="btn-pill">
+                Issue Book
               </Button>
-              <Button as={Link} to="/librarian/return" variant="success">
-                <i className="bi bi-arrow-return-left me-2"></i>Return Book
+              <Button as={Link} to="/librarian/return" variant="dark" className="btn-pill">
+                Return Book
               </Button>
-              <Button as={Link} to="/librarian/inventory" variant="outline-primary">
-                <i className="bi bi-collection me-2"></i>Inventory
+              <Button as={Link} to="/librarian/inventory" variant="dark" className="btn-pill">
+                Inventory
               </Button>
-              <Button as={Link} to="/librarian/reservations" variant="outline-warning">
-                <i className="bi bi-bookmark-check me-2"></i>Reservations
+              <Button as={Link} to="/librarian/reservations" variant="dark" className="btn-pill">
+                Reservations
               </Button>
-              <Button as={Link} to="/librarian/fines" variant="outline-danger">
-                <i className="bi bi-cash-coin me-2"></i>Fines
+              <Button as={Link} to="/librarian/fines" variant="dark" className="btn-pill">
+                Fines
               </Button>
-              <Button as={Link} to="/librarian/reports" variant="outline-secondary">
-                <i className="bi bi-bar-chart-line me-2"></i>Reports
+              <Button as={Link} to="/librarian/reports" variant="dark" className="btn-pill">
+                Reports
               </Button>
             </Card.Body>
           </Card>
@@ -142,7 +142,6 @@ const Dashboard = () => {
         <Col lg={2} md={4} sm={6}>
           <Card className="stat-card primary text-center">
             <Card.Body>
-              <i className="bi bi-book fs-2 text-primary mb-2 d-block"></i>
               <h4 className="mb-0">{stats?.totalBooks || 0}</h4>
               <small className="text-muted">Total Books</small>
             </Card.Body>
@@ -151,7 +150,6 @@ const Dashboard = () => {
         <Col lg={2} md={4} sm={6}>
           <Card className="stat-card success text-center">
             <Card.Body>
-              <i className="bi bi-file-earmark-pdf fs-2 text-success mb-2 d-block"></i>
               <h4 className="mb-0">{stats?.totalEBooks || 0}</h4>
               <small className="text-muted">eBooks</small>
             </Card.Body>
@@ -160,7 +158,6 @@ const Dashboard = () => {
         <Col lg={2} md={4} sm={6}>
           <Card className="stat-card info text-center">
             <Card.Body>
-              <i className="bi bi-people fs-2 text-info mb-2 d-block"></i>
               <h4 className="mb-0">{stats?.totalUsers || 0}</h4>
               <small className="text-muted">Users</small>
             </Card.Body>
@@ -169,7 +166,6 @@ const Dashboard = () => {
         <Col lg={2} md={4} sm={6}>
           <Card className="stat-card warning text-center">
             <Card.Body>
-              <i className="bi bi-journal-check fs-2 text-warning mb-2 d-block"></i>
               <h4 className="mb-0">{stats?.activeLoans || 0}</h4>
               <small className="text-muted">Active Loans</small>
             </Card.Body>
@@ -178,7 +174,6 @@ const Dashboard = () => {
         <Col lg={2} md={4} sm={6}>
           <Card className="stat-card danger text-center">
             <Card.Body>
-              <i className="bi bi-exclamation-triangle fs-2 text-danger mb-2 d-block"></i>
               <h4 className="mb-0">{stats?.overdueLoans || 0}</h4>
               <small className="text-muted">Overdue</small>
             </Card.Body>
@@ -187,7 +182,6 @@ const Dashboard = () => {
         <Col lg={2} md={4} sm={6}>
           <Card className="stat-card primary text-center">
             <Card.Body>
-              <i className="bi bi-cash-coin fs-2 text-primary mb-2 d-block"></i>
               <h4 className="mb-0">LKR {(stats?.outstandingFines || 0).toFixed(0)}</h4>
               <small className="text-muted">Outstanding Fines</small>
             </Card.Body>
@@ -243,16 +237,14 @@ const Dashboard = () => {
         {/* Overdue Loans */}
         <Col lg={6}>
           <Card>
-            <Card.Header className="d-flex justify-content-between align-items-center">
-              <span className="fw-semibold text-danger">
-                <i className="bi bi-exclamation-triangle me-2"></i>Overdue Loans
-              </span>
+            <Card.Header className="d-flex justify-content-between align-items-center fw-bold">
+              Overdue Loans
               <Badge bg="danger">{overdueLoans.length}</Badge>
             </Card.Header>
             <Card.Body className="p-0">
-              <div style={{ maxHeight: '300px', overflow: 'auto' }}>
+              <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead>
+                  <thead className="table-light">
                     <tr>
                       <th>User</th>
                       <th>Book</th>
@@ -297,13 +289,13 @@ const Dashboard = () => {
         {/* Today's Activity */}
         <Col lg={6}>
           <Card>
-            <Card.Header className="fw-semibold">
-              <i className="bi bi-calendar-check me-2"></i>Today's Loans
+            <Card.Header className="fw-bold">
+              Today's Loans
             </Card.Header>
             <Card.Body className="p-0">
-              <div style={{ maxHeight: '300px', overflow: 'auto' }}>
+              <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead>
+                  <thead className="table-light">
                     <tr>
                       <th>User</th>
                       <th>Book</th>
@@ -345,16 +337,14 @@ const Dashboard = () => {
       <Row className="mt-4">
         <Col>
           <Card>
-            <Card.Header className="d-flex justify-content-between align-items-center">
-              <span className="fw-semibold text-warning">
-                <i className="bi bi-bookmark me-2"></i>Pending Reservations
-              </span>
+            <Card.Header className="d-flex justify-content-between align-items-center fw-bold">
+              Pending Reservations
               <Badge bg="warning" text="dark">{pendingReservations.length}</Badge>
             </Card.Header>
             <Card.Body className="p-0">
-              <div style={{ maxHeight: '250px', overflow: 'auto' }}>
+              <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead>
+                  <thead className="table-light">
                     <tr>
                       <th>User</th>
                       <th>Book</th>
@@ -392,17 +382,15 @@ const Dashboard = () => {
       <Row className="mt-4">
         <Col>
           <Card>
-            <Card.Header className="d-flex justify-content-between align-items-center">
-              <span className="fw-semibold text-info">
-                <i className="bi bi-person-badge me-2"></i>Pending Membership Applications
-              </span>
+            <Card.Header className="d-flex justify-content-between align-items-center fw-bold">
+              Pending Membership Applications
               <Badge bg="info">{pendingMemberships.length}</Badge>
             </Card.Header>
             <Card.Body className="p-0">
               {membershipMsg && <Alert variant="success" className="m-3 py-2">{membershipMsg}</Alert>}
-              <div style={{ maxHeight: '300px', overflow: 'auto' }}>
+              <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead>
+                  <thead className="table-light">
                     <tr>
                       <th>Name</th>
                       <th>ID</th>
@@ -429,7 +417,8 @@ const Dashboard = () => {
                             <div className="d-flex gap-1">
                               <Button
                                 size="sm"
-                                variant="success"
+                                variant="dark"
+                                className="btn-pill"
                                 onClick={async () => {
                                   try {
                                     await membershipAPI.review(m.id, { approved: true, adminComments: '' });
@@ -439,11 +428,12 @@ const Dashboard = () => {
                                   } catch { setMembershipMsg('Action failed'); setTimeout(() => setMembershipMsg(''), 4000); }
                                 }}
                               >
-                                <i className="bi bi-check-lg"></i> Approve
+                                Approve
                               </Button>
                               <Button
                                 size="sm"
-                                variant="danger"
+                                variant="dark"
+                                className="btn-pill"
                                 onClick={async () => {
                                   const reason = window.prompt('Rejection reason (optional):') || '';
                                   try {
@@ -454,7 +444,7 @@ const Dashboard = () => {
                                   } catch { setMembershipMsg('Action failed'); setTimeout(() => setMembershipMsg(''), 4000); }
                                 }}
                               >
-                                <i className="bi bi-x-lg"></i> Reject
+                                Reject
                               </Button>
                             </div>
                           </td>
