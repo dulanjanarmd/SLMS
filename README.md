@@ -74,9 +74,6 @@ The project is divided into two main components:
 - **Book Details:** View detailed information about each book.
 - **Borrowing:** Borrow books directly from the platform.
 - **User Profile:** Manage user profile and view borrowing history.
-
-### User Frontend
-
 - **React 18.2.0:** The JavaScript library for building the user interface.
 - **Vite:** The build tool for the frontend application.
 - **Axios:** For making HTTP requests to the backend APIs.
