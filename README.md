@@ -10,6 +10,54 @@ The project is divided into two main components:
 - **Admin Frontend:** A modern and user-friendly admin dashboard built with React, allowing librarians to manage books, users, and other library resources efficiently.
 - **User Frontend:** A user-friendly interface for library members to browse, search, and borrow books.
 
+## Project Structure
+
+```
+/
+├── admin-frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+├── backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── com/
+│   │   │   │       └── sliit/
+│   │   │   │           └── library/
+│   │   │   │               ├── config/
+│   │   │   │               ├── controller/
+│   │   │   │               ├── dto/
+│   │   │   │               ├── entity/
+│   │   │   │               ├── exception/
+│   │   │   │               ├── repository/
+│   │   │   │               ├── scheduler/
+│   │   │   │               ├── security/
+│   │   │   │               └── service/
+│   │   │   └── resources/
+│   └── pom.xml
+└── frontend/
+    ├── public/
+    ├── src/
+    │   ├── assets/
+    │   ├── components/
+    │   ├── context/
+    │   ├── pages/
+    │   ├── services/
+    │   ├── tests/
+    │   ├── App.jsx
+    │   └── main.jsx
+    ├── package.json
+    └── vite.config.js
+```
+
 ## Features
 
 ### Backend (Spring Boot)
@@ -40,6 +88,13 @@ The project is divided into two main components:
 - **Dashboard:** An intuitive and responsive dashboard for managing library resources.
 - **Book Management:** Add, edit, and delete books, authors, and categories.
 - **User Management:** View and manage registered users.
+- **Borrowing and Returning:** Manage the process of borrowing and returning books.
+- **Fine Management:** Automatically calculate and manage fines for overdue books.
+- **Reporting:** Generate reports on book popularity, user activity, and more.
+- **Notifications:** Send notifications to users about due dates, reservations, and other important events.
+- **E-books:** Manage and read e-books directly from the platform.
+- **Reservations:** Reserve books that are currently unavailable.
+- **Membership Management:** Manage user memberships and renewals.
 - **Charts and Analytics:** Visual representation of library data using Chart.js.
 - **Routing:** Seamless navigation between different sections of the admin panel using React Router.
 
