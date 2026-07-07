@@ -32,7 +32,11 @@ const FacultyDashboard = () => {
   };
 
   useEffect(() => {
-    if (user) fetchData();
+    if (user) {
+      fetchData();
+      const interval = setInterval(fetchData, 30000);
+      return () => clearInterval(interval);
+    }
   }, [user]);
 
   if (loading) {

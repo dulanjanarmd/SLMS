@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { bookAPI, borrowAPI, reservationAPI, userAPI } from '../services/api';
-import { Container, Row, Col, Card, Button, Badge, Alert, Spinner, Modal, Form } from 'react-bootstrap';
+import { bookAPI, reservationAPI, userAPI } from '../services/api';
+import { Container, Row, Col, Card, Button, Badge, Alert, Spinner, Modal } from 'react-bootstrap';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -13,11 +13,8 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [showBorrowModal, setShowBorrowModal] = useState(false);
   const [showReserveModal, setShowReserveModal] = useState(false);
-  const [userId, setUserId] = useState('');
   const [reserving, setReserving] = useState(false);
-  const [issuing, setIssuing] = useState(false);
 
   useEffect(() => {
     fetchBook();
@@ -41,12 +38,10 @@ const BookDetail = () => {
       const res = await userAPI.getProfile();
       setProfile(res.data);
     } catch {
-      // fallback to stale user
       setProfile(user);
     }
   };
 
-  // Use live profile isMember, fallback to stored user
   const isMember = profile?.isMember ?? user?.isMember ?? false;
   const isLibrarian = user?.role === 'LIBRARIAN';
 
@@ -55,11 +50,8 @@ const BookDetail = () => {
       setReserving(true);
       setError('');
       setSuccess('');
-      await reservationAPI.create({
-        bookId: parseInt(id),
-        userId: user.id,
-      });
-      setSuccess('Added to reservation queue! You will be notified when the book becomes available.');
+      await reservationAPI.create({ bookId: parseInt(id), userId: user.id });
+      setSuccess('Added to reservation queue! Visit the library with your Reservation ID to collect the book.');
       setShowReserveModal(false);
       fetchBook();
     } catch (err) {
@@ -67,28 +59,6 @@ const BookDetail = () => {
       setShowReserveModal(false);
     } finally {
       setReserving(false);
-    }
-  };
-
-  const handleIssue = async () => {
-    try {
-      setIssuing(true);
-      setError('');
-      setSuccess('');
-      const targetUserId = userId ? parseInt(userId) : user?.id;
-      if (!targetUserId) {
-        setError('Please enter a user ID');
-        return;
-      }
-      await borrowAPI.issue({ userId: targetUserId, bookId: parseInt(id) });
-      setSuccess('Book issued successfully!');
-      setShowBorrowModal(false);
-      fetchBook();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to issue book');
-      setShowBorrowModal(false);
-    } finally {
-      setIssuing(false);
     }
   };
 
@@ -114,35 +84,35 @@ const BookDetail = () => {
   const renderActionButtons = () => {
     if (!user) return null;
 
-    // Librarian: always show Issue button
+    // Librarian: link to dedicated Issue Book page
     if (isLibrarian) {
       return (
-        <Button variant="dark" className="btn-pill" onClick={() => setShowBorrowModal(true)}>
-          Issue Book
+        <Button variant="dark" className="btn-pill w-100" as={Link} to="/librarian/issue">
+          <i className="bi bi-book-half me-2"></i>Go to Issue Book
         </Button>
       );
     }
 
-    // Non-member: show membership prompt with option to join queue
+    // Non-member
     if (!isMember) {
       return (
         <>
           <Alert variant="warning" className="mb-2 py-2 small">
-            <i className="bi bi-lock me-1"></i>Library membership required to borrow or reserve books.
+            <i className="bi bi-lock me-1"></i>Library membership required to reserve books.
           </Alert>
-          <Button as={Link} to="/membership" variant="dark" size="sm" className="btn-pill">
+          <Button as={Link} to="/membership" variant="dark" size="sm" className="btn-pill w-100">
             Apply for Membership
           </Button>
         </>
       );
     }
 
-    // Member: only Reserve — students/faculty cannot directly borrow, must reserve first
+    // Member: Reserve only
     return (
       <>
         {book.availableCopies > 0 ? (
           <Button variant="dark" className="w-100 btn-pill" onClick={() => setShowReserveModal(true)}>
-            Reserve Book
+            <i className="bi bi-bookmark-plus me-2"></i>Reserve Book
           </Button>
         ) : (
           <>
@@ -150,7 +120,7 @@ const BookDetail = () => {
               <i className="bi bi-info-circle me-1"></i>All copies are currently borrowed.
             </Alert>
             <Button variant="dark" className="w-100 btn-pill" onClick={() => setShowReserveModal(true)}>
-              Join Waiting Queue
+              <i className="bi bi-clock me-2"></i>Join Waiting Queue
             </Button>
           </>
         )}
@@ -164,7 +134,7 @@ const BookDetail = () => {
       {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
 
       <Button variant="dark" size="sm" className="mb-3 btn-pill" onClick={() => navigate('/books')}>
-        Back to Catalog
+        <i className="bi bi-arrow-left me-1"></i>Back to Catalog
       </Button>
 
       <Row>
@@ -192,14 +162,12 @@ const BookDetail = () => {
             </Card.Body>
           </Card>
 
-          {/* Action Buttons */}
           <Card className="mt-3">
             <Card.Body className="d-grid gap-2">
               {renderActionButtons()}
             </Card.Body>
           </Card>
 
-          {/* Membership status indicator */}
           {user && !isLibrarian && (
             <div className="mt-2 text-center">
               {isMember ? (
@@ -235,66 +203,25 @@ const BookDetail = () => {
               )}
 
               <Row className="g-3">
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">ISBN</small>
-                    <p className="mb-0 fw-semibold">{book.isbn}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">ISBN-13</small>
-                    <p className="mb-0 fw-semibold">{book.isbn13 || 'N/A'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">Publisher</small>
-                    <p className="mb-0 fw-semibold">{book.publisher || 'N/A'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">Publication Year</small>
-                    <p className="mb-0 fw-semibold">{book.publicationYear || 'N/A'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">Edition</small>
-                    <p className="mb-0 fw-semibold">{book.edition || 'N/A'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">Language</small>
-                    <p className="mb-0 fw-semibold">{book.language || 'N/A'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">Format</small>
-                    <p className="mb-0 fw-semibold">{book.format || 'Physical'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">Shelf Location</small>
-                    <p className="mb-0 fw-semibold">{book.shelfLocation || 'N/A'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">Category</small>
-                    <p className="mb-0 fw-semibold">{book.categoryName || 'Uncategorized'}</p>
-                  </div>
-                </Col>
-                <Col sm={6}>
-                  <div className="p-3 bg-light rounded">
-                    <small className="text-muted">DDC Number</small>
-                    <p className="mb-0 fw-semibold">{book.ddcNumber || 'N/A'}</p>
-                  </div>
-                </Col>
+                {[
+                  { label: 'ISBN', value: book.isbn },
+                  { label: 'ISBN-13', value: book.isbn13 || 'N/A' },
+                  { label: 'Publisher', value: book.publisher || 'N/A' },
+                  { label: 'Publication Year', value: book.publicationYear || 'N/A' },
+                  { label: 'Edition', value: book.edition || 'N/A' },
+                  { label: 'Language', value: book.language || 'N/A' },
+                  { label: 'Format', value: book.format || 'Physical' },
+                  { label: 'Shelf Location', value: book.shelfLocation || 'N/A' },
+                  { label: 'Category', value: book.categoryName || 'Uncategorized' },
+                  { label: 'DDC Number', value: book.ddcNumber || 'N/A' },
+                ].map(({ label, value }) => (
+                  <Col sm={6} key={label}>
+                    <div className="p-3 bg-light rounded">
+                      <small className="text-muted">{label}</small>
+                      <p className="mb-0 fw-semibold">{value}</p>
+                    </div>
+                  </Col>
+                ))}
                 {book.replacementCost > 0 && (
                   <Col sm={6}>
                     <div className="p-3 bg-light rounded">
@@ -320,6 +247,7 @@ const BookDetail = () => {
         </Col>
       </Row>
 
+      {/* Reserve Modal */}
       <Modal show={showReserveModal} onHide={() => setShowReserveModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -334,8 +262,8 @@ const BookDetail = () => {
           {book?.availableCopies > 0 ? (
             <Alert variant="info" className="py-2 small">
               <i className="bi bi-info-circle me-1"></i>
-              This book is available. Your reservation will appear in the librarian's queue.
-              Visit the library and give your <strong>Student ID or Reservation number</strong> to collect it.
+              This book is available. Visit the library and show your{' '}
+              <strong>Student ID or Reservation number</strong> to collect it.
             </Alert>
           ) : (
             <Alert variant="warning" className="py-2 small">
@@ -349,37 +277,6 @@ const BookDetail = () => {
           <Button variant="dark" className="btn-pill" onClick={handleReserve} disabled={reserving}>
             {reserving ? <Spinner size="sm" className="me-2" /> : null}
             Confirm Reservation
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* Borrow / Issue Modal */}
-      <Modal show={showBorrowModal} onHide={() => setShowBorrowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{isLibrarian ? 'Issue Book' : 'Borrow Book'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>You are about to {isLibrarian ? 'issue' : 'borrow'} <strong>"{book?.title}"</strong>.</p>
-          {isLibrarian && (
-            <Form.Group className="mb-3">
-              <Form.Label>User ID (leave blank for self)</Form.Label>
-              <Form.Control
-                type="number"
-                placeholder="Enter user ID"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-              />
-              <Form.Text className="text-muted">
-                As a librarian, you can issue books on behalf of other users.
-              </Form.Text>
-            </Form.Group>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" className="btn-pill" onClick={() => setShowBorrowModal(false)}>Cancel</Button>
-          <Button variant="dark" className="btn-pill" onClick={handleIssue} disabled={issuing}>
-            {issuing ? <Spinner size="sm" className="me-2" /> : null}
-            {isLibrarian ? 'Issue Now' : 'Borrow Now'}
           </Button>
         </Modal.Footer>
       </Modal>

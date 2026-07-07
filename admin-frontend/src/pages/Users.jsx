@@ -30,10 +30,10 @@ const Users = () => {
       const params = { page: currentPage, size: 15, sort: 'createdAt,desc' };
       if (searchKeyword) params.keyword = searchKeyword;
       const response = await userAPI.getAllUsers(params);
-      let data = response.data.content;
+      let data = response.data?.content || [];
       if (roleFilter) data = data.filter(u => u.role === roleFilter);
       setUsers(data);
-      setTotalPages(response.data.totalPages);
+      setTotalPages(response.data?.totalPages || 0);
     } catch (err) {
       setError('Failed to load users');
     } finally {

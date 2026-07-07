@@ -12,6 +12,8 @@ const MyReservations = () => {
 
   useEffect(() => {
     fetchReservations();
+    const interval = setInterval(fetchReservations, 20000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchReservations = async () => {

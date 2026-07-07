@@ -49,10 +49,15 @@ const Notifications = () => {
       case 'BOOK_RETURNED':
       case 'DUE_REMINDER':
       case 'OVERDUE_ALERT':
+      case 'RENEWAL_APPROVED':
+      case 'RENEWAL_DENIED':
         return '/my-books';
+      case 'RENEWAL_REQUEST':
+        return '/librarian/renewals';
       case 'RESERVATION_READY':
-      case 'NEW_RESERVATION':
         return '/my-reservations';
+      case 'NEW_RESERVATION':
+        return '/librarian/reservations';
       case 'FINE_IMPOSED':
       case 'FINE_PAID':
         return '/my-fines';
@@ -74,6 +79,9 @@ const Notifications = () => {
       case 'FINE_IMPOSED':      return 'bi-cash-coin text-danger';
       case 'FINE_PAID':         return 'bi-check-circle text-success';
       case 'ANNOUNCEMENT':      return 'bi-megaphone text-info';
+      case 'RENEWAL_REQUEST':   return 'bi-arrow-repeat text-warning';
+      case 'RENEWAL_APPROVED':  return 'bi-check2-circle text-success';
+      case 'RENEWAL_DENIED':    return 'bi-x-circle text-danger';
       default:                  return 'bi-bell text-secondary';
     }
   };

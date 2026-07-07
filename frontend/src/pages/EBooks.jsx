@@ -33,7 +33,7 @@ const EBooks = () => {
     try {
       setLoading(true);
       const response = await ebookAPI.getAllPublic();
-      setEbooks(response.data);
+      setEbooks(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       setError('Failed to load eBooks');
     } finally {

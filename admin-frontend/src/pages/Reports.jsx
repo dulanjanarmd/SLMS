@@ -30,18 +30,18 @@ const Reports = () => {
 
   const fetchReports = async () => {
     try {
-      const [popularRes, overdueRes, fineRes, inventoryRes, userRes] = await Promise.all([
+      const [popularRes, overdueRes, fineRes, inventoryRes, userRes] = await Promise.allSettled([
         reportAPI.getPopularBooks(10),
         reportAPI.getOverdueItems(),
         reportAPI.getFineCollection(),
         reportAPI.getInventory(),
         reportAPI.getUserActivity(),
       ]);
-      setPopularBooks(popularRes.data);
-      setOverdueItems(overdueRes.data);
-      setFineReport(fineRes.data);
-      setInventoryReport(inventoryRes.data);
-      setUserActivity(userRes.data);
+      if (popularRes.status === 'fulfilled') setPopularBooks(popularRes.value.data || []);
+      if (overdueRes.status === 'fulfilled') setOverdueItems(overdueRes.value.data || []);
+      if (fineRes.status === 'fulfilled') setFineReport(fineRes.value.data || {});
+      if (inventoryRes.status === 'fulfilled') setInventoryReport(inventoryRes.value.data || {});
+      if (userRes.status === 'fulfilled') setUserActivity(userRes.value.data || {});
     } catch (err) {
       console.error('Failed to fetch reports');
     } finally {

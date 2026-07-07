@@ -55,9 +55,10 @@ const AppNavbar = () => {
       case 'RENEWAL_DENIED':
         navigate('/my-books'); break;
       case 'RENEWAL_REQUEST':
-        navigate('/librarian/renewals'); break;
-      case 'RESERVATION_READY':
+        navigate(user?.role === 'LIBRARIAN' ? '/librarian/renewals' : '/my-books'); break;
       case 'NEW_RESERVATION':
+        navigate(user?.role === 'LIBRARIAN' ? '/librarian/reservations' : '/my-reservations'); break;
+      case 'RESERVATION_READY':
         navigate('/my-reservations'); break;
       case 'FINE_IMPOSED':
       case 'FINE_PAID':
