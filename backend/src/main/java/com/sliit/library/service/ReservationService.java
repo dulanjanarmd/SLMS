@@ -72,9 +72,8 @@ public class ReservationService {
         String notifTitle = "New Reservation: " + book.getTitle();
         String notifMsg = user.getFullName() + " (" + user.getStudentStaffId() + ") has reserved \"" +
                 book.getTitle() + "\". Reservation #" + reservation.getId() + ".";
-        userRepository.findByRole(Role.LIBRARIAN).forEach(librarian ->
-                notificationService.sendNotification(librarian, NotificationType.NEW_RESERVATION, notifTitle, notifMsg)
-        );
+        userRepository.findByRole(Role.LIBRARIAN).forEach(librarian -> notificationService.sendNotification(librarian,
+                NotificationType.NEW_RESERVATION, notifTitle, notifMsg));
 
         return mapToReservationResponse(reservation);
     }
@@ -88,11 +87,28 @@ public class ReservationService {
             throw new RuntimeException("You can only cancel your own reservations");
         }
 
+        if (reservation.getStatus() == ReservationStatus.FULFILLED ||
+                reservation.getStatus() == ReservationStatus.CANCELLED) {
+            throw new RuntimeException("Reservation is already " + reservation.getStatus().name().toLowerCase());
+        }
+
+        boolean wasNotified = reservation.getStatus() == ReservationStatus.NOTIFIED;
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservationRepository.save(reservation);
 
         Book book = reservation.getBook();
-        book.setReservedCopies(Math.max(0, book.getReservedCopies() - 1));
+        if (book.getReservedCopies() > 0) {
+            book.setReservedCopies(book.getReservedCopies() - 1);
+        }
+        // NOTIFIED means a copy was held for this user — restore it
+        if (wasNotified) {
+            book.setAvailableCopies(book.getAvailableCopies() + 1);
+        }
+        // countPendingByBook already excludes the now-CANCELLED reservation
+        long remainingPending = reservationRepository.countPendingByBook(book.getId());
+        if (remainingPending <= 0 && book.getAvailableCopies() > 0) {
+            book.setStatus(BookStatus.AVAILABLE);
+        }
         bookRepository.save(book);
 
         List<Reservation> pendingList = reservationRepository.findPendingByBookOrderByDate(book.getId());
@@ -151,8 +167,7 @@ public class ReservationService {
                     NotificationType.RESERVATION_READY,
                     "Book Available: " + book.getTitle(),
                     "The book \"" + book.getTitle() + "\" you reserved is now available. " +
-                            "Please collect it within 48 hours. Your queue position is #1."
-            );
+                            "Please collect it within 48 hours. Your queue position is #1.");
         }
     }
 

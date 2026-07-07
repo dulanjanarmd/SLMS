@@ -23,7 +23,7 @@ const MyBooks = () => {
         borrowAPI.getUserHistory(user.id),
       ]);
       setActiveLoans(activeRes.data);
-      setBorrowHistory(historyRes.data.filter(loan => loan.status === 'RETURNED' || loan.status === 'OVERDUE'));
+      setBorrowHistory(historyRes.data.filter(loan => loan.status === 'RETURNED'));
     } catch (err) {
       setError('Failed to load your books');
     } finally {
@@ -35,11 +35,11 @@ const MyBooks = () => {
     try {
       setError('');
       setSuccess('');
-      await borrowAPI.renew(borrowId);
-      setSuccess('Book renewed successfully!');
+      await borrowAPI.requestRenewal(borrowId);
+      setSuccess('Renewal request submitted! Awaiting librarian approval.');
       fetchMyBooks();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to renew book');
+      setError(err.response?.data?.message || 'Failed to request renewal');
     }
   };
 
@@ -113,8 +113,8 @@ const MyBooks = () => {
                         </small>
                       </td>
                       <td>
-                        <Badge bg={overdue ? 'danger' : loan.status === 'RENEWED' ? 'info' : 'success'}>
-                          {overdue ? 'OVERDUE' : loan.status}
+                        <Badge bg={overdue ? 'danger' : loan.status === 'RENEWED' ? 'info' : loan.status === 'RENEWAL_REQUESTED' ? 'warning' : 'success'}>
+                          {overdue ? 'OVERDUE' : loan.status === 'RENEWAL_REQUESTED' ? 'RENEWAL PENDING' : loan.status}
                         </Badge>
                       </td>
                       <td>{loan.renewalCount}/2</td>
@@ -122,10 +122,12 @@ const MyBooks = () => {
                         <Button
                           variant="outline-primary"
                           size="sm"
-                          disabled={loan.renewalCount >= 2 || overdue}
+                          disabled={loan.renewalCount >= 2 || overdue || loan.status === 'RENEWAL_REQUESTED'}
                           onClick={() => handleRenew(loan.id)}
+                          title={loan.status === 'RENEWAL_REQUESTED' ? 'Renewal request pending librarian approval' : ''}
                         >
-                          <i className="bi bi-arrow-repeat me-1"></i>Renew
+                          <i className="bi bi-arrow-repeat me-1"></i>
+                          {loan.status === 'RENEWAL_REQUESTED' ? 'Pending...' : 'Request Renewal'}
                         </Button>
                       </td>
                     </tr>
@@ -167,7 +169,7 @@ const MyBooks = () => {
                       <td>{loan.issueDate}</td>
                       <td>{loan.returnDate || '-'}</td>
                       <td>
-                        <Badge bg={loan.status === 'RETURNED' ? 'secondary' : loan.status === 'OVERDUE' ? 'danger' : 'primary'}>
+                        <Badge bg={loan.status === 'RETURNED' ? 'secondary' : 'primary'}>
                           {loan.status}
                         </Badge>
                       </td>

@@ -5,5 +5,6 @@ public enum BorrowStatus {
     RETURNED,
     OVERDUE,
     LOST,
-    RENEWED
+    RENEWED,
+    RENEWAL_REQUESTED
 }

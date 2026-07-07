@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { bookAPI, categoryAPI } from '../services/api';
 import { Container, Row, Col, Card, Form, Button, Badge, Pagination, Spinner, Alert } from 'react-bootstrap';
@@ -9,116 +9,108 @@ const Books = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Search & Filter State
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [advancedSearch, setAdvancedSearch] = useState({
-    title: '',
-    author: '',
-    isbn: '',
-    year: '',
-  });
+  const [advancedSearch, setAdvancedSearch] = useState({ title: '', author: '', isbn: '', year: '' });
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const pageSize = 12;
 
+  // Track which mode we're in so pagination works correctly
+  const [searchMode, setSearchMode] = useState('all'); // 'all' | 'keyword' | 'advanced' | 'category'
+
   useEffect(() => {
-    fetchCategories();
-    fetchBooks();
-  }, [currentPage]);
+    categoryAPI.getAll()
+      .then(r => setCategories(Array.isArray(r.data) ? r.data : []))
+      .catch(() => {});
+  }, []);
 
-  const fetchCategories = async () => {
+  const loadBooks = useCallback(async (mode, page) => {
+    setLoading(true);
+    setError('');
     try {
-      const response = await categoryAPI.getAll();
-      setCategories(Array.isArray(response.data) ? response.data : []);
-    } catch (err) {
-      console.error('Failed to fetch categories');
-    }
-  };
-
-  const fetchBooks = async () => {
-    try {
-      setLoading(true);
-      const response = await bookAPI.getAll({
-        page: currentPage,
-        size: pageSize,
-        sort: 'createdAt,desc',
-      });
-      setBooks(response.data.content || response.data || []);
-      setTotalPages(response.data.totalPages || 0);
-      setError('');
-    } catch (err) {
-      setError('Failed to load books');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-      if (searchKeyword.trim()) {
-        const response = await bookAPI.search(searchKeyword, {
-          page: 0,
+      let res;
+      if (mode === 'keyword' && searchKeyword.trim()) {
+        res = await bookAPI.search(searchKeyword, { page, size: pageSize });
+      } else if (mode === 'advanced') {
+        res = await bookAPI.advancedSearch({
+          title: advancedSearch.title || undefined,
+          author: advancedSearch.author || undefined,
+          isbn: advancedSearch.isbn || undefined,
+          year: advancedSearch.year || undefined,
+          categoryId: selectedCategory || undefined,
+          status: selectedStatus || undefined,
+          page,
           size: pageSize,
         });
-        setBooks(response.data.content || response.data || []);
-        setTotalPages(response.data.totalPages || 0);
+      } else if (mode === 'category' && selectedCategory) {
+        res = await bookAPI.advancedSearch({
+          categoryId: selectedCategory,
+          page,
+          size: pageSize,
+        });
       } else {
-        fetchBooks();
+        res = await bookAPI.getAll({ page, size: pageSize, sort: 'createdAt,desc' });
       }
-    } catch (err) {
-      setError('Search failed');
+      setBooks(res.data.content || res.data || []);
+      setTotalPages(res.data.totalPages || 0);
+    } catch {
+      setError('Failed to load books.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchKeyword, advancedSearch, selectedCategory, selectedStatus]);
 
-  const handleAdvancedSearch = async (e) => {
+  // Initial load
+  useEffect(() => {
+    loadBooks(searchMode, currentPage);
+  }, [currentPage]);
+
+  const handleSearch = (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const response = await bookAPI.advancedSearch({
-        ...advancedSearch,
-        categoryId: selectedCategory || undefined,
-        status: selectedStatus || undefined,
-        page: 0,
-        size: pageSize,
-      });
-      setBooks(response.data.content || response.data || []);
-      setTotalPages(response.data.totalPages || 0);
-    } catch (err) {
-      setError('Advanced search failed');
-    } finally {
-      setLoading(false);
-    }
+    setCurrentPage(0);
+    setSearchMode('keyword');
+    loadBooks('keyword', 0);
   };
 
-  const handleCategoryFilter = async (categoryId) => {
-    setSelectedCategory(categoryId);
-    try {
-      setLoading(true);
-      if (categoryId) {
-        const response = await bookAPI.getByCategory(categoryId);
-        setBooks(response.data);
-      } else {
-        fetchBooks();
-      }
-    } catch (err) {
-      setError('Failed to filter by category');
-    } finally {
-      setLoading(false);
-    }
+  const handleAdvancedSearch = (e) => {
+    e.preventDefault();
+    setCurrentPage(0);
+    setSearchMode('advanced');
+    loadBooks('advanced', 0);
+  };
+
+  const handleCategoryClick = (catId) => {
+    setSelectedCategory(catId);
+    setCurrentPage(0);
+    const mode = catId ? 'category' : 'all';
+    setSearchMode(mode);
+    loadBooks(mode, 0);
+  };
+
+  const handleClear = () => {
+    setSearchKeyword('');
+    setSelectedCategory('');
+    setSelectedStatus('');
+    setAdvancedSearch({ title: '', author: '', isbn: '', year: '' });
+    setCurrentPage(0);
+    setSearchMode('all');
+    loadBooks('all', 0);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    loadBooks(searchMode, page);
   };
 
   const getStatusBadge = (book) => {
-    if (book.availableCopies > 0) return <Badge bg="success">Available ({book.availableCopies})</Badge>;
-    if (book.status === 'RESERVED') return <Badge bg="warning" text="dark">Reserved</Badge>;
+    if (book.availableCopies > 0)
+      return <Badge bg="success">Available ({book.availableCopies})</Badge>;
+    if (book.status === 'RESERVED')
+      return <Badge bg="warning" text="dark">Reserved</Badge>;
     return <Badge bg="danger">Unavailable</Badge>;
   };
 
@@ -128,7 +120,7 @@ const Books = () => {
         <i className="bi bi-search me-2"></i>Book Catalog
       </h2>
 
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
 
       {/* Search Bar */}
       <Card className="mb-4">
@@ -143,30 +135,27 @@ const Books = () => {
                 onChange={(e) => setSearchKeyword(e.target.value)}
               />
             </div>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 flex-wrap">
               <Button type="submit" variant="dark" className="btn-pill">
-                Search
+                <i className="bi bi-search me-1"></i>Search
               </Button>
-              <Button variant="dark" className="btn-pill" onClick={() => setShowAdvanced(!showAdvanced)}>
-                <i className="bi bi-sliders me-1"></i>Advanced
+              <Button variant="outline-dark" className="btn-pill" onClick={() => setShowAdvanced(!showAdvanced)}>
+                <i className="bi bi-sliders me-1"></i>Advanced Filters
               </Button>
-              {searchKeyword && (
-                <Button variant="dark" className="btn-pill" onClick={() => { setSearchKeyword(''); fetchBooks(); }}>
-                  Clear
-                </Button>
-              )}
+              <Button variant="outline-secondary" className="btn-pill" onClick={handleClear}>
+                <i className="bi bi-x-circle me-1"></i>Clear
+              </Button>
             </div>
           </Form>
 
           {/* Advanced Search */}
           {showAdvanced && (
             <Form onSubmit={handleAdvancedSearch} className="mt-3 pt-3 border-top">
-              <Row>
+              <Row className="g-2">
                 <Col md={3}>
-                  <Form.Group className="mb-2">
+                  <Form.Group>
                     <Form.Label>Title</Form.Label>
                     <Form.Control
-                      type="text"
                       placeholder="Book title"
                       value={advancedSearch.title}
                       onChange={(e) => setAdvancedSearch({ ...advancedSearch, title: e.target.value })}
@@ -174,66 +163,62 @@ const Books = () => {
                   </Form.Group>
                 </Col>
                 <Col md={3}>
-                  <Form.Group className="mb-2">
+                  <Form.Group>
                     <Form.Label>Author</Form.Label>
                     <Form.Control
-                      type="text"
                       placeholder="Author name"
                       value={advancedSearch.author}
                       onChange={(e) => setAdvancedSearch({ ...advancedSearch, author: e.target.value })}
                     />
                   </Form.Group>
                 </Col>
-                <Col md={3}>
-                  <Form.Group className="mb-2">
+                <Col md={2}>
+                  <Form.Group>
                     <Form.Label>ISBN</Form.Label>
                     <Form.Control
-                      type="text"
-                      placeholder="ISBN number"
+                      placeholder="ISBN"
                       value={advancedSearch.isbn}
                       onChange={(e) => setAdvancedSearch({ ...advancedSearch, isbn: e.target.value })}
                     />
                   </Form.Group>
                 </Col>
-                <Col md={3}>
-                  <Form.Group className="mb-2">
+                <Col md={2}>
+                  <Form.Group>
                     <Form.Label>Year</Form.Label>
                     <Form.Control
                       type="number"
-                      placeholder="Publication year"
+                      placeholder="e.g. 2022"
                       value={advancedSearch.year}
                       onChange={(e) => setAdvancedSearch({ ...advancedSearch, year: e.target.value })}
                     />
                   </Form.Group>
                 </Col>
-              </Row>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-2">
-                    <Form.Label>Category</Form.Label>
-                    <Form.Select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-                      <option value="">All Categories</option>
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-2">
+                <Col md={2}>
+                  <Form.Group>
                     <Form.Label>Status</Form.Label>
                     <Form.Select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
-                      <option value="">All Statuses</option>
+                      <option value="">All</option>
                       <option value="AVAILABLE">Available</option>
                       <option value="ISSUED">Issued</option>
                       <option value="RESERVED">Reserved</option>
                     </Form.Select>
                   </Form.Group>
                 </Col>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label>Category</Form.Label>
+                    <Form.Select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                      <option value="">All Categories</option>
+                      {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
               </Row>
-              <Button type="submit" variant="dark" size="sm" className="btn-pill">
-                Apply Filters
-              </Button>
+              <div className="mt-3">
+                <Button type="submit" variant="dark" size="sm" className="btn-pill">
+                  <i className="bi bi-funnel me-1"></i>Apply Filters
+                </Button>
+              </div>
             </Form>
           )}
         </Card.Body>
@@ -242,18 +227,20 @@ const Books = () => {
       {/* Category Quick Filter */}
       <div className="mb-4 d-flex gap-2 flex-wrap">
         <Button
-          variant={selectedCategory === '' ? 'primary' : 'outline-primary'}
+          variant={selectedCategory === '' && searchMode !== 'keyword' && searchMode !== 'advanced' ? 'primary' : 'outline-primary'}
           size="sm"
-          onClick={() => handleCategoryFilter('')}
+          className="btn-pill"
+          onClick={() => handleCategoryClick('')}
         >
           All
         </Button>
-        {categories.slice(0, 8).map((cat) => (
+        {categories.slice(0, 8).map(cat => (
           <Button
             key={cat.id}
             variant={selectedCategory === String(cat.id) ? 'primary' : 'outline-primary'}
             size="sm"
-            onClick={() => handleCategoryFilter(String(cat.id))}
+            className="btn-pill"
+            onClick={() => handleCategoryClick(String(cat.id))}
           >
             {cat.name}
           </Button>
@@ -270,19 +257,26 @@ const Books = () => {
       ) : (
         <>
           <Row>
-            {books.map((book) => (
+            {books.map(book => (
               <Col key={book.id} lg={3} md={4} sm={6} className="mb-4">
                 <Card as={Link} to={`/books/${book.id}`} className="book-card text-decoration-none h-100">
                   <div
                     className="card-img-top d-flex align-items-center justify-content-center text-white"
                     style={{
                       height: '200px',
-                      background: book.coverImageUrl
-                        ? `url(${book.coverImageUrl}) center/cover`
-                        : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      overflow: 'hidden',
                     }}
                   >
-                    {!book.coverImageUrl && <i className="bi bi-book" style={{ fontSize: '4rem' }}></i>}
+                    {book.coverImageUrl ? (
+                      <img
+                        src={book.coverImageUrl}
+                        alt={book.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <i className="bi bi-book" style={{ fontSize: '4rem' }}></i>
+                    )}
                   </div>
                   <Card.Body className="p-3">
                     <Card.Title className="book-title">{book.title}</Card.Title>
@@ -302,26 +296,25 @@ const Books = () => {
             ))}
           </Row>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="d-flex justify-content-center mt-4">
               <Pagination>
                 <Pagination.Prev
                   disabled={currentPage === 0}
-                  onClick={() => setCurrentPage(currentPage - 1)}
+                  onClick={() => handlePageChange(currentPage - 1)}
                 />
-                {Array.from({ length: totalPages }, (_, i) => (
+                {Array.from({ length: Math.min(totalPages, 10) }, (_, i) => (
                   <Pagination.Item
                     key={i}
                     active={i === currentPage}
-                    onClick={() => setCurrentPage(i)}
+                    onClick={() => handlePageChange(i)}
                   >
                     {i + 1}
                   </Pagination.Item>
                 ))}
                 <Pagination.Next
                   disabled={currentPage === totalPages - 1}
-                  onClick={() => setCurrentPage(currentPage + 1)}
+                  onClick={() => handlePageChange(currentPage + 1)}
                 />
               </Pagination>
             </div>

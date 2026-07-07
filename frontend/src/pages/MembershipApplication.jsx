@@ -90,6 +90,7 @@ const MembershipApplication = () => {
                   src={`${API_URL}/membership/photo/${existing.photoPath}`}
                   alt="Member"
                   style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%', border: '3px solid #dee2e6' }}
+                  onError={e => { e.target.style.display = 'none'; }}
                 />
               </div>
             )}

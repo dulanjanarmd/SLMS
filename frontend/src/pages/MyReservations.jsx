@@ -88,6 +88,7 @@ const MyReservations = () => {
           <Table striped hover className="mb-0">
             <thead>
               <tr>
+                <th>Reservation #</th>
                 <th>Book</th>
                 <th>Author</th>
                 <th>Queue Position</th>
@@ -99,13 +100,18 @@ const MyReservations = () => {
             <tbody>
               {reservations.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center text-muted py-4">
+                  <td colSpan="7" className="text-center text-muted py-4">
                     No reservations. Visit the <Alert.Link href="/books">catalog</Alert.Link> to reserve books.
                   </td>
                 </tr>
               ) : (
                 reservations.map((res) => (
                   <tr key={res.id}>
+                    <td>
+                      <span className="fw-bold text-primary">#{res.id}</span>
+                      <br />
+                      <small className="text-muted">Show this to librarian</small>
+                    </td>
                     <td className="fw-semibold">{res.bookTitle}</td>
                     <td>{res.bookAuthor}</td>
                     <td>

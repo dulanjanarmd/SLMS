@@ -24,6 +24,7 @@ import IssueBook from './pages/IssueBook';
 import ReturnBook from './pages/ReturnBook';
 import Inventory from './pages/Inventory';
 import ReservationManagement from './pages/ReservationManagement';
+import RenewalRequests from './pages/RenewalRequests';
 import FineManagement from './pages/FineManagement';
 import LibrarianReports from './pages/LibrarianReports';
 import NotFound from './pages/NotFound';
@@ -88,6 +89,7 @@ function App() {
           <Route path="/librarian/return" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><ReturnBook /></div></PrivateRoute>} />
           <Route path="/librarian/inventory" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><Inventory /></div></PrivateRoute>} />
           <Route path="/librarian/reservations" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><ReservationManagement /></div></PrivateRoute>} />
+          <Route path="/librarian/renewals" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><RenewalRequests /></div></PrivateRoute>} />
           <Route path="/librarian/fines" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><FineManagement /></div></PrivateRoute>} />
           <Route path="/librarian/reports" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><LibrarianReports /></div></PrivateRoute>} />
           <Route path="/student/dashboard" element={<PrivateRoute allowedRoles={['STUDENT']}><AppNavbar /><div className="pt-3"><StudentDashboard /></div></PrivateRoute>} />

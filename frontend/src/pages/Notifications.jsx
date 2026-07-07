@@ -1,34 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { notificationAPI } from '../services/api';
-import { Container, Card, Badge, Button, Alert, Spinner } from 'react-bootstrap';
+import { Container, Card, Badge, Button, Spinner } from 'react-bootstrap';
 
 const Notifications = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  useEffect(() => { fetchNotifications(); }, []);
 
   const fetchNotifications = async () => {
     try {
       const response = await notificationAPI.getUserNotifications(user.id);
-      setNotifications(response.data);
+      setNotifications(response.data || []);
     } catch (err) {
       console.error('Failed to load notifications');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleMarkAsRead = async (id) => {
-    try {
-      await notificationAPI.markAsRead(id);
-      fetchNotifications();
-    } catch (err) {
-      console.error('Failed to mark as read');
     }
   };
 
@@ -41,16 +32,49 @@ const Notifications = () => {
     }
   };
 
+  const handleClick = async (notif) => {
+    // Mark as read
+    if (!notif.isRead) {
+      try { await notificationAPI.markAsRead(notif.id); } catch {}
+    }
+    // Navigate to relevant page
+    const dest = getDestination(notif);
+    if (dest) navigate(dest);
+    fetchNotifications();
+  };
+
+  const getDestination = (notif) => {
+    switch (notif.type) {
+      case 'BOOK_ISSUED':
+      case 'BOOK_RETURNED':
+      case 'DUE_REMINDER':
+      case 'OVERDUE_ALERT':
+        return '/my-books';
+      case 'RESERVATION_READY':
+      case 'NEW_RESERVATION':
+        return '/my-reservations';
+      case 'FINE_IMPOSED':
+      case 'FINE_PAID':
+        return '/my-fines';
+      case 'ANNOUNCEMENT':
+        return notif.relatedEntityType === 'MEMBERSHIP' ? '/membership' : null;
+      default:
+        return null;
+    }
+  };
+
   const getTypeIcon = (type) => {
     switch (type) {
-      case 'DUE_REMINDER': return 'bi-calendar-check text-warning';
-      case 'OVERDUE_ALERT': return 'bi-exclamation-triangle text-danger';
+      case 'DUE_REMINDER':      return 'bi-calendar-check text-warning';
+      case 'OVERDUE_ALERT':     return 'bi-exclamation-triangle text-danger';
       case 'RESERVATION_READY': return 'bi-bookmark-check text-success';
-      case 'BOOK_ISSUED': return 'bi-book text-primary';
-      case 'BOOK_RETURNED': return 'bi-check-circle text-success';
-      case 'FINE_IMPOSED': return 'bi-cash-coin text-danger';
-      case 'FINE_PAID': return 'bi-check-circle text-success';
-      default: return 'bi-bell text-secondary';
+      case 'NEW_RESERVATION':   return 'bi-bookmark-plus text-primary';
+      case 'BOOK_ISSUED':       return 'bi-book text-primary';
+      case 'BOOK_RETURNED':     return 'bi-check-circle text-success';
+      case 'FINE_IMPOSED':      return 'bi-cash-coin text-danger';
+      case 'FINE_PAID':         return 'bi-check-circle text-success';
+      case 'ANNOUNCEMENT':      return 'bi-megaphone text-info';
+      default:                  return 'bi-bell text-secondary';
     }
   };
 
@@ -62,15 +86,22 @@ const Notifications = () => {
     );
   }
 
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
   return (
     <Container>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold">
           <i className="bi bi-bell me-2"></i>Notifications
+          {unreadCount > 0 && (
+            <Badge bg="danger" className="ms-2 fs-6">{unreadCount}</Badge>
+          )}
         </h2>
-        <Button variant="outline-primary" size="sm" onClick={handleMarkAllAsRead}>
-          <i className="bi bi-check-all me-1"></i>Mark All as Read
-        </Button>
+        {unreadCount > 0 && (
+          <Button variant="outline-primary" size="sm" onClick={handleMarkAllAsRead}>
+            <i className="bi bi-check-all me-1"></i>Mark All as Read
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -81,40 +112,49 @@ const Notifications = () => {
               <p>No notifications yet</p>
             </div>
           ) : (
-            notifications.map((notif) => (
-              <div
-                key={notif.id}
-                className={`notification-item d-flex gap-3 ${!notif.isRead ? 'unread' : ''}`}
-              >
-                <div className="flex-shrink-0 mt-1">
-                  <i className={`bi ${getTypeIcon(notif.type)} fs-4`}></i>
-                </div>
-                <div className="flex-grow-1">
-                  <div className="d-flex justify-content-between align-items-start">
-                    <h6 className="mb-1 fw-semibold">{notif.title}</h6>
-                    <small className="text-muted">
-                      {new Date(notif.sentAt).toLocaleDateString()} {new Date(notif.sentAt).toLocaleTimeString()}
-                    </small>
+            notifications.map((notif) => {
+              const dest = getDestination(notif);
+              return (
+                <div
+                  key={notif.id}
+                  className={`notification-item d-flex gap-3 ${!notif.isRead ? 'unread' : ''} ${dest ? 'cursor-pointer' : ''}`}
+                  style={{ cursor: dest ? 'pointer' : 'default' }}
+                  onClick={() => handleClick(notif)}
+                >
+                  <div className="flex-shrink-0 mt-1">
+                    <i className={`bi ${getTypeIcon(notif.type)} fs-4`}></i>
                   </div>
-                  <p className="mb-1 text-muted">{notif.message}</p>
+                  <div className="flex-grow-1">
+                    <div className="d-flex justify-content-between align-items-start">
+                      <h6 className="mb-1 fw-semibold">
+                        {notif.title}
+                        {!notif.isRead && (
+                          <Badge bg="primary" className="ms-2" style={{ fontSize: '0.6rem' }}>NEW</Badge>
+                        )}
+                      </h6>
+                      <small className="text-muted ms-2 text-nowrap">
+                        {new Date(notif.sentAt).toLocaleDateString()}{' '}
+                        {new Date(notif.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </small>
+                    </div>
+                    <p className="mb-1 text-muted">{notif.message}</p>
+                    {dest && (
+                      <small className="text-primary">
+                        <i className="bi bi-arrow-right me-1"></i>Click to view details
+                      </small>
+                    )}
+                  </div>
                   {!notif.isRead && (
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="p-0"
-                      onClick={() => handleMarkAsRead(notif.id)}
-                    >
-                      Mark as read
-                    </Button>
+                    <div className="flex-shrink-0 d-flex align-items-center">
+                      <span
+                        className="rounded-circle bg-primary d-inline-block"
+                        style={{ width: 10, height: 10 }}
+                      ></span>
+                    </div>
                   )}
                 </div>
-                {!notif.isRead && (
-                  <div className="flex-shrink-0">
-                    <span className="badge bg-primary rounded-pill" style={{ width: '8px', height: '8px', display: 'inline-block' }}></span>
-                  </div>
-                )}
-              </div>
-            ))
+              );
+            })
           )}
         </Card.Body>
       </Card>

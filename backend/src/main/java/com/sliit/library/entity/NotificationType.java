@@ -9,5 +9,8 @@ public enum NotificationType {
     BOOK_RETURNED,
     FINE_IMPOSED,
     FINE_PAID,
-    ANNOUNCEMENT
+    ANNOUNCEMENT,
+    RENEWAL_REQUEST,
+    RENEWAL_APPROVED,
+    RENEWAL_DENIED
 }

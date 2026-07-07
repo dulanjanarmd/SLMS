@@ -3,11 +3,15 @@ package com.sliit.library.dto;
 import com.sliit.library.entity.BookStatus;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BookRequestDTO {
 
     private String title;
@@ -31,4 +35,5 @@ public class BookRequestDTO {
     private Long categoryId;
     private BookStatus status;
     private LocalDate acquisitionDate;
+    private Boolean nonRenewable;
 }

@@ -48,7 +48,7 @@ public class MembershipController {
             Path uploadPath = Paths.get(uploadDir);
             Files.createDirectories(uploadPath);
             String filename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-            Files.copy(photo.getInputStream(), uploadPath.resolve(filename));
+            Files.copy(photo.getInputStream(), uploadPath.resolve(filename), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             photoPath = filename;
         }
 

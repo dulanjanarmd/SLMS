@@ -80,6 +80,7 @@ public class BookService {
                 .accessionNumber(request.getAccessionNumber())
                 .category(category)
                 .acquisitionDate(request.getAcquisitionDate())
+                .nonRenewable(request.getNonRenewable() != null ? request.getNonRenewable() : false)
                 .build();
 
         bookRepository.save(book);
@@ -150,6 +151,7 @@ public class BookService {
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             book.setCategory(category);
         }
+        if (request.getNonRenewable() != null) book.setNonRenewable(request.getNonRenewable());
 
         bookRepository.save(book);
         return mapToBookResponse(book);
@@ -243,6 +245,7 @@ public class BookService {
                 .acquisitionDate(book.getAcquisitionDate())
                 .createdAt(book.getCreatedAt())
                 .borrowCount(book.getBorrowCount())
+                .nonRenewable(book.getNonRenewable())
                 .build();
     }
 }

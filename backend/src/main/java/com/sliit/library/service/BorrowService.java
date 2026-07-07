@@ -205,7 +205,13 @@ public class BorrowService {
         }
 
         book.setAvailableCopies(book.getAvailableCopies() + 1);
-        book.setStatus(BookStatus.AVAILABLE);
+        // Recalculate status: if pending reservations exist, mark RESERVED, else AVAILABLE
+        long pendingReservations = reservationRepository.countPendingByBook(book.getId());
+        if (pendingReservations > 0) {
+            book.setStatus(BookStatus.RESERVED);
+        } else {
+            book.setStatus(BookStatus.AVAILABLE);
+        }
         user.setCurrentBorrowCount(Math.max(0, user.getCurrentBorrowCount() - 1));
 
         borrowRecordRepository.save(borrowRecord);
@@ -224,7 +230,7 @@ public class BorrowService {
     }
 
     @Transactional
-    public BorrowResponse renewBook(Long borrowId) {
+    public BorrowResponse requestRenewal(Long borrowId) {
         BorrowRecord borrowRecord = borrowRecordRepository.findById(borrowId)
                 .orElseThrow(() -> new RuntimeException("Borrow record not found"));
 
@@ -236,28 +242,92 @@ public class BorrowService {
             throw new RuntimeException("Maximum renewals (" + maxRenewals + ") reached");
         }
 
+        if (LocalDate.now().isAfter(borrowRecord.getDueDate())) {
+            throw new RuntimeException("Cannot renew: Book is already overdue. Please return it.");
+        }
+
+        Book book = borrowRecord.getBook();
+        if (Boolean.TRUE.equals(book.getNonRenewable())) {
+            throw new RuntimeException("This book cannot be renewed. It is marked as non-renewable by the librarian.");
+        }
+
         User user = borrowRecord.getUser();
         if (user.getOutstandingFine() != null && user.getOutstandingFine() > 200) {
             throw new RuntimeException("Cannot renew: Outstanding fine exceeds LKR 200");
         }
 
+        boolean hasReservation = reservationRepository.findPendingByBookOrderByDate(book.getId()).stream()
+                .anyMatch(r -> !r.getUser().getId().equals(user.getId()));
+        if (hasReservation) {
+            throw new RuntimeException("Cannot renew: Another member has placed a reservation on this book.");
+        }
+
+        borrowRecord.setStatus(BorrowStatus.RENEWAL_REQUESTED);
+        borrowRecordRepository.save(borrowRecord);
+
+        String msg = user.getFullName() + " (" + user.getStudentStaffId() + ") has requested renewal for \"" +
+                book.getTitle() + "\". Borrow ID: " + borrowId + ". Due: " + borrowRecord.getDueDate();
+        userRepository.findByRole(Role.LIBRARIAN).forEach(librarian ->
+                notificationService.sendNotification(librarian, NotificationType.RENEWAL_REQUEST,
+                        "Renewal Request: " + book.getTitle(), msg));
+
+        notificationService.sendNotification(user, NotificationType.RENEWAL_REQUEST,
+                "Renewal Requested: " + book.getTitle(),
+                "Your renewal request for \"" + book.getTitle() + "\" has been submitted. Awaiting librarian approval.");
+
+        return mapToBorrowResponse(borrowRecord);
+    }
+
+    @Transactional
+    public BorrowResponse approveRenewal(Long borrowId) {
+        BorrowRecord borrowRecord = borrowRecordRepository.findById(borrowId)
+                .orElseThrow(() -> new RuntimeException("Borrow record not found"));
+
+        if (borrowRecord.getStatus() != BorrowStatus.RENEWAL_REQUESTED) {
+            throw new RuntimeException("No pending renewal request for this borrow record");
+        }
+
+        User user = borrowRecord.getUser();
         int loanDays = getLoanDaysForRole(user.getRole());
         LocalDate newDueDate = LocalDate.now().plusDays(loanDays);
 
         borrowRecord.setDueDate(newDueDate);
         borrowRecord.setRenewalCount(borrowRecord.getRenewalCount() + 1);
         borrowRecord.setStatus(BorrowStatus.RENEWED);
-
         borrowRecordRepository.save(borrowRecord);
 
-        notificationService.sendNotification(
-                user,
-                NotificationType.DUE_REMINDER,
-                "Book Renewed: " + borrowRecord.getBook().getTitle(),
-                "Your book \"" + borrowRecord.getBook().getTitle() + "\" has been renewed. New due date: "
-                        + newDueDate);
+        notificationService.sendNotification(user, NotificationType.RENEWAL_APPROVED,
+                "Renewal Approved: " + borrowRecord.getBook().getTitle(),
+                "Your renewal for \"" + borrowRecord.getBook().getTitle() + "\" has been approved. New due date: " + newDueDate);
 
         return mapToBorrowResponse(borrowRecord);
+    }
+
+    @Transactional
+    public BorrowResponse denyRenewal(Long borrowId) {
+        BorrowRecord borrowRecord = borrowRecordRepository.findById(borrowId)
+                .orElseThrow(() -> new RuntimeException("Borrow record not found"));
+
+        if (borrowRecord.getStatus() != BorrowStatus.RENEWAL_REQUESTED) {
+            throw new RuntimeException("No pending renewal request for this borrow record");
+        }
+
+        borrowRecord.setStatus(BorrowStatus.ACTIVE);
+        borrowRecordRepository.save(borrowRecord);
+
+        User user = borrowRecord.getUser();
+        notificationService.sendNotification(user, NotificationType.RENEWAL_DENIED,
+                "Renewal Denied: " + borrowRecord.getBook().getTitle(),
+                "Your renewal request for \"" + borrowRecord.getBook().getTitle() + "\" was denied. Please return the book by " + borrowRecord.getDueDate());
+
+        return mapToBorrowResponse(borrowRecord);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BorrowResponse> getRenewalRequests() {
+        return borrowRecordRepository.findRenewalRequests().stream()
+                .map(this::mapToBorrowResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -269,7 +339,7 @@ public class BorrowService {
 
     @Transactional(readOnly = true)
     public List<BorrowResponse> getActiveLoans(Long userId) {
-        return borrowRecordRepository.findByUserIdAndStatus(userId, BorrowStatus.ACTIVE).stream()
+        return borrowRecordRepository.findActiveByUserId(userId).stream()
                 .map(this::mapToBorrowResponse)
                 .toList();
     }
@@ -307,7 +377,7 @@ public class BorrowService {
 
     @Transactional(readOnly = true)
     public List<BorrowResponse> getAllActiveLoans() {
-        return borrowRecordRepository.findByStatus(BorrowStatus.ACTIVE).stream()
+        return borrowRecordRepository.findAllActiveLoans().stream()
                 .map(this::mapToBorrowResponse)
                 .toList();
     }

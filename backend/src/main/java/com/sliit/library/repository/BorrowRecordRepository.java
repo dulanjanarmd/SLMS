@@ -21,14 +21,23 @@ public interface BorrowRecordRepository extends JpaRepository<BorrowRecord, Long
 
     List<BorrowRecord> findByUserIdAndStatus(Long userId, BorrowStatus status);
 
+    @Query("SELECT br FROM BorrowRecord br WHERE br.user.id = :userId AND br.status IN ('ACTIVE', 'RENEWED', 'RENEWAL_REQUESTED')")
+    List<BorrowRecord> findActiveByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT br FROM BorrowRecord br WHERE br.status IN ('ACTIVE', 'RENEWED', 'RENEWAL_REQUESTED')")
+    List<BorrowRecord> findAllActiveLoans();
+
     @Query("SELECT br FROM BorrowRecord br WHERE br.status = 'ACTIVE' AND br.dueDate < :currentDate")
     List<BorrowRecord> findOverdueLoans(@Param("currentDate") LocalDate currentDate);
 
     @Query("SELECT br FROM BorrowRecord br WHERE br.user.id = :userId AND br.status = 'ACTIVE' AND br.dueDate < :currentDate")
     List<BorrowRecord> findOverdueByUser(@Param("userId") Long userId, @Param("currentDate") LocalDate currentDate);
 
-    @Query("SELECT COUNT(br) FROM BorrowRecord br WHERE br.user.id = :userId AND br.status = 'ACTIVE'")
+    @Query("SELECT COUNT(br) FROM BorrowRecord br WHERE br.user.id = :userId AND br.status IN ('ACTIVE', 'RENEWED', 'RENEWAL_REQUESTED')")
     Long countActiveLoansByUser(@Param("userId") Long userId);
+
+    @Query("SELECT br FROM BorrowRecord br WHERE br.status = 'RENEWAL_REQUESTED'")
+    List<BorrowRecord> findRenewalRequests();
 
     @Query("SELECT br FROM BorrowRecord br WHERE br.issueDate = :today")
     List<BorrowRecord> findTodayLoans(@Param("today") LocalDate today);

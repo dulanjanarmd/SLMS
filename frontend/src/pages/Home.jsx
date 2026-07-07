@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
-import { bookAPI, borrowAPI, notificationAPI } from '../services/api';
+import { bookAPI, borrowAPI, reservationAPI, fineAPI } from '../services/api';
 import { Container, Row, Col, Card, Button, Badge, Spinner } from 'react-bootstrap';
 
 const Home = () => {
@@ -14,7 +14,6 @@ const Home = () => {
     pendingReservations: 0,
     outstandingFines: 0,
   });
-  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,25 +22,35 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const [booksRes, notifRes] = await Promise.all([
-        bookAPI.getPopular(6),
-        user ? notificationAPI.getUnreadCount(user.id) : Promise.resolve({ data: 0 }),
-      ]);
-      setPopularBooks(booksRes.data);
+      const booksRes = await bookAPI.getPopular(6);
+      setPopularBooks(booksRes.data || []);
 
       if (user) {
-        const loansRes = await borrowAPI.getActiveLoans(user.id);
         const today = new Date().toISOString().split('T')[0];
-        const overdue = loansRes.data.filter(l => l.dueDate < today);
+        const [loansRes, reservationsRes, finesRes] = await Promise.all([
+          borrowAPI.getActiveLoans(user.id),
+          reservationAPI.getUserReservations(user.id),
+          fineAPI.getUnpaidFines(user.id),
+        ]);
+
+        const loans = loansRes.data || [];
+        const overdue = loans.filter(l => l.dueDate < today);
+        const pending = (reservationsRes.data || []).filter(
+          r => r.status === 'PENDING' || r.status === 'NOTIFIED'
+        );
+        const totalFines = (finesRes.data || []).reduce(
+          (sum, f) => sum + (f.amount || 0), 0
+        );
+
         setStats({
-          activeLoans: loansRes.data.length,
+          activeLoans: loans.length,
           overdueLoans: overdue.length,
-          pendingReservations: 0,
-          outstandingFines: 0,
+          pendingReservations: pending.length,
+          outstandingFines: totalFines,
         });
       }
     } catch (err) {
-      console.error('Failed to fetch home data');
+      console.error('Failed to fetch home data', err);
     } finally {
       setLoading(false);
     }
@@ -80,35 +89,39 @@ const Home = () => {
       <Container>
         {/* Quick Stats for logged in user */}
         {user && (
-          <Row className="mb-4">
+          <Row className="mb-4 g-3">
             <Col md={3}>
-              <Card className="stat-card primary text-center">
+              <Card as={Link} to="/my-books" className="stat-card primary text-center text-decoration-none h-100">
                 <Card.Body>
-                  <h4 className="mb-0">{stats.activeLoans}</h4>
+                  <i className="bi bi-book fs-3 text-primary mb-1 d-block"></i>
+                  <h4 className="mb-0 fw-bold">{stats.activeLoans}</h4>
                   <small className="text-muted">Active Loans</small>
                 </Card.Body>
               </Card>
             </Col>
             <Col md={3}>
-              <Card className="stat-card danger text-center">
+              <Card as={Link} to="/my-books" className="stat-card danger text-center text-decoration-none h-100">
                 <Card.Body>
-                  <h4 className="mb-0">{stats.overdueLoans}</h4>
+                  <i className="bi bi-exclamation-triangle fs-3 text-danger mb-1 d-block"></i>
+                  <h4 className="mb-0 fw-bold text-danger">{stats.overdueLoans}</h4>
                   <small className="text-muted">Overdue</small>
                 </Card.Body>
               </Card>
             </Col>
             <Col md={3}>
-              <Card className="stat-card warning text-center">
+              <Card as={Link} to="/my-reservations" className="stat-card warning text-center text-decoration-none h-100">
                 <Card.Body>
-                  <h4 className="mb-0">{stats.pendingReservations}</h4>
+                  <i className="bi bi-bookmark fs-3 text-warning mb-1 d-block"></i>
+                  <h4 className="mb-0 fw-bold">{stats.pendingReservations}</h4>
                   <small className="text-muted">Reservations</small>
                 </Card.Body>
               </Card>
             </Col>
             <Col md={3}>
-              <Card className="stat-card info text-center">
+              <Card as={Link} to="/my-fines" className="stat-card info text-center text-decoration-none h-100">
                 <Card.Body>
-                  <h4 className="mb-0">LKR {stats.outstandingFines.toFixed(2)}</h4>
+                  <i className="bi bi-cash-coin fs-3 text-info mb-1 d-block"></i>
+                  <h4 className="mb-0 fw-bold">LKR {stats.outstandingFines.toFixed(2)}</h4>
                   <small className="text-muted">Outstanding Fines</small>
                 </Card.Body>
               </Card>
@@ -143,10 +156,15 @@ const Home = () => {
                     style={{
                       height: '180px',
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      overflow: 'hidden',
                     }}
                   >
                     {book.coverImageUrl ? (
-                      <img src={book.coverImageUrl} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img
+                        src={book.coverImageUrl}
+                        alt={book.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
                     ) : (
                       <i className="bi bi-book" style={{ fontSize: '3rem' }}></i>
                     )}
@@ -161,7 +179,7 @@ const Home = () => {
                         {book.availableCopies > 0 ? 'Available' : 'Unavailable'}
                       </Badge>
                       <small className="text-muted">
-                        <i className="bi bi-eye me-1"></i>{book.borrowCount}
+                        <i className="bi bi-arrow-repeat me-1"></i>{book.borrowCount}
                       </small>
                     </div>
                   </Card.Body>
@@ -189,7 +207,7 @@ const Home = () => {
               <i className="bi bi-calendar-check fs-1 text-success mb-3"></i>
               <h5>Online Reservations</h5>
               <p className="text-muted">
-                Reserve books online and get notified when they become available for pickup.
+                Reserve books online and collect them at the library counter.
               </p>
             </Card>
           </Col>

@@ -116,6 +116,9 @@ public class Book {
     @Builder.Default
     private Integer borrowCount = 0;
 
+    @Builder.Default
+    private Boolean nonRenewable = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

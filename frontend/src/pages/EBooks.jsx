@@ -244,6 +244,109 @@ const EBooks = () => {
           ))}
         </Row>
       )}
+
+      {/* Upload eBook Modal — librarian only */}
+      <Modal show={showUpload} onHide={() => setShowUpload(false)} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title><i className="bi bi-upload me-2"></i>Upload eBook</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleUpload}>
+          <Modal.Body>
+            <Row className="g-3">
+              <Col md={8}>
+                <Form.Group>
+                  <Form.Label>Title <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    required
+                    value={ebookForm.title}
+                    onChange={e => setEbookForm({ ...ebookForm, title: e.target.value })}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label>Author <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    required
+                    value={ebookForm.author}
+                    onChange={e => setEbookForm({ ...ebookForm, author: e.target.value })}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label>ISBN</Form.Label>
+                  <Form.Control
+                    value={ebookForm.isbn}
+                    onChange={e => setEbookForm({ ...ebookForm, isbn: e.target.value })}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label>Publisher</Form.Label>
+                  <Form.Control
+                    value={ebookForm.publisher}
+                    onChange={e => setEbookForm({ ...ebookForm, publisher: e.target.value })}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={2}>
+                <Form.Group>
+                  <Form.Label>Year</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={ebookForm.publicationYear}
+                    onChange={e => setEbookForm({ ...ebookForm, publicationYear: e.target.value })}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={2}>
+                <Form.Group>
+                  <Form.Label>Language</Form.Label>
+                  <Form.Control
+                    value={ebookForm.language}
+                    onChange={e => setEbookForm({ ...ebookForm, language: e.target.value })}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    value={ebookForm.description}
+                    onChange={e => setEbookForm({ ...ebookForm, description: e.target.value })}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>PDF File <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    type="file"
+                    accept="application/pdf"
+                    onChange={e => setPdfFile(e.target.files[0] || null)}
+                  />
+                  {pdfFile && (
+                    <Form.Text className="text-success">
+                      <i className="bi bi-file-earmark-pdf me-1"></i>
+                      {pdfFile.name} ({(pdfFile.size / 1024 / 1024).toFixed(2)} MB)
+                    </Form.Text>
+                  )}
+                </Form.Group>
+              </Col>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowUpload(false)}>Cancel</Button>
+            <Button variant="dark" className="btn-pill" type="submit" disabled={uploading}>
+              {uploading ? <><Spinner size="sm" className="me-2" />Uploading...</> : <><i className="bi bi-upload me-2"></i>Upload eBook</>}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </Container>
   );
 };

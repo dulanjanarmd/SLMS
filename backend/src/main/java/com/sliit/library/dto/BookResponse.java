@@ -38,4 +38,5 @@ public class BookResponse {
     private LocalDate acquisitionDate;
     private LocalDateTime createdAt;
     private Integer borrowCount;
+    private Boolean nonRenewable;
 }

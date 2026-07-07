@@ -37,13 +37,35 @@ const AppNavbar = () => {
     }
   };
 
-  const handleNotificationClick = async (notifId) => {
+  const handleNotificationClick = async (notif) => {
     try {
-      await notificationAPI.markAsRead(notifId);
+      await notificationAPI.markAsRead(notif.id);
       fetchUnreadCount();
       fetchNotifications();
     } catch (err) {
       console.error('Failed to mark as read');
+    }
+    // Navigate to relevant section
+    switch (notif.type) {
+      case 'BOOK_ISSUED':
+      case 'BOOK_RETURNED':
+      case 'DUE_REMINDER':
+      case 'OVERDUE_ALERT':
+      case 'RENEWAL_APPROVED':
+      case 'RENEWAL_DENIED':
+        navigate('/my-books'); break;
+      case 'RENEWAL_REQUEST':
+        navigate('/librarian/renewals'); break;
+      case 'RESERVATION_READY':
+      case 'NEW_RESERVATION':
+        navigate('/my-reservations'); break;
+      case 'FINE_IMPOSED':
+      case 'FINE_PAID':
+        navigate('/my-fines'); break;
+      case 'ANNOUNCEMENT':
+        navigate('/notifications'); break;
+      default:
+        navigate('/notifications');
     }
   };
 
@@ -90,6 +112,9 @@ const AppNavbar = () => {
                   <NavDropdown.Item as={Link} to="/librarian/reservations">
                     Reservations
                   </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/librarian/renewals">
+                    Renewal Requests
+                  </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/librarian/fines">
                     Fines
                   </NavDropdown.Item>
@@ -121,7 +146,16 @@ const AppNavbar = () => {
           </Nav>
           <Nav>
             <NavDropdown
-              title="Notifications"
+              title={
+                <span className="fw-bold position-relative">
+                  <i className="bi bi-bell me-1"></i>Notifications
+                  {unreadCount > 0 && (
+                    <Badge bg="danger" pill className="ms-1" style={{ fontSize: '0.65rem' }}>
+                      {unreadCount}
+                    </Badge>
+                  )}
+                </span>
+              }
               id="notification-dropdown"
               align="end"
               onClick={fetchNotifications}
@@ -134,7 +168,7 @@ const AppNavbar = () => {
                 notifications.slice(0, 5).map((notif) => (
                   <NavDropdown.Item
                     key={notif.id}
-                    onClick={() => handleNotificationClick(notif.id)}
+                    onClick={() => handleNotificationClick(notif)}
                     className="notification-item unread"
                   >
                     <div className="fw-semibold" style={{ fontSize: '0.85rem' }}>{notif.title}</div>

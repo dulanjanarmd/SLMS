@@ -28,6 +28,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.user.id = :userId AND r.status = 'PENDING'")
     Long countPendingByUser(@Param("userId") Long userId);
 
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.book.id = :bookId AND r.status IN ('PENDING', 'NOTIFIED')")
+    Long countPendingByBook(@Param("bookId") Long bookId);
+
     @Query("SELECT r FROM Reservation r WHERE r.status = 'NOTIFIED' AND r.expiryDate < :now")
     List<Reservation> findExpiredNotified(@Param("now") LocalDateTime now);
 

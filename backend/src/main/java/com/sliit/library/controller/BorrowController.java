@@ -36,8 +36,26 @@ public class BorrowController {
 
     @PostMapping("/borrow/renew/{borrowId}")
     @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
-    public ResponseEntity<BorrowResponse> renewBook(@PathVariable Long borrowId) {
-        return ResponseEntity.ok(borrowService.renewBook(borrowId));
+    public ResponseEntity<BorrowResponse> requestRenewal(@PathVariable Long borrowId) {
+        return ResponseEntity.ok(borrowService.requestRenewal(borrowId));
+    }
+
+    @PostMapping("/librarian/borrow/renew/{borrowId}/approve")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<BorrowResponse> approveRenewal(@PathVariable Long borrowId) {
+        return ResponseEntity.ok(borrowService.approveRenewal(borrowId));
+    }
+
+    @PostMapping("/librarian/borrow/renew/{borrowId}/deny")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<BorrowResponse> denyRenewal(@PathVariable Long borrowId) {
+        return ResponseEntity.ok(borrowService.denyRenewal(borrowId));
+    }
+
+    @GetMapping("/librarian/borrow/renewal-requests")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<List<BorrowResponse>> getRenewalRequests() {
+        return ResponseEntity.ok(borrowService.getRenewalRequests());
     }
 
     @GetMapping("/borrow/user/{userId}")

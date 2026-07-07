@@ -82,7 +82,7 @@ const StudentDashboard = () => {
             <Card.Body>
               <i className="bi bi-bookmark fs-2 text-warning mb-2 d-block"></i>
               <h4 className="mb-0">{pendingReservations.length}</h4>
-              <small className="text-muted">Pending Reservations</small>
+              <small className="text-muted">Reservations</small>
             </Card.Body>
           </Card>
         </Col>
@@ -157,7 +157,7 @@ const StudentDashboard = () => {
                       return (
                         <tr key={loan.id} className={isOverdue ? 'table-danger' : ''}>
                           <td className="fw-semibold">{loan.bookTitle}</td>
-                          <td>{loan.borrowDate}</td>
+                          <td>{loan.issueDate}</td>
                           <td>{loan.dueDate}</td>
                           <td>
                             <Badge bg={isOverdue ? 'danger' : 'success'}>
