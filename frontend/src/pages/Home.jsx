@@ -39,7 +39,7 @@ const Home = () => {
           r => r.status === 'PENDING' || r.status === 'NOTIFIED'
         );
         const totalFines = (finesRes.data || []).reduce(
-          (sum, f) => sum + (f.amount || 0), 0
+          (sum, f) => sum + (f.remainingAmount || 0), 0
         );
 
         setStats({

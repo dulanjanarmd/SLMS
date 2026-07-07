@@ -45,6 +45,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(keyword, pageable));
     }
 
+    @GetMapping("/librarian/users")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<Page<UserProfileResponse>> searchUsersForLibrarian(
+            @RequestParam(required = false) String keyword,
+            Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllUsers(keyword, pageable));
+    }
+
     @GetMapping("/admin/users/role/{role}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUsersByRole(@PathVariable Role role) {

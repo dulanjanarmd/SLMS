@@ -47,7 +47,7 @@ const EBooks = () => {
       setLoading(true);
       if (searchKeyword.trim()) {
         const response = await ebookAPI.search(searchKeyword, { page: 0, size: 12 });
-        setEbooks(response.data.content);
+        setEbooks(response.data?.content || response.data || []);
       } else {
         fetchEBooks();
       }

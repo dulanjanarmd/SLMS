@@ -10,7 +10,11 @@ const RenewalRequests = () => {
   const [actionModal, setActionModal] = useState(null); // { type: 'approve'|'deny', loan }
   const [processing, setProcessing] = useState(false);
 
-  useEffect(() => { fetchRequests(); }, []);
+  useEffect(() => {
+    fetchRequests();
+    const interval = setInterval(fetchRequests, 20000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchRequests = async () => {
     try {

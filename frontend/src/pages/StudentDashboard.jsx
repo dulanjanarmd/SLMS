@@ -16,14 +16,14 @@ const StudentDashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      const [loansRes, reservationsRes, finesRes] = await Promise.all([
+      const [loansRes, reservationsRes, finesRes] = await Promise.allSettled([
         borrowAPI.getActiveLoans(user.id),
         reservationAPI.getUserReservations(user.id),
         fineAPI.getUnpaidFines(user.id),
       ]);
-      setActiveLoans(loansRes.data);
-      setReservations(reservationsRes.data);
-      setUnpaidFines(finesRes.data);
+      if (loansRes.status === 'fulfilled') setActiveLoans(loansRes.value.data || []);
+      if (reservationsRes.status === 'fulfilled') setReservations(reservationsRes.value.data || []);
+      if (finesRes.status === 'fulfilled') setUnpaidFines(finesRes.value.data || []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load dashboard data.');
     } finally {

@@ -18,44 +18,44 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/admin/dashboard/stats")
+    @GetMapping({"/admin/dashboard/stats", "/librarian/dashboard/stats"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<DashboardStats> getDashboardStats() {
         return ResponseEntity.ok(reportService.getDashboardStats());
     }
 
-    @GetMapping("/admin/reports/popular-books")
+    @GetMapping({"/admin/reports/popular-books", "/librarian/reports/popular-books"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<List<PopularBookDTO>> getPopularBooks(
             @RequestParam(defaultValue = "10") int limit) {
         return ResponseEntity.ok(reportService.getPopularBooks(limit));
     }
 
-    @GetMapping("/admin/reports/overdue-items")
+    @GetMapping({"/admin/reports/overdue-items", "/librarian/reports/overdue-items"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<List<OverdueItemDTO>> getOverdueItems() {
         return ResponseEntity.ok(reportService.getOverdueItems());
     }
 
-    @GetMapping("/admin/reports/borrowing-by-faculty")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping({"/admin/reports/borrowing-by-faculty", "/librarian/reports/borrowing-by-faculty"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<Map<String, Object>> getBorrowingByFaculty() {
         return ResponseEntity.ok(reportService.getBorrowingByFaculty());
     }
 
-    @GetMapping("/admin/reports/user-activity")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping({"/admin/reports/user-activity", "/librarian/reports/user-activity"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<Map<String, Object>> getUserActivityReport() {
         return ResponseEntity.ok(reportService.getUserActivityReport());
     }
 
-    @GetMapping("/admin/reports/inventory")
+    @GetMapping({"/admin/reports/inventory", "/librarian/reports/inventory"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<Map<String, Object>> getInventoryReport() {
         return ResponseEntity.ok(reportService.getInventoryReport());
     }
 
-    @GetMapping("/admin/reports/fine-collection")
+    @GetMapping({"/admin/reports/fine-collection", "/librarian/reports/fine-collection"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<Map<String, Object>> getFineCollectionReport() {
         return ResponseEntity.ok(reportService.getFineCollectionReport());

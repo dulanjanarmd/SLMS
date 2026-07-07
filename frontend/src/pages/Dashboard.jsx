@@ -39,6 +39,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    const interval = setInterval(fetchDashboardData, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -107,6 +109,9 @@ const Dashboard = () => {
     <Container fluid className="px-4">
       <h2 className="fw-bold mb-4">
         <i className="bi bi-speedometer2 me-2"></i>Librarian Dashboard
+        <Button variant="outline-secondary" size="sm" className="ms-3" onClick={fetchDashboardData}>
+          <i className="bi bi-arrow-clockwise me-1"></i>Refresh
+        </Button>
       </h2>
 
       {/* Quick Actions */}

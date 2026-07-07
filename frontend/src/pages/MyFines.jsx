@@ -21,7 +21,7 @@ const MyFines = () => {
     try {
       setLoading(true);
       const response = await fineAPI.getUserFines(user.id);
-      setFines(response.data);
+      setFines(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       setError('Failed to load fines');
     } finally {

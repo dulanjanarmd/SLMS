@@ -40,7 +40,11 @@ const Inventory = () => {
   const [newStatus, setNewStatus] = useState('');
 
   useEffect(() => { fetchCategories(); }, []);
-  useEffect(() => { fetchBooks(); }, [page, statusFilter, categoryFilter]);
+  useEffect(() => {
+    fetchBooks();
+    const interval = setInterval(fetchBooks, 30000);
+    return () => clearInterval(interval);
+  }, [page, statusFilter, categoryFilter]);
 
   const fetchCategories = async () => {
     try {

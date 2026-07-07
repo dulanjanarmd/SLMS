@@ -22,12 +22,17 @@ const LibrarianReports = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => {
+    fetchAll();
+    const interval = setInterval(fetchAll, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchAll = async () => {
     setLoading(true);
+    setError('');
     try {
-      const [statsRes, popularRes, overdueRes, inventoryRes, fineRes, todayLRes, todayRRes] = await Promise.all([
+      const [statsRes, popularRes, overdueRes, inventoryRes, fineRes, todayLRes, todayRRes] = await Promise.allSettled([
         reportAPI.getDashboardStats(),
         reportAPI.getPopularBooks(10),
         reportAPI.getOverdueItems(),
@@ -36,13 +41,13 @@ const LibrarianReports = () => {
         borrowAPI.getTodayLoans(),
         borrowAPI.getTodayReturns(),
       ]);
-      setStats(statsRes.data);
-      setPopularBooks(popularRes.data || []);
-      setOverdueItems(overdueRes.data || []);
-      setInventory(inventoryRes.data || {});
-      setFineReport(fineRes.data || {});
-      setTodayLoans(todayLRes.data || []);
-      setTodayReturns(todayRRes.data || []);
+      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
+      if (popularRes.status === 'fulfilled') setPopularBooks(popularRes.value.data || []);
+      if (overdueRes.status === 'fulfilled') setOverdueItems(overdueRes.value.data || []);
+      if (inventoryRes.status === 'fulfilled') setInventory(inventoryRes.value.data || {});
+      if (fineRes.status === 'fulfilled') setFineReport(fineRes.value.data || {});
+      if (todayLRes.status === 'fulfilled') setTodayLoans(todayLRes.value.data || []);
+      if (todayRRes.status === 'fulfilled') setTodayReturns(todayRRes.value.data || []);
     } catch {
       setError('Failed to load report data.');
     } finally {

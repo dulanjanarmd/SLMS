@@ -29,7 +29,8 @@ const IssueBook = () => {
     setStudent(null);
     try {
       const res = await userAPI.searchUsers(studentQuery);
-      const users = res.data.content || [];
+      // Handle both paginated {content:[]} and plain array responses
+      const users = res.data?.content || (Array.isArray(res.data) ? res.data : []);
       if (users.length === 0) {
         setStudentError('No user found with that ID or name.');
       } else {

@@ -16,14 +16,14 @@ const FacultyDashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      const [loansRes, reservationsRes, finesRes] = await Promise.all([
+      const [loansRes, reservationsRes, finesRes] = await Promise.allSettled([
         borrowAPI.getActiveLoans(user.id),
         reservationAPI.getUserReservations(user.id),
         fineAPI.getUnpaidFines(user.id),
       ]);
-      setActiveLoans(loansRes.data);
-      setReservations(reservationsRes.data);
-      setUnpaidFines(finesRes.data);
+      if (loansRes.status === 'fulfilled') setActiveLoans(loansRes.value.data || []);
+      if (reservationsRes.status === 'fulfilled') setReservations(reservationsRes.value.data || []);
+      if (finesRes.status === 'fulfilled') setUnpaidFines(finesRes.value.data || []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load dashboard data.');
     } finally {
@@ -184,7 +184,7 @@ const FacultyDashboard = () => {
                       return (
                         <tr key={loan.id} className={isOverdue ? 'table-danger' : ''}>
                           <td className="fw-semibold">{loan.bookTitle}</td>
-                          <td>{loan.borrowDate}</td>
+                          <td>{loan.issueDate}</td>
                           <td>{loan.dueDate}</td>
                           <td>
                             <Badge bg={isOverdue ? 'danger' : 'success'}>

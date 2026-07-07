@@ -22,16 +22,16 @@ const Dashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      const [statsRes, overdueRes, todayLoansRes, pendingRes] = await Promise.all([
+      const [statsRes, overdueRes, todayLoansRes, pendingRes] = await Promise.allSettled([
         reportAPI.getDashboardStats(),
         borrowAPI.getOverdue(),
         borrowAPI.getTodayLoans(),
         reservationAPI.getPending(),
       ]);
-      setStats(statsRes.data);
-      setOverdueLoans(overdueRes.data);
-      setTodayLoans(todayLoansRes.data);
-      setPendingReservations(pendingRes.data);
+      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
+      if (overdueRes.status === 'fulfilled') setOverdueLoans(overdueRes.value.data || []);
+      if (todayLoansRes.status === 'fulfilled') setTodayLoans(todayLoansRes.value.data || []);
+      if (pendingRes.status === 'fulfilled') setPendingReservations(pendingRes.value.data || []);
     } catch (err) {
       setError('Failed to load dashboard data.');
     } finally {
@@ -39,15 +39,19 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
-  if (loading) return (
+  if (loading && !stats) return (
     <Container className="py-5 text-center">
       <Spinner animation="border" variant="primary" />
     </Container>
   );
 
-  if (error) return (
+  if (error && !stats) return (
     <Container className="py-4">
       <Alert variant="danger">
         {error}
