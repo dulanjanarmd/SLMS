@@ -74,16 +74,13 @@ The project is divided into two main components:
 - **Book Details:** View detailed information about each book.
 - **Borrowing:** Borrow books directly from the platform.
 - **User Profile:** Manage user profile and view borrowing history.
-
-### User Frontend
-
 - **React 18.2.0:** The JavaScript library for building the user interface.
 - **Vite:** The build tool for the frontend application.
 - **Axios:** For making HTTP requests to the backend APIs.
 - **Bootstrap 5.3.2:** The CSS framework for designing the user interface.
 - **React Router 6.20.1:** For handling routing and navigation in the application.
 
-### Admin Frontend (React)
+### Frontend (React)
 
 - **Dashboard:** An intuitive and responsive dashboard for managing library resources.
 - **Book Management:** Add, edit, and delete books, authors, and categories.
