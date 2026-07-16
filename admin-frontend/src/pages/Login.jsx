@@ -128,83 +128,137 @@ const Login = () => {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-card animate-fade-in">
-        <div className="text-center mb-4">
-          <div className="mb-3">
-            <i className="bi bi-shield-lock" style={{ fontSize: '3rem', color: '#003366' }}></i>
+    <div className="login-page-new admin-login">
+      {/* Animated Background Shapes */}
+      <div className="floating-shapes">
+        <div className="shape shape-1"></div>
+        <div className="shape shape-2"></div>
+        <div className="shape shape-3"></div>
+        <div className="shape shape-4"></div>
+      </div>
+
+      <div className="login-container-new">
+        {/* Left Side - Branding */}
+        <div className="login-branding admin-branding">
+          <div className="branding-content">
+            <div className="admin-icon-wrapper">
+              <i className="bi bi-shield-lock-fill admin-shield-icon"></i>
+            </div>
+            <h1 className="brand-title">Admin Portal</h1>
+            <p className="brand-subtitle">SLIIT Library Management System</p>
+            <div className="admin-badge">
+              <i className="bi bi-lock-fill"></i>
+              <span>Restricted Access</span>
+            </div>
+            <div className="brand-features admin-features">
+              <div className="feature-item">
+                <i className="bi bi-people-fill"></i>
+                <span>Manage Users & Staff</span>
+              </div>
+              <div className="feature-item">
+                <i className="bi bi-bar-chart-line-fill"></i>
+                <span>Analytics & Reports</span>
+              </div>
+              <div className="feature-item">
+                <i className="bi bi-gear-fill"></i>
+                <span>System Configuration</span>
+              </div>
+            </div>
           </div>
-          <h3 className="fw-bold" style={{ color: '#003366' }}>Admin Portal</h3>
-          <p className="text-muted">SLIIT Library Management System</p>
-          <span className="badge bg-danger px-3 py-2">
-            <i className="bi bi-lock me-1"></i>Restricted Access
-          </span>
         </div>
 
-        {error && (
-          <Alert variant="danger" dismissible onClose={() => setError('')}>
-            {error}
-          </Alert>
-        )}
+        {/* Right Side - Login Form */}
+        <div className="login-form-side">
+          <div className="login-card-new animate-fade-in">
+            <div className="form-header">
+              <h2 className="form-title">Administrator Login</h2>
+              <p className="form-subtitle">Sign in to access admin dashboard</p>
+            </div>
 
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Admin Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter admin email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoFocus
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-2">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
-
-          <div className="text-end mb-4">
-            <Button variant="link" className="p-0 text-muted small text-decoration-none" onClick={() => setShowForgot(true)}>
-              Forgot password?
-            </Button>
-          </div>
-
-          <Button
-            variant="primary"
-            type="submit"
-            className="w-100 py-2 fw-semibold"
-            disabled={loading}
-          >
-            {loading ? (
-              <><Spinner size="sm" className="me-2" />Verifying...</>
-            ) : (
-              <><i className="bi bi-box-arrow-in-right me-2"></i>Sign In to Admin Portal</>
+            {error && (
+              <Alert variant="danger" dismissible onClose={() => setError('')} className="alert-shake">
+                <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                {error}
+              </Alert>
             )}
-          </Button>
-        </Form>
 
-        <hr className="my-4" />
-        <div className="text-center">
-          <small className="text-muted">
-            <i className="bi bi-info-circle me-1"></i>
-            Admin demo: <strong>admin@example.com</strong> / password
-          </small>
-        </div>
-        <div className="text-center mt-2">
-          <small className="text-muted">
-            Not an admin?{' '}
-            <a href="http://localhost:5173/login" className="text-decoration-none">
-              Go to Library Portal
-            </a>
-          </small>
+            <Form onSubmit={handleSubmit} className="login-form">
+              <Form.Group className="mb-3">
+                <Form.Label className="form-label-custom">
+                  <i className="bi bi-envelope-fill"></i>
+                  Admin Email
+                </Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Enter admin email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoFocus
+                  className="form-input-custom"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-2">
+                <Form.Label className="form-label-custom">
+                  <i className="bi bi-key-fill"></i>
+                  Password
+                </Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="form-input-custom"
+                />
+              </Form.Group>
+
+              <div className="text-end mb-4">
+                <Button 
+                  variant="link" 
+                  className="p-0 text-decoration-none forgot-link" 
+                  onClick={() => setShowForgot(true)}
+                >
+                  Forgot password?
+                </Button>
+              </div>
+
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-100 py-2 fw-semibold btn-login-custom btn-admin-login"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Spinner size="sm" className="me-2" /> Verifying...
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-box-arrow-in-right me-2"></i>
+                    Sign In to Admin Portal
+                  </>
+                )}
+              </Button>
+            </Form>
+
+            <hr className="my-4" />
+            <div className="text-center">
+              <small className="text-muted">
+                <i className="bi bi-info-circle me-1"></i>
+                Admin demo: <strong>admin@example.com</strong> / password
+              </small>
+            </div>
+            <div className="text-center mt-2">
+              <small className="text-muted">
+                Not an admin?{' '}
+                <a href="http://localhost:5173/login" className="text-decoration-none register-link">
+                  Go to Library Portal
+                </a>
+              </small>
+            </div>
+          </div>
         </div>
       </div>
     </div>
