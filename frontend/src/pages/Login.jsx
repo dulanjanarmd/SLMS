@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Form, Button, Alert, Spinner } from 'react-bootstrap';
+import logo from '../assets/logo.jpeg';
 
 const Login = () => {
   const [identifier, setIdentifier] = useState('');
@@ -44,9 +45,10 @@ const Login = () => {
     <div className="login-page">
       <div className="login-card animate-fade-in">
         <div className="text-center mb-4">
-          <i className="bi bi-book-half" style={{ fontSize: '3rem', color: '#003366' }}></i>
+          <img src={logo} alt="LibraryHub Logo" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
           <h3 className="mt-2 fw-bold text-primary">LibraryHub</h3>
-          <p className="text-muted">Online Library Management System</p>
+          <p className="text-muted">Welcome to LibraryHub</p>
+          <p className="text-muted">Your one-stop solution for all your library needs</p>     
         </div>
 
         {error && (
