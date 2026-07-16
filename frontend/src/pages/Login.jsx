@@ -45,7 +45,7 @@ const Login = () => {
       <div className="login-card animate-fade-in">
         <div className="text-center mb-4">
           <i className="bi bi-book-half" style={{ fontSize: '3rem', color: '#003366' }}></i>
-          <h3 className="mt-2 fw-bold text-primary">SLIIT Library</h3>
+          <h3 className="mt-2 fw-bold text-primary">LibraryHub</h3>
           <p className="text-muted">Online Library Management System</p>
         </div>
 
