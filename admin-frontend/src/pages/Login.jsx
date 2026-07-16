@@ -245,13 +245,13 @@ const Login = () => {
 
             <hr className="my-4" />
             <div className="text-center">
-              <small className="text-muted">
+              <small className="text-muted-custom">
                 <i className="bi bi-info-circle me-1"></i>
                 Admin demo: <strong>admin@example.com</strong> / password
               </small>
             </div>
             <div className="text-center mt-2">
-              <small className="text-muted">
+              <small className="text-muted-custom">
                 Not an admin?{' '}
                 <a href="http://localhost:5173/login" className="text-decoration-none register-link">
                   Go to Library Portal

@@ -131,7 +131,7 @@ const Login = () => {
                 <Form.Check
                   type="checkbox"
                   label="Remember me"
-                  className="text-muted"
+                  className="text-muted-custom"
                 />
                 <Link to="/forgot-password" className="text-decoration-none small text-muted forgot-link">
                   Forgot password?
@@ -158,7 +158,7 @@ const Login = () => {
             </Form>
 
             <div className="text-center mt-4">
-              <p className="text-muted mb-0">
+              <p className="text-muted-custom mb-0">
                 Don't have an account?{' '}
                 <Link to="/register" className="text-decoration-none fw-semibold register-link">
                   Register here
