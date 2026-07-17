@@ -80,9 +80,9 @@ const AppNavbar = () => {
   if (!user) return null;
 
   return (
-    <Navbar bg="light" variant="light" expand="lg" className="sticky-top shadow-sm">
+    <Navbar bg="dark" variant="dark" expand="lg" className="sticky-top shadow-sm">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/" className="fw-bold" style={{ fontSize: '1.5rem', color: 'var(--sliit-blue)' }}>
+        <Navbar.Brand as={Link} to="/" className="fw-bold" style={{ fontSize: '1.5rem', color: 'var(--accent-blue)' }}>
           LibraryHub
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />

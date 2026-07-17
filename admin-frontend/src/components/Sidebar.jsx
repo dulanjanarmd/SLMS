@@ -26,7 +26,7 @@ const Sidebar = () => {
     <div className="admin-sidebar">
       <div className="sidebar-brand">
         <div className="d-flex align-items-center gap-2">
-          <i className="bi bi-shield-lock fs-4 text-warning"></i>
+          <i className="bi bi-shield-lock fs-4" style={{ color: 'var(--accent-blue)' }}></i>
           <div>
             <div className="fw-bold fs-6">SLIIT Library</div>
             <small className="opacity-75">Admin Portal</small>
@@ -49,9 +49,9 @@ const Sidebar = () => {
 
       <div className="p-3 border-top border-secondary border-opacity-25">
         <div className="d-flex align-items-center gap-2 mb-3">
-          <div className="rounded-circle bg-warning d-flex align-items-center justify-content-center"
-               style={{ width: 36, height: 36, flexShrink: 0 }}>
-            <i className="bi bi-person text-dark"></i>
+          <div className="rounded-circle d-flex align-items-center justify-content-center"
+               style={{ width: 36, height: 36, flexShrink: 0, background: 'var(--accent-blue)' }}>
+            <i className="bi bi-person text-white"></i>
           </div>
           <div className="overflow-hidden">
             <div className="fw-semibold text-truncate" style={{ fontSize: '0.85rem' }}>

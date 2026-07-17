@@ -87,7 +87,7 @@ const Register = () => {
 
         {/* Right Side - Register Form */}
         <div className="login-form-side">
-          <div className="login-card-new animate-fade-in" style={{ maxWidth: '600px' }}>
+          <div className="login-card-new animate-fade-in" style={{ maxWidth: '750px' }}>
             <div className="form-header">
               <h2 className="form-title">Create Account</h2>
               <p className="form-subtitle">Join SLIIT Library System</p>

@@ -11,17 +11,17 @@ const AdminLayout = ({ children }) => {
       <div className="admin-main">
         <div className="admin-topbar">
           <div>
-            <span className="text-muted" style={{ fontSize: '0.85rem' }}>
-              <i className="bi bi-shield-check text-success me-1"></i>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              <i className="bi bi-shield-check me-1" style={{ color: 'var(--accent-blue)' }}></i>
               Admin Portal
             </span>
           </div>
           <div className="d-flex align-items-center gap-3">
-            <span className="badge bg-danger">
+            <span className="badge" style={{ background: 'var(--accent-blue)' }}>
               <i className="bi bi-person me-1"></i>
               {user?.role}
             </span>
-            <span className="text-muted" style={{ fontSize: '0.85rem' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
               {user?.fullName}
             </span>
           </div>
