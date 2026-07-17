@@ -80,7 +80,7 @@ const Home = () => {
               </div>
             </Col>
             <Col lg={4} className="text-center d-none d-lg-block">
-              <img src={logo} alt="Library Hub Logo" style={{ width: '200px', opacity: 0.8 }} />
+              <img src={logo} alt="Library Hub Logo" className="logo-animated" style={{ width: '200px', height: '200px' }} />
             </Col>
           </Row>
         </Container>
