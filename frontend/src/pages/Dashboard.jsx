@@ -14,7 +14,7 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js';
-import { Bar, Doughnut, Line } from 'react-chartjs-2';
+import { Bar, Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
@@ -249,7 +249,7 @@ const Dashboard = () => {
             <Card.Body className="p-0">
               <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead className="table-light">
+                  <thead>
                     <tr>
                       <th>User</th>
                       <th>Book</th>
@@ -300,7 +300,7 @@ const Dashboard = () => {
             <Card.Body className="p-0">
               <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead className="table-light">
+                  <thead>
                     <tr>
                       <th>User</th>
                       <th>Book</th>
@@ -349,7 +349,7 @@ const Dashboard = () => {
             <Card.Body className="p-0">
               <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead className="table-light">
+                  <thead>
                     <tr>
                       <th>User</th>
                       <th>Book</th>
@@ -395,7 +395,7 @@ const Dashboard = () => {
               {membershipMsg && <Alert variant="success" className="m-3 py-2">{membershipMsg}</Alert>}
               <div style={{ height: '300px', overflow: 'auto' }}>
                 <Table striped hover className="mb-0">
-                  <thead className="table-light">
+                  <thead>
                     <tr>
                       <th>Name</th>
                       <th>ID</th>
