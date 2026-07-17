@@ -49,8 +49,11 @@ const Inventory = () => {
   const fetchCategories = async () => {
     try {
       const res = await categoryAPI.getAll();
-      setCategories(res.data || []);
-    } catch { /* silent */ }
+      setCategories(res?.data || []);
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+      setCategories([]);
+    }
   };
 
   const fetchBooks = async () => {
@@ -73,10 +76,13 @@ const Inventory = () => {
           ...(categoryFilter && { categoryId: categoryFilter }),
         });
       }
-      setBooks(res.data.content || []);
-      setTotalPages(res.data.totalPages || 0);
-    } catch {
-      setError('Failed to load books.');
+      setBooks(res?.data?.content || []);
+      setTotalPages(res?.data?.totalPages || 0);
+    } catch (err) {
+      console.error('Failed to fetch books:', err);
+      setError('Failed to load books. Please try again.');
+      setBooks([]);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }

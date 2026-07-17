@@ -20,9 +20,11 @@ const RenewalRequests = () => {
     try {
       setLoading(true);
       const res = await borrowAPI.getRenewalRequests();
-      setRequests(res.data || []);
-    } catch {
+      setRequests(res?.data || []);
+    } catch (err) {
+      console.error('Failed to fetch renewal requests:', err);
       setError('Failed to load renewal requests.');
+      setRequests([]);
     } finally {
       setLoading(false);
     }

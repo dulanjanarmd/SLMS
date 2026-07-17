@@ -53,11 +53,11 @@ const Dashboard = () => {
         membershipAPI.getPending(),
       ]);
 
-      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
-      if (overdueRes.status === 'fulfilled') setOverdueLoans(overdueRes.value.data || []);
-      if (todayLoansRes.status === 'fulfilled') setTodayLoans(todayLoansRes.value.data || []);
-      if (pendingRes.status === 'fulfilled') setPendingReservations(pendingRes.value.data || []);
-      if (membershipsRes.status === 'fulfilled') setPendingMemberships(membershipsRes.value.data || []);
+      if (statsRes.status === 'fulfilled') setStats(statsRes.value?.data || null);
+      if (overdueRes.status === 'fulfilled') setOverdueLoans(overdueRes.value?.data || []);
+      if (todayLoansRes.status === 'fulfilled') setTodayLoans(todayLoansRes.value?.data || []);
+      if (pendingRes.status === 'fulfilled') setPendingReservations(pendingRes.value?.data || []);
+      if (membershipsRes.status === 'fulfilled') setPendingMemberships(membershipsRes.value?.data || []);
     } catch (err) {
       console.error('Failed to fetch dashboard data', err);
     } finally {
