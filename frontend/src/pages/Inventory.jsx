@@ -214,7 +214,7 @@ const Inventory = () => {
               <Col md={2}>
                 <Form.Select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)}>
                   <option value="">All Categories</option>
-                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {Array.isArray(categories) && categories.map(c => <option key={c?.id} value={c?.id}>{c?.name}</option>)}
                 </Form.Select>
               </Col>
               <Col md={2}>
@@ -253,24 +253,24 @@ const Inventory = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredBooks.length === 0 ? (
+                {(!Array.isArray(filteredBooks) || filteredBooks.length === 0) ? (
                   <tr><td colSpan="8" className="text-center text-muted py-4">No books found.</td></tr>
                 ) : filteredBooks.map(book => (
-                  <tr key={book.id}>
+                  <tr key={book?.id || Math.random()}>
                     <td>
-                      <div className="fw-semibold">{book.title}</div>
-                      <small className="text-muted">{book.author}</small>
+                      <div className="fw-semibold">{book?.title}</div>
+                      <small className="text-muted">{book?.author}</small>
                     </td>
-                    <td><small>{book.isbn}</small></td>
-                    <td><small>{book.categoryName || '—'}</small></td>
-                    <td><small>{book.shelfLocation || '—'}</small></td>
-                    <td className="text-center">{book.totalCopies}</td>
+                    <td><small>{book?.isbn}</small></td>
+                    <td><small>{book?.categoryName || '—'}</small></td>
+                    <td><small>{book?.shelfLocation || '—'}</small></td>
+                    <td className="text-center">{book?.totalCopies}</td>
                     <td className="text-center">
-                      <Badge bg={book.availableCopies > 0 ? 'success' : 'danger'}>
-                        {book.availableCopies}
+                      <Badge bg={book?.availableCopies > 0 ? 'success' : 'danger'}>
+                        {book?.availableCopies}
                       </Badge>
                     </td>
-                    <td>{statusBadge(book.status)}</td>
+                    <td>{statusBadge(book?.status)}</td>
                     <td>
                       <div className="d-flex gap-1">
                         <Button size="sm" variant="dark" className="btn-pill" onClick={() => openEdit(book)} title="Edit">
@@ -354,7 +354,7 @@ const Inventory = () => {
                   <Form.Label>Category</Form.Label>
                   <Form.Select value={form.categoryId} onChange={e => setForm({ ...form, categoryId: e.target.value })}>
                     <option value="">Select...</option>
-                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    {Array.isArray(categories) && categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </Form.Select>
                 </Form.Group>
               </Col>

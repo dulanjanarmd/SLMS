@@ -3,28 +3,20 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
 import { bookAPI, borrowAPI, reservationAPI, fineAPI } from '../services/api';
-import { Container, Row, Col, Card, Button, Badge, Spinner } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 
 const Home = () => {
   const { user } = useAuth();
   const [popularBooks, setPopularBooks] = useState([]);
-  const [stats, setStats] = useState({
-    activeLoans: 0,
-    overdueLoans: 0,
-    pendingReservations: 0,
-    outstandingFines: 0,
-  });
+  const [stats, setStats] = useState({ activeLoans: 0, overdueLoans: 0, pendingReservations: 0, outstandingFines: 0 });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchData();
-  }, [user]);
+  useEffect(() => { fetchData(); }, [user]);
 
   const fetchData = async () => {
     try {
       const booksRes = await bookAPI.getPopular(6);
       setPopularBooks(booksRes.data || []);
-
       if (user) {
         const today = new Date().toISOString().split('T')[0];
         const [loansRes, reservationsRes, finesRes] = await Promise.all([
@@ -32,196 +24,164 @@ const Home = () => {
           reservationAPI.getUserReservations(user.id),
           fineAPI.getUnpaidFines(user.id),
         ]);
-
         const loans = loansRes.data || [];
         const overdue = loans.filter(l => l.dueDate < today);
-        const pending = (reservationsRes.data || []).filter(
-          r => r.status === 'PENDING' || r.status === 'NOTIFIED'
-        );
-        const totalFines = (finesRes.data || []).reduce(
-          (sum, f) => sum + (f.remainingAmount || 0), 0
-        );
-
-        setStats({
-          activeLoans: loans.length,
-          overdueLoans: overdue.length,
-          pendingReservations: pending.length,
-          outstandingFines: totalFines,
-        });
+        const pending = (reservationsRes.data || []).filter(r => r.status === 'PENDING' || r.status === 'NOTIFIED');
+        const totalFines = (finesRes.data || []).reduce((sum, f) => sum + (f.remainingAmount || 0), 0);
+        setStats({ activeLoans: loans.length, overdueLoans: overdue.length, pendingReservations: pending.length, outstandingFines: totalFines });
       }
-    } catch (err) {
-      console.error('Failed to fetch home data', err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
+  const quickStats = [
+    { label: 'Active Loans', value: stats.activeLoans, icon: '📚', color: '#ef5a24', bg: 'rgba(239,90,36,0.10)', to: '/my-books' },
+    { label: 'Overdue', value: stats.overdueLoans, icon: '⚠️', color: '#ef4444', bg: 'rgba(239,68,68,0.10)', to: '/my-books' },
+    { label: 'Reservations', value: stats.pendingReservations, icon: '🔖', color: '#f59e0b', bg: 'rgba(245,158,11,0.10)', to: '/my-reservations' },
+    { label: 'Fines Due', value: `LKR ${stats.outstandingFines.toFixed(0)}`, icon: '💳', color: '#6366f1', bg: 'rgba(99,102,241,0.10)', to: '/my-fines' },
+  ];
+
+  const services = [
+    { icon: '🔍', title: 'Advanced Search', desc: 'Find books by title, author, ISBN, category and more with powerful filters.', color: '#ef5a24' },
+    { icon: '📅', title: 'Online Reservations', desc: 'Reserve books online and collect them at the library counter anytime.', color: '#10b981' },
+    { icon: '📱', title: 'Digital Library', desc: 'Access our growing collection of eBooks, journals and research papers.', color: '#6366f1' },
+    { icon: '🔔', title: 'Smart Alerts', desc: 'Get notified for due dates, overdue reminders, and reservation status updates.', color: '#f59e0b' },
+  ];
+
   return (
-    <div>
-      {/* Hero Section */}
-      <div className="bg-primary text-white py-5 mb-4" style={{ background: 'linear-gradient(135deg, #003366 0%, #1a5276 100%)' }}>
-        <Container>
-          <Row className="align-items-center">
-            <Col lg={8}>
-              <h1 className="display-5 fw-bold mb-3 animate-fade-in">
-                Welcome to <span style={{ color: 'var(--sliit-orange)' }}>LibraryHub</span>
-              </h1>
-              <p className="lead mb-4">
-                Your gateway to knowledge. Browse our extensive collection of physical books and eBooks,
-                manage your loans, reservations, and stay updated with notifications.
-              </p>
-              <div className="d-flex gap-3">
-                <Button as={Link} to="/books" variant="dark" size="lg" className="btn-pill">
-                  Browse Catalog
-                </Button>
-                <Button as={Link} to="/ebooks" variant="dark" size="lg" className="btn-pill">
-                  eBooks
-                </Button>
-              </div>
-            </Col>
-            <Col lg={4} className="text-center d-none d-lg-block">
-              <img src={logo} alt="Library Hub Logo" className="logo-animated" style={{ width: '200px', height: '200px' }} />
-            </Col>
-          </Row>
-        </Container>
+    <div style={{ fontFamily: 'Poppins, sans-serif' }}>
+      {/* Hero */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 45%, #4c1d95 70%, #ef5a24 100%)',
+        padding: '64px 0 80px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {[...Array(3)].map((_, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            width: 200 + i * 80,
+            height: 200 + i * 80,
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.04)',
+            top: i === 0 ? -60 : i === 1 ? 'auto' : 30,
+            bottom: i === 1 ? -80 : 'auto',
+            right: i === 0 ? -60 : i === 1 ? 100 : 'auto',
+            left: i === 2 ? '40%' : 'auto',
+          }} />
+        ))}
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 40 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 999, padding: '6px 16px', marginBottom: 20, backdropFilter: 'blur(8px)' }}>
+              <span style={{ color: '#ff8c5a', fontSize: '0.8rem', fontWeight: 600 }}>● LIVE</span>
+              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.82rem' }}>SLIIT Digital Library System</span>
+            </div>
+            <h1 style={{ color: 'white', fontSize: '3rem', fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
+              Welcome to{' '}
+              <span style={{ background: 'linear-gradient(135deg, #ff8c5a, #ef5a24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                LibraryHub
+              </span>
+            </h1>
+            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: 32, maxWidth: 520 }}>
+              Your gateway to knowledge. Browse thousands of physical books and eBooks, manage your loans, and stay updated — all in one place.
+            </p>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <Link to="/books" style={{ background: '#ef5a24', color: 'white', padding: '13px 28px', borderRadius: 999, fontWeight: 700, fontSize: '0.95rem', textDecoration: 'none', boxShadow: '0 8px 24px rgba(239,90,36,0.4)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                📚 Browse Catalog
+              </Link>
+              <Link to="/ebooks" style={{ background: 'rgba(255,255,255,0.12)', color: 'white', padding: '13px 28px', borderRadius: 999, fontWeight: 600, fontSize: '0.95rem', textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                📱 eBooks
+              </Link>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)' }}>
+              <img src={logo} alt="LibraryHub" style={{ width: 140, height: 140, borderRadius: '50%', objectFit: 'cover' }} />
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Container>
-        {/* Quick Stats for logged in user */}
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 28px' }}>
+        {/* Quick Stats */}
         {user && (
-          <Row className="mb-4 g-3">
-            <Col md={3}>
-              <Card as={Link} to="/my-books" className="stat-card primary text-center text-decoration-none h-100">
-                <Card.Body>
-                  <i className="bi bi-book fs-3 text-primary mb-1 d-block"></i>
-                  <h4 className="mb-0 fw-bold">{stats.activeLoans}</h4>
-                  <small className="text-muted">Active Loans</small>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card as={Link} to="/my-books" className="stat-card danger text-center text-decoration-none h-100">
-                <Card.Body>
-                  <i className="bi bi-exclamation-triangle fs-3 text-danger mb-1 d-block"></i>
-                  <h4 className="mb-0 fw-bold text-danger">{stats.overdueLoans}</h4>
-                  <small className="text-muted">Overdue</small>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card as={Link} to="/my-reservations" className="stat-card warning text-center text-decoration-none h-100">
-                <Card.Body>
-                  <i className="bi bi-bookmark fs-3 text-warning mb-1 d-block"></i>
-                  <h4 className="mb-0 fw-bold">{stats.pendingReservations}</h4>
-                  <small className="text-muted">Reservations</small>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card as={Link} to="/my-fines" className="stat-card info text-center text-decoration-none h-100">
-                <Card.Body>
-                  <i className="bi bi-cash-coin fs-3 text-info mb-1 d-block"></i>
-                  <h4 className="mb-0 fw-bold">LKR {stats.outstandingFines.toFixed(2)}</h4>
-                  <small className="text-muted">Outstanding Fines</small>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 48 }}>
+            {quickStats.map(s => (
+              <Link key={s.to} to={s.to} style={{ textDecoration: 'none' }}>
+                <div style={{ background: 'white', borderRadius: 16, padding: '22px 24px', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: 16, transition: 'all 0.22s', cursor: 'pointer' }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 24px ${s.color}22`; e.currentTarget.style.borderColor = s.color + '50'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}
+                >
+                  <div style={{ width: 48, height: 48, borderRadius: 12, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>{s.icon}</div>
+                  <div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1a1a2e', lineHeight: 1 }}>{s.value}</div>
+                    <div style={{ fontSize: '0.78rem', fontWeight: 500, color: '#64748b', marginTop: 4 }}>{s.label}</div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         )}
 
         {/* Popular Books */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 className="fw-bold">Popular Now</h3>
-          <Button as={Link} to="/books" variant="dark" className="btn-pill">
-            View All <i className="bi bi-arrow-right ms-1"></i>
-          </Button>
+        <div style={{ marginBottom: 48 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+            <div>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0, marginBottom: 4 }}>🔥 Popular Now</h2>
+              <p style={{ color: '#64748b', margin: 0, fontSize: '0.88rem' }}>Most borrowed books this month</p>
+            </div>
+            <Link to="/books" style={{ background: '#1a1a2e', color: 'white', padding: '10px 22px', borderRadius: 999, fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none' }}>
+              View All →
+            </Link>
+          </div>
+
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 20 }}>
+              {popularBooks.map((book, idx) => (
+                <Link key={book.id} to={`/books/${book.id}`} style={{ textDecoration: 'none' }}>
+                  <div style={{ background: 'white', borderRadius: 16, overflow: 'hidden', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', transition: 'all 0.22s', animationDelay: `${idx * 80}ms` }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.12)'; e.currentTarget.style.borderColor = '#ef5a2440'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}
+                  >
+                    <div style={{ height: 200, background: 'linear-gradient(135deg, #667eea, #764ba2)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                      {book.coverImageUrl
+                        ? <img src={book.coverImageUrl} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <span style={{ fontSize: '3.5rem' }}>📖</span>}
+                    </div>
+                    <div style={{ padding: '14px 14px 16px' }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1a1a2e', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: 6 }}>{book.title}</div>
+                      <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: 10 }}>{book.author}</div>
+                      <span style={{ background: book.availableCopies > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: book.availableCopies > 0 ? '#059669' : '#dc2626', borderRadius: 6, padding: '3px 10px', fontSize: '0.72rem', fontWeight: 600 }}>
+                        {book.availableCopies > 0 ? '✓ Available' : '✗ Unavailable'}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
-        {loading ? (
-          <div className="text-center py-5">
-            <Spinner animation="border" variant="primary" />
-          </div>
-        ) : (
-          <Row>
-            {popularBooks.map((book, index) => (
-              <Col key={book.id} lg={2} md={4} sm={6} className="mb-4">
-                <Card
-                  as={Link}
-                  to={`/books/${book.id}`}
-                  className="book-card text-decoration-none h-100 animate-fade-in"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div
-                    className="card-img-top d-flex align-items-center justify-content-center text-white"
-                    style={{
-                      height: '180px',
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {book.coverImageUrl ? (
-                      <img
-                        src={book.coverImageUrl}
-                        alt={book.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    ) : (
-                      <i className="bi bi-book" style={{ fontSize: '3rem' }}></i>
-                    )}
-                  </div>
-                  <Card.Body className="p-3">
-                    <Card.Title className="book-title">{book.title}</Card.Title>
-                    <Card.Text className="text-muted mb-1" style={{ fontSize: '0.85rem' }}>
-                      {book.author}
-                    </Card.Text>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <Badge bg={book.availableCopies > 0 ? 'success' : 'danger'}>
-                        {book.availableCopies > 0 ? 'Available' : 'Unavailable'}
-                      </Badge>
-                      <small className="text-muted">
-                        <i className="bi bi-arrow-repeat me-1"></i>{book.borrowCount}
-                      </small>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
+        {/* Services */}
+        <div style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #fdf1ec 100%)', borderRadius: 20, padding: '48px 40px', marginBottom: 40 }}>
+          <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', textAlign: 'center', marginBottom: 8 }}>Library Services</h2>
+          <p style={{ color: '#64748b', textAlign: 'center', marginBottom: 36, fontSize: '0.9rem' }}>Everything you need, all in one place</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
+            {services.map(s => (
+              <div key={s.title} style={{ background: 'white', borderRadius: 16, padding: '28px 24px', textAlign: 'center', border: '1px solid #e8ecf0', transition: 'all 0.22s' }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 12px 32px ${s.color}18`; e.currentTarget.style.borderColor = s.color + '50'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; e.currentTarget.style.borderColor = '#e8ecf0'; }}
+              >
+                <div style={{ width: 56, height: 56, borderRadius: 14, background: s.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', margin: '0 auto 16px' }}>{s.icon}</div>
+                <h4 style={{ fontWeight: 700, fontSize: '1rem', color: '#1a1a2e', marginBottom: 10 }}>{s.title}</h4>
+                <p style={{ color: '#64748b', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
+              </div>
             ))}
-          </Row>
-        )}
-
-        {/* Features Section */}
-        <hr className="my-5" />
-        <h3 className="fw-bold text-center mb-4">Library Services</h3>
-        <Row className="g-4">
-          <Col md={4}>
-            <Card className="h-100 text-center p-4">
-              <i className="bi bi-search fs-1 text-primary mb-3"></i>
-              <h5>Advanced Search</h5>
-              <p className="text-muted">
-                Search by title, author, ISBN, category, and more. Find exactly what you need.
-              </p>
-            </Card>
-          </Col>
-          <Col md={4}>
-            <Card className="h-100 text-center p-4">
-              <i className="bi bi-calendar-check fs-1 text-success mb-3"></i>
-              <h5>Online Reservations</h5>
-              <p className="text-muted">
-                Reserve books online and collect them at the library counter.
-              </p>
-            </Card>
-          </Col>
-          <Col md={4}>
-            <Card className="h-100 text-center p-4">
-              <i className="bi bi-file-earmark-pdf fs-1 text-danger mb-3"></i>
-              <h5>eBook Access</h5>
-              <p className="text-muted">
-                Access digital resources including eBooks, journals, and research papers.
-              </p>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
