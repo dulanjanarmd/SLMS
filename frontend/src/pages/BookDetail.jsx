@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { bookAPI, reservationAPI, userAPI } from '../services/api';
-import { Container, Row, Col, Card, Button, Badge, Alert, Spinner, Modal } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -16,30 +16,17 @@ const BookDetail = () => {
   const [showReserveModal, setShowReserveModal] = useState(false);
   const [reserving, setReserving] = useState(false);
 
-  useEffect(() => {
-    fetchBook();
-    if (user) fetchProfile();
-  }, [id]);
+  useEffect(() => { fetchBook(); if (user) fetchProfile(); }, [id]);
 
   const fetchBook = async () => {
-    try {
-      setLoading(true);
-      const response = await bookAPI.getById(id);
-      setBook(response.data);
-    } catch (err) {
-      setError('Book not found');
-    } finally {
-      setLoading(false);
-    }
+    try { setLoading(true); const res = await bookAPI.getById(id); setBook(res.data); }
+    catch { setError('Book not found'); }
+    finally { setLoading(false); }
   };
 
   const fetchProfile = async () => {
-    try {
-      const res = await userAPI.getProfile();
-      setProfile(res.data);
-    } catch {
-      setProfile(user);
-    }
+    try { const res = await userAPI.getProfile(); setProfile(res.data); }
+    catch { setProfile(user); }
   };
 
   const isMember = profile?.isMember ?? user?.isMember ?? false;
@@ -47,240 +34,139 @@ const BookDetail = () => {
 
   const handleReserve = async () => {
     try {
-      setReserving(true);
-      setError('');
-      setSuccess('');
+      setReserving(true); setError(''); setSuccess('');
       await reservationAPI.create({ bookId: parseInt(id), userId: user.id });
       setSuccess('Added to reservation queue! Visit the library with your Reservation ID to collect the book.');
-      setShowReserveModal(false);
-      fetchBook();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to reserve book');
-      setShowReserveModal(false);
-    } finally {
-      setReserving(false);
-    }
+      setShowReserveModal(false); fetchBook();
+      setTimeout(() => setSuccess(''), 6000);
+    } catch (err) { setError(err.response?.data?.message || 'Failed to reserve book'); setShowReserveModal(false); }
+    finally { setReserving(false); }
   };
 
-  if (loading) {
-    return (
-      <Container className="py-5 text-center">
-        <Spinner animation="border" variant="primary" />
-      </Container>
-    );
-  }
+  if (loading) return <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div>;
 
-  if (error && !book) {
-    return (
-      <Container className="py-5">
-        <Alert variant="danger">{error}</Alert>
-        <Button variant="dark" className="btn-pill" onClick={() => navigate('/books')}>
-          Back to Catalog
-        </Button>
-      </Container>
-    );
-  }
+  if (error && !book) return (
+    <div style={{ padding: '80px 24px', textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
+      <div style={{ fontSize: '4rem', marginBottom: 16 }}>🔍</div>
+      <h2 style={{ fontWeight: 800, color: '#1a1a2e', marginBottom: 12 }}>{error}</h2>
+      <button onClick={() => navigate('/books')} style={{ background: '#1a1a2e', color: 'white', border: 'none', borderRadius: 999, padding: '12px 28px', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>← Back to Catalog</button>
+    </div>
+  );
 
-  const renderActionButtons = () => {
-    if (!user) return null;
-
-    // Librarian: link to dedicated Issue Book page
-    if (isLibrarian) {
-      return (
-        <Button variant="dark" className="btn-pill w-100" as={Link} to="/librarian/issue">
-          <i className="bi bi-book-half me-2"></i>Go to Issue Book
-        </Button>
-      );
-    }
-
-    // Non-member
-    if (!isMember) {
-      return (
-        <>
-          <Alert variant="warning" className="mb-2 py-2 small">
-            <i className="bi bi-lock me-1"></i>Library membership required to reserve books.
-          </Alert>
-          <Button as={Link} to="/membership" variant="dark" size="sm" className="btn-pill w-100">
-            Apply for Membership
-          </Button>
-        </>
-      );
-    }
-
-    // Member: Reserve only
-    return (
-      <>
-        {book.availableCopies > 0 ? (
-          <Button variant="dark" className="w-100 btn-pill" onClick={() => setShowReserveModal(true)}>
-            <i className="bi bi-bookmark-plus me-2"></i>Reserve Book
-          </Button>
-        ) : (
-          <>
-            <Alert variant="info" className="mb-2 py-2 small">
-              <i className="bi bi-info-circle me-1"></i>All copies are currently borrowed.
-            </Alert>
-            <Button variant="dark" className="w-100 btn-pill" onClick={() => setShowReserveModal(true)}>
-              <i className="bi bi-clock me-2"></i>Join Waiting Queue
-            </Button>
-          </>
-        )}
-      </>
-    );
+  const getStatus = () => {
+    if (book.availableCopies > 0) return { label: `${book.availableCopies} Copies Available`, color: '#10b981', bg: 'rgba(16,185,129,0.1)' };
+    if (book.status === 'RESERVED') return { label: 'Reserved / In Queue', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' };
+    return { label: 'Currently Unavailable', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' };
   };
+  const status = getStatus();
 
   return (
-    <Container className="py-4">
-      {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
-      {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
+    <div style={{ padding: '32px 28px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#065f46', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontSize: '1.4rem' }}>✅</span> {success}
+      </div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <span style={{ fontSize: '1.4rem' }}>⚠️</span> {error}
+      </div>}
 
-      <Button variant="dark" size="sm" className="mb-3 btn-pill" onClick={() => navigate('/books')}>
-        <i className="bi bi-arrow-left me-1"></i>Back to Catalog
-      </Button>
-
-      <Row>
-        {/* Book Cover */}
-        <Col lg={4} className="mb-4">
-          <Card>
-            <div
-              className="d-flex align-items-center justify-content-center text-white"
-              style={{
-                height: '400px',
-                background: book.coverImageUrl
-                  ? `url(${book.coverImageUrl}) center/cover`
-                  : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                borderRadius: '12px 12px 0 0',
-              }}
-            >
-              {!book.coverImageUrl && <i className="bi bi-book" style={{ fontSize: '6rem' }}></i>}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 340px) 1fr', gap: 32 }}>
+        {/* Left Col: Cover & Action */}
+        <div>
+          <div style={{ background: 'linear-gradient(135deg, #1a1a2e, #4c1d95)', borderRadius: 20, padding: 8, boxShadow: '0 24px 60px rgba(0,0,0,0.12)', marginBottom: 24 }}>
+            <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', height: 460, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {book.coverImageUrl ? <img src={book.coverImageUrl} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: '6rem' }}>📖</span>}
             </div>
-            <Card.Body className="text-center">
-              <Badge bg={book.availableCopies > 0 ? 'success' : 'danger'} className="fs-6 px-3 py-2">
-                {book.availableCopies > 0
-                  ? `${book.availableCopies} of ${book.totalCopies} Available`
-                  : 'Currently Unavailable'}
-              </Badge>
-            </Card.Body>
-          </Card>
+          </div>
 
-          <Card className="mt-3">
-            <Card.Body className="d-grid gap-2">
-              {renderActionButtons()}
-            </Card.Body>
-          </Card>
+          <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 20 }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700, marginBottom: 8 }}>Availability</div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: status.bg, color: status.color, borderRadius: 999, padding: '8px 20px', fontSize: '0.9rem', fontWeight: 800 }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: status.color }}></span> {status.label}
+              </div>
+            </div>
 
-          {user && !isLibrarian && (
-            <div className="mt-2 text-center">
-              {isMember ? (
-                <small className="text-success">
-                  <i className="bi bi-patch-check-fill me-1"></i>Active Member
-                  {profile?.membershipId && ` · ${profile.membershipId}`}
-                </small>
+            {user ? (
+              isLibrarian ? (
+                <Link to="/librarian/issue" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a2e', color: 'white', textDecoration: 'none', padding: '14px', borderRadius: 12, fontWeight: 700, fontSize: '0.95rem', gap: 8, transition: 'transform 0.2s' }}>
+                  📤 Go to Issue Book
+                </Link>
+              ) : !isMember ? (
+                <div style={{ background: 'rgba(245,158,11,0.1)', color: '#d97706', padding: '16px', borderRadius: 12, fontSize: '0.85rem', textAlign: 'center', border: '1px solid rgba(245,158,11,0.2)' }}>
+                  <div style={{ fontWeight: 700, marginBottom: 4 }}>Membership Required</div>
+                  You need an active membership to reserve books. <Link to="/membership" style={{ color: '#d97706', fontWeight: 800 }}>Apply Now</Link>
+                </div>
               ) : (
-                <small className="text-muted">
-                  <i className="bi bi-person-x me-1"></i>Not a member yet
-                </small>
-              )}
+                <button onClick={() => setShowReserveModal(true)} disabled={book.availableCopies === 0} style={{ width: '100%', padding: '14px', background: book.availableCopies > 0 ? 'linear-gradient(135deg, #ef5a24, #ff6b35)' : '#f1f5f9', color: book.availableCopies > 0 ? 'white' : '#9ca3af', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: '0.95rem', cursor: book.availableCopies > 0 ? 'pointer' : 'not-allowed', fontFamily: 'Poppins, sans-serif', boxShadow: book.availableCopies > 0 ? '0 8px 24px rgba(239,90,36,0.3)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  🔖 {book.availableCopies > 0 ? 'Reserve Book' : 'Currently Unavailable'}
+                </button>
+              )
+            ) : (
+              <div style={{ textAlign: 'center' }}>
+                <Link to="/login" style={{ display: 'block', width: '100%', padding: '14px', background: 'linear-gradient(135deg, #ef5a24, #ff6b35)', color: 'white', textDecoration: 'none', borderRadius: 12, fontWeight: 700, fontSize: '0.95rem', marginBottom: 12, boxShadow: '0 8px 24px rgba(239,90,36,0.3)' }}>Login to Reserve</Link>
+                <div style={{ fontSize: '0.85rem', color: '#64748b' }}>Don't have an account? <Link to="/register" style={{ color: '#ef5a24', fontWeight: 600 }}>Sign up</Link></div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Col: Details */}
+        <div>
+          <button onClick={() => navigate(-1)} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: 0, marginBottom: 20 }}>
+            ← Back
+          </button>
+          
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+              <span style={{ background: 'rgba(239,90,36,0.1)', color: '#ef5a24', padding: '4px 12px', borderRadius: 6, fontSize: '0.75rem', fontWeight: 700 }}>{book.categoryName}</span>
+              <span style={{ color: '#9ca3af', fontSize: '0.9rem' }}>•</span>
+              <span style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: 500 }}>{book.publicationYear}</span>
             </div>
-          )}
-        </Col>
+            <h1 style={{ fontWeight: 900, fontSize: '2.4rem', color: '#1a1a2e', lineHeight: 1.2, margin: '0 0 8px' }}>{book.title}</h1>
+            <h2 style={{ fontWeight: 500, fontSize: '1.2rem', color: '#64748b', margin: 0 }}>by {book.author}</h2>
+          </div>
 
-        {/* Book Details */}
-        <Col lg={8}>
-          <Card className="h-100">
-            <Card.Body>
-              <h2 className="fw-bold mb-2">{book.title}</h2>
-              <p className="text-muted fs-5 mb-4">
-                <i className="bi bi-person me-2"></i>
-                {book.author}
-                {book.additionalAuthors && <span className="fs-6">, {book.additionalAuthors}</span>}
-              </p>
-
-              {book.description && (
-                <div className="mb-4">
-                  <h5 className="fw-semibold">Description</h5>
-                  <p className="text-muted">{book.description}</p>
+          <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', padding: '32px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', marginBottom: 24 }}>
+            <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 16px' }}>About this Book</h3>
+            <p style={{ color: '#475569', lineHeight: 1.8, fontSize: '0.95rem', margin: '0 0 32px' }}>{book.description || 'No description available for this book.'}</p>
+            
+            <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 16px' }}>Details</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 32px' }}>
+              {[
+                { l: 'ISBN', v: book.isbn },
+                { l: 'Publisher', v: book.publisher || 'Unknown' },
+                { l: 'Language', v: book.language || 'English' },
+                { l: 'Added On', v: new Date(book.createdAt).toLocaleDateString() }
+              ].map(d => (
+                <div key={d.l} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{d.l}</span>
+                  <span style={{ fontSize: '0.95rem', color: '#1e293b', fontWeight: 500 }}>{d.v}</span>
                 </div>
-              )}
-
-              <Row className="g-3">
-                {[
-                  { label: 'ISBN', value: book.isbn },
-                  { label: 'ISBN-13', value: book.isbn13 || 'N/A' },
-                  { label: 'Publisher', value: book.publisher || 'N/A' },
-                  { label: 'Publication Year', value: book.publicationYear || 'N/A' },
-                  { label: 'Edition', value: book.edition || 'N/A' },
-                  { label: 'Language', value: book.language || 'N/A' },
-                  { label: 'Format', value: book.format || 'Physical' },
-                  { label: 'Shelf Location', value: book.shelfLocation || 'N/A' },
-                  { label: 'Category', value: book.categoryName || 'Uncategorized' },
-                  { label: 'DDC Number', value: book.ddcNumber || 'N/A' },
-                ].map(({ label, value }) => (
-                  <Col sm={6} key={label}>
-                    <div className="p-3 bg-light rounded">
-                      <small className="text-muted">{label}</small>
-                      <p className="mb-0 fw-semibold">{value}</p>
-                    </div>
-                  </Col>
-                ))}
-                {book.replacementCost > 0 && (
-                  <Col sm={6}>
-                    <div className="p-3 bg-light rounded">
-                      <small className="text-muted">Replacement Cost</small>
-                      <p className="mb-0 fw-semibold text-danger">LKR {book.replacementCost.toFixed(2)}</p>
-                    </div>
-                  </Col>
-                )}
-              </Row>
-
-              {book.subjectHeadings && (
-                <div className="mt-4">
-                  <h6 className="fw-semibold">Subject Headings</h6>
-                  <div className="d-flex gap-2 flex-wrap">
-                    {book.subjectHeadings.split(',').map((tag, idx) => (
-                      <Badge key={idx} bg="secondary">{tag.trim()}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Reserve Modal */}
-      <Modal show={showReserveModal} onHide={() => setShowReserveModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <i className="bi bi-bookmark-plus me-2"></i>
-            {book?.availableCopies > 0 ? 'Reserve Book' : 'Join Waiting Queue'}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            You are about to reserve <strong>"{book?.title}"</strong> by {book?.author}.
-          </p>
-          {book?.availableCopies > 0 ? (
-            <Alert variant="info" className="py-2 small">
-              <i className="bi bi-info-circle me-1"></i>
-              This book is available. Visit the library and show your{' '}
-              <strong>Student ID or Reservation number</strong> to collect it.
-            </Alert>
-          ) : (
-            <Alert variant="warning" className="py-2 small">
-              <i className="bi bi-clock me-1"></i>
-              All copies are borrowed. You will be notified when a copy becomes available.
-            </Alert>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" className="btn-pill" onClick={() => setShowReserveModal(false)}>Cancel</Button>
-          <Button variant="dark" className="btn-pill" onClick={handleReserve} disabled={reserving}>
-            {reserving ? <Spinner size="sm" className="me-2" /> : null}
-            Confirm Reservation
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+      {showReserveModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)' }}>
+          <div style={{ background: 'white', borderRadius: 24, padding: '36px', width: '100%', maxWidth: 460, boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
+            <h3 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', marginBottom: 12 }}>Confirm Reservation</h3>
+            <p style={{ color: '#64748b', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: 24 }}>
+              Are you sure you want to reserve <strong>"{book.title}"</strong>? 
+              Once reserved, you will need to pick it up from the library within 48 hours.
+            </p>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button onClick={() => setShowReserveModal(false)} style={{ flex: 1, padding: '14px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' }}>Cancel</button>
+              <button onClick={handleReserve} disabled={reserving} style={{ flex: 1, padding: '14px', background: 'linear-gradient(135deg, #ef5a24, #ff6b35)', color: 'white', border: 'none', borderRadius: 12, fontFamily: 'Poppins, sans-serif', fontWeight: 700, cursor: reserving ? 'not-allowed' : 'pointer', fontSize: '0.95rem', boxShadow: '0 8px 24px rgba(239,90,36,0.3)' }}>
+                {reserving ? <Spinner size="sm" /> : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

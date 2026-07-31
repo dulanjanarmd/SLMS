@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { reportAPI, borrowAPI } from '../services/api';
-import {
-  Container, Row, Col, Card, Table, Badge, Button, Alert, Spinner, Tab, Tabs
-} from 'react-bootstrap';
-import {
-  Chart as ChartJS, CategoryScale, LinearScale, BarElement,
-  Title, Tooltip, Legend, ArcElement
-} from 'chart.js';
+import { Spinner } from 'react-bootstrap';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -21,355 +16,189 @@ const LibrarianReports = () => {
   const [todayReturns, setTodayReturns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
 
-  useEffect(() => {
-    fetchAll();
-    const interval = setInterval(fetchAll, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  useEffect(() => { fetchAll(); const intv = setInterval(fetchAll, 30000); return () => clearInterval(intv); }, []);
 
   const fetchAll = async () => {
-    setLoading(true);
-    setError('');
+    setLoading(true); setError('');
     try {
-      const [statsRes, popularRes, overdueRes, inventoryRes, fineRes, todayLRes, todayRRes] = await Promise.allSettled([
-        reportAPI.getDashboardStats(),
-        reportAPI.getPopularBooks(10),
-        reportAPI.getOverdueItems(),
-        reportAPI.getInventory(),
-        reportAPI.getFineCollection(),
-        borrowAPI.getTodayLoans(),
-        borrowAPI.getTodayReturns(),
+      const [s, p, o, i, f, tl, tr] = await Promise.allSettled([
+        reportAPI.getDashboardStats(), reportAPI.getPopularBooks(10), reportAPI.getOverdueItems(), reportAPI.getInventory(), reportAPI.getFineCollection(), borrowAPI.getTodayLoans(), borrowAPI.getTodayReturns(),
       ]);
-      if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
-      if (popularRes.status === 'fulfilled') setPopularBooks(popularRes.value.data || []);
-      if (overdueRes.status === 'fulfilled') setOverdueItems(overdueRes.value.data || []);
-      if (inventoryRes.status === 'fulfilled') setInventory(inventoryRes.value.data || {});
-      if (fineRes.status === 'fulfilled') setFineReport(fineRes.value.data || {});
-      if (todayLRes.status === 'fulfilled') setTodayLoans(todayLRes.value.data || []);
-      if (todayRRes.status === 'fulfilled') setTodayReturns(todayRRes.value.data || []);
-    } catch {
-      setError('Failed to load report data.');
-    } finally {
-      setLoading(false);
-    }
+      if (s.status === 'fulfilled') setStats(s.value.data);
+      if (p.status === 'fulfilled') setPopularBooks(p.value.data || []);
+      if (o.status === 'fulfilled') setOverdueItems(o.value.data || []);
+      if (i.status === 'fulfilled') setInventory(i.value.data || {});
+      if (f.status === 'fulfilled') setFineReport(f.value.data || {});
+      if (tl.status === 'fulfilled') setTodayLoans(tl.value.data || []);
+      if (tr.status === 'fulfilled') setTodayReturns(tr.value.data || []);
+    } catch { setError('Failed to load report data.'); }
+    finally { setLoading(false); }
   };
 
   const exportCSV = (data, filename) => {
     if (!data.length) return;
     const keys = Object.keys(data[0]);
-    const csv = [
-      keys.join(','),
-      ...data.map(row => keys.map(k => `"${row[k] ?? ''}"`).join(','))
-    ].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
+    const csv = [keys.join(','), ...data.map(r => keys.map(k => `"${r[k] ?? ''}"`).join(','))].join('\n');
+    const b = new Blob([csv], { type: 'text/csv' });
+    const u = URL.createObjectURL(b);
+    const a = document.createElement('a'); a.href = u; a.download = filename; a.click();
+    URL.revokeObjectURL(u);
   };
 
   const inventoryChartData = inventory ? {
     labels: ['Available', 'Issued', 'Reserved', 'Unavailable'],
-    datasets: [{
-      data: [
-        inventory.availableBooks || 0,
-        inventory.issuedBooks || 0,
-        inventory.reservedBooks || 0,
-        inventory.unavailableBooks || 0
-      ],
-      backgroundColor: ['#198754', '#dc3545', '#ffc107', '#6c757d'],
-      borderWidth: 0,
-    }],
+    datasets: [{ data: [inventory.availableBooks||0, inventory.issuedBooks||0, inventory.reservedBooks||0, inventory.unavailableBooks||0], backgroundColor: ['#10b981', '#ef4444', '#f59e0b', '#64748b'], borderWidth: 0 }],
   } : null;
 
   const activityChartData = stats ? {
     labels: ["Today's Loans", "Today's Returns", 'Active Loans', 'Overdue'],
-    datasets: [{
-      label: 'Count',
-      data: [
-        stats.todayLoans || 0,
-        stats.todayReturns || 0,
-        stats.activeLoans || 0,
-        stats.overdueLoans || 0
-      ],
-      backgroundColor: ['#0d6efd', '#198754', '#0dcaf0', '#dc3545'],
-      borderRadius: 6,
-    }],
+    datasets: [{ label: 'Count', data: [stats.todayLoans||0, stats.todayReturns||0, stats.activeLoans||0, stats.overdueLoans||0], backgroundColor: ['#0ea5e9', '#10b981', '#8b5cf6', '#ef4444'], borderRadius: 6 }],
   } : null;
 
-  if (loading) {
-    return (
-      <Container className="py-5 text-center">
-        <Spinner animation="border" variant="primary" />
-      </Container>
-    );
-  }
+  const thStyle = { padding: '14px 20px', textAlign: 'left', fontWeight: 600, fontSize: '0.73rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9', whiteSpace: 'nowrap' };
+  const tabStyle = (isActive) => ({ padding: '12px 24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', borderBottom: isActive ? '3px solid #1a1a2e' : '3px solid transparent', color: isActive ? '#1a1a2e' : '#64748b', transition: 'all 0.2s', background: 'none', borderTop: 'none', borderLeft: 'none', borderRight: 'none', fontFamily: 'Poppins, sans-serif' });
+
+  if (loading) return <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div>;
 
   return (
-    <Container fluid className="px-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold mb-0">
-          <i className="bi bi-bar-chart-line me-2 text-primary"></i>Reports
-        </h2>
-        <Button variant="dark" className="btn-pill" onClick={fetchAll}>
-          Refresh
-        </Button>
+    <div style={{ padding: '32px 28px', maxWidth: 1300, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
+      {/* Header */}
+      <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #1a365d 50%, #059669 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>📊 Librarian Reports</h1>
+        <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Daily operations and comprehensive library statistics</p>
       </div>
 
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500 }}>⚠️ {error}</div>}
 
-      {/* Summary Stats */}
-      <Row className="g-3 mb-4">
-        {[
-          { label: "Today's Loans", value: stats?.todayLoans || 0, color: 'primary', icon: 'bi-book' },
-          { label: "Today's Returns", value: stats?.todayReturns || 0, color: 'success', icon: 'bi-arrow-return-left' },
-          { label: 'Active Loans', value: stats?.activeLoans || 0, color: 'info', icon: 'bi-journal-check' },
-          { label: 'Overdue', value: stats?.overdueLoans || 0, color: 'danger', icon: 'bi-exclamation-triangle' },
-          { label: 'Pending Reservations', value: stats?.pendingReservations || 0, color: 'warning', icon: 'bi-bookmark' },
-          { label: 'Outstanding Fines', value: `LKR ${(stats?.outstandingFines || 0).toFixed(0)}`, color: 'danger', icon: 'bi-cash-coin' },
-        ].map(s => (
-          <Col lg={2} md={4} sm={6} key={s.label}>
-            <Card className={`stat-card ${s.color} text-center`}>
-              <Card.Body>
-                <i className={`bi ${s.icon} fs-3 text-${s.color} mb-1 d-block`}></i>
-                <h5 className="fw-bold mb-0">{s.value}</h5>
-                <small className="text-muted">{s.label}</small>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid #e8ecf0', marginBottom: 24 }}>
+        <button style={tabStyle(activeTab === 'overview')} onClick={() => setActiveTab('overview')}>Overview</button>
+        <button style={tabStyle(activeTab === 'today')} onClick={() => setActiveTab('today')}>Today's Activity</button>
+        <button style={tabStyle(activeTab === 'fines')} onClick={() => setActiveTab('fines')}>Fines & Overdue</button>
+      </div>
 
-      {/* Charts */}
-      <Row className="g-4 mb-4">
-        <Col lg={4}>
-          <Card>
-            <Card.Header className="fw-semibold">
-              <i className="bi bi-pie-chart me-2"></i>Inventory Status
-            </Card.Header>
-            <Card.Body>
-              {inventoryChartData && (
-                <div style={{ height: 260 }}>
-                  <Doughnut
-                    data={inventoryChartData}
-                    options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }}
-                  />
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={8}>
-          <Card>
-            <Card.Header className="fw-semibold">
-              <i className="bi bi-bar-chart me-2"></i>Loan Activity
-            </Card.Header>
-            <Card.Body>
-              {activityChartData && (
-                <div style={{ height: 260 }}>
-                  <Bar
-                    data={activityChartData}
-                    options={{
-                      responsive: true, maintainAspectRatio: false,
-                      plugins: { legend: { display: false } },
-                      scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-                    }}
-                  />
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      {activeTab === 'overview' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          {inventoryChartData && (
+            <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 20px' }}>Current Inventory Status</h3>
+              <div style={{ height: 300 }}><Doughnut data={inventoryChartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Poppins', size: 12 } } } } }} /></div>
+            </div>
+          )}
+          {activityChartData && (
+            <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 20px' }}>Circulation Activity</h3>
+              <div style={{ height: 300 }}><Bar data={activityChartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }} /></div>
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Tabbed Reports */}
-      <Card>
-        <Card.Body>
-          <Tabs defaultActiveKey="today" className="mb-3">
-
-            {/* Today's Transactions */}
-            <Tab eventKey="today" title={<><i className="bi bi-calendar-day me-1"></i>Today</>}>
-              <Row className="g-3">
-                <Col md={6}>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h6 className="fw-semibold mb-0">Today's Loans ({todayLoans.length})</h6>
-                    <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(todayLoans, 'today_loans.csv')}>
-                      CSV
-                    </Button>
-                  </div>
-                  <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-                    <Table size="sm" striped hover className="mb-0">
-                      <thead><tr><th>User</th><th>Book</th><th>Due</th></tr></thead>
-                      <tbody>
-                        {todayLoans.length === 0
-                          ? <tr><td colSpan="3" className="text-center text-muted py-3">No loans today.</td></tr>
-                          : todayLoans.map(l => (
-                            <tr key={l.id}>
-                              <td>
-                                <div className="fw-semibold" style={{ fontSize: '0.82rem' }}>{l.userName}</div>
-                                <small className="text-muted">{l.studentStaffId}</small>
-                              </td>
-                              <td style={{ fontSize: '0.82rem' }}>{l.bookTitle}</td>
-                              <td style={{ fontSize: '0.82rem' }}>{l.dueDate}</td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h6 className="fw-semibold mb-0">Today's Returns ({todayReturns.length})</h6>
-                    <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(todayReturns, 'today_returns.csv')}>
-                      CSV
-                    </Button>
-                  </div>
-                  <div style={{ maxHeight: 300, overflowY: 'auto' }}>
-                    <Table size="sm" striped hover className="mb-0">
-                      <thead><tr><th>User</th><th>Book</th><th>Fine</th></tr></thead>
-                      <tbody>
-                        {todayReturns.length === 0
-                          ? <tr><td colSpan="3" className="text-center text-muted py-3">No returns today.</td></tr>
-                          : todayReturns.map(l => (
-                            <tr key={l.id}>
-                              <td>
-                                <div className="fw-semibold" style={{ fontSize: '0.82rem' }}>{l.userName}</div>
-                                <small className="text-muted">{l.studentStaffId}</small>
-                              </td>
-                              <td style={{ fontSize: '0.82rem' }}>{l.bookTitle}</td>
-                              <td className={l.fineAmount > 0 ? 'text-danger fw-bold' : ''} style={{ fontSize: '0.82rem' }}>
-                                {l.fineAmount > 0 ? `LKR ${l.fineAmount?.toFixed(2)}` : '—'}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                </Col>
-              </Row>
-            </Tab>
-
-            {/* Popular Books */}
-            <Tab eventKey="popular" title={<><i className="bi bi-fire me-1"></i>Popular Books</>}>
-              <div className="d-flex justify-content-end mb-2">
-                <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(popularBooks, 'popular_books.csv')}>
-                  Export CSV
-                </Button>
-              </div>
-              <Table striped hover responsive>
-                <thead>
-                  <tr><th>#</th><th>Title</th><th>Author</th><th>ISBN</th><th>Total Borrows</th><th>Available</th></tr>
-                </thead>
+      {activeTab === 'today' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                📤 Issued Today
+                <span style={{ background: 'rgba(14,165,233,0.1)', color: '#0ea5e9', padding: '4px 10px', borderRadius: 999, fontSize: '0.8rem' }}>{todayLoans.length}</span>
+              </h3>
+              <button onClick={() => exportCSV(todayLoans, 'today_issues.csv')} style={{ background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Export CSV</button>
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                <thead><tr style={{ background: 'white' }}>{['Book', 'Borrower', 'Time', 'Due Date'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
                 <tbody>
-                  {popularBooks.length === 0
-                    ? <tr><td colSpan="6" className="text-center text-muted py-3">No data.</td></tr>
-                    : popularBooks.map((b, i) => (
-                      <tr key={b.bookId}>
-                        <td className="fw-bold text-primary">{i + 1}</td>
-                        <td className="fw-semibold">{b.title}</td>
-                        <td>{b.author}</td>
-                        <td><small>{b.isbn}</small></td>
-                        <td><Badge bg="primary">{b.borrowCount}</Badge></td>
-                        <td>
-                          <Badge bg={b.availableCopies > 0 ? 'success' : 'danger'}>
-                            {b.availableCopies}/{b.totalCopies}
-                          </Badge>
-                        </td>
-                      </tr>
-                    ))}
+                  {todayLoans.length === 0 ? <tr><td colSpan={4} style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>No books issued today.</td></tr> : todayLoans.map((l, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
+                      <td style={{ padding: '16px 20px' }}><div style={{ fontWeight: 700, color: '#1a1a2e' }}>{l.bookTitle}</div><div style={{ fontSize: '0.75rem', color: '#64748b' }}>{l.isbn}</div></td>
+                      <td style={{ padding: '16px 20px' }}><div style={{ fontWeight: 700, color: '#1a1a2e' }}>{l.userName}</div><div style={{ fontSize: '0.75rem', color: '#64748b' }}>{l.studentStaffId}</div></td>
+                      <td style={{ padding: '16px 20px', color: '#64748b' }}>{new Date(l.issueDate).toLocaleTimeString()}</td>
+                      <td style={{ padding: '16px 20px', color: '#374151', fontWeight: 600 }}>{l.dueDate}</td>
+                    </tr>
+                  ))}
                 </tbody>
-              </Table>
-            </Tab>
-
-            {/* Overdue */}
-            <Tab eventKey="overdue" title={<><i className="bi bi-exclamation-triangle me-1"></i>Overdue ({overdueItems.length})</>}>
-              <div className="d-flex justify-content-end mb-2">
-                <Button size="sm" variant="dark" className="btn-pill" onClick={() => exportCSV(overdueItems, 'overdue_books.csv')}>
-                  Export CSV
-                </Button>
-              </div>
-              <Table striped hover responsive>
-                <thead>
-                  <tr><th>User</th><th>Contact</th><th>Book</th><th>Due Date</th><th>Days Overdue</th><th>Fine</th></tr>
-                </thead>
+              </table>
+            </div>
+          </div>
+          <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                📥 Returned Today
+                <span style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '4px 10px', borderRadius: 999, fontSize: '0.8rem' }}>{todayReturns.length}</span>
+              </h3>
+              <button onClick={() => exportCSV(todayReturns, 'today_returns.csv')} style={{ background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Export CSV</button>
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                <thead><tr style={{ background: 'white' }}>{['Book', 'Borrower', 'Time Returned', 'Fine Paid'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
                 <tbody>
-                  {overdueItems.length === 0
-                    ? <tr><td colSpan="6" className="text-center text-muted py-3">No overdue items.</td></tr>
-                    : overdueItems.map(item => (
-                      <tr key={item.borrowId} className="table-danger">
-                        <td>
-                          <div className="fw-semibold">{item.userName}</div>
-                          <small>{item.studentStaffId}</small>
-                        </td>
-                        <td><small>{item.email}<br />{item.phoneNumber}</small></td>
-                        <td>
-                          <div className="fw-semibold">{item.bookTitle}</div>
-                          <small>{item.isbn}</small>
-                        </td>
-                        <td className="text-danger fw-bold">{item.dueDate}</td>
-                        <td><Badge bg="danger">{item.overdueDays} days</Badge></td>
-                        <td className="fw-bold text-danger">LKR {item.fineAmount?.toFixed(2)}</td>
-                      </tr>
-                    ))}
+                  {todayReturns.length === 0 ? <tr><td colSpan={4} style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>No books returned today.</td></tr> : todayReturns.map((r, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
+                      <td style={{ padding: '16px 20px' }}><div style={{ fontWeight: 700, color: '#1a1a2e' }}>{r.bookTitle}</div></td>
+                      <td style={{ padding: '16px 20px' }}><div style={{ fontWeight: 700, color: '#1a1a2e' }}>{r.userName}</div></td>
+                      <td style={{ padding: '16px 20px', color: '#64748b' }}>{new Date(r.returnDate).toLocaleTimeString()}</td>
+                      <td style={{ padding: '16px 20px', fontWeight: 700, color: r.fineAmount > 0 ? '#ef4444' : '#10b981' }}>{r.fineAmount > 0 ? `LKR ${r.fineAmount.toFixed(2)}` : 'None'}</td>
+                    </tr>
+                  ))}
                 </tbody>
-              </Table>
-            </Tab>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
 
-            {/* Inventory */}
-            <Tab eventKey="inventory" title={<><i className="bi bi-collection me-1"></i>Inventory</>}>
-              {inventory && (
-                <Row className="g-3 mt-1">
-                  {[
-                    { label: 'Total Books', value: inventory.totalBooks, color: 'primary' },
-                    { label: 'Available', value: inventory.availableBooks, color: 'success' },
-                    { label: 'Issued', value: inventory.issuedBooks, color: 'danger' },
-                    { label: 'Reserved', value: inventory.reservedBooks, color: 'warning' },
-                    { label: 'Unavailable', value: inventory.unavailableBooks, color: 'secondary' },
-                    { label: 'Total eBooks', value: inventory.totalEBooks, color: 'info' },
-                  ].map(s => (
-                    <Col md={2} key={s.label}>
-                      <Card className={`stat-card ${s.color} text-center`}>
-                        <Card.Body>
-                          <h4 className={`fw-bold text-${s.color} mb-0`}>{s.value || 0}</h4>
-                          <small className="text-muted">{s.label}</small>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              )}
-            </Tab>
+      {activeTab === 'fines' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24 }}>
+          {fineReport && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+              {[
+                { l: 'Total Outstanding Fines', v: `LKR ${(fineReport.totalOutstanding || 0).toFixed(2)}`, c: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+                { l: 'Total Collected Fines', v: `LKR ${(fineReport.totalCollected || 0).toFixed(2)}`, c: '#10b981', bg: 'rgba(16,185,129,0.1)' }
+              ].map(f => (
+                <div key={f.l} style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', padding: '24px', display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', color: f.c }}>💰</div>
+                  <div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: 900, color: f.c, lineHeight: 1 }}>{f.v}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600, marginTop: 4 }}>{f.l}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-            {/* Fine Collection */}
-            <Tab eventKey="fines" title={<><i className="bi bi-cash-coin me-1"></i>Fines</>}>
-              {fineReport && (
-                <Row className="g-3 mt-1">
-                  {[
-                    { label: 'Total Fines Issued', value: fineReport.totalFinesIssued || 0, color: 'primary' },
-                    { label: 'Total Collected', value: `LKR ${(fineReport.totalCollected || 0).toFixed(2)}`, color: 'success' },
-                    { label: 'Total Outstanding', value: `LKR ${(fineReport.totalOutstanding || 0).toFixed(2)}`, color: 'danger' },
-                    { label: 'Paid', value: fineReport.paidFines || 0, color: 'success' },
-                    { label: 'Unpaid', value: fineReport.unpaidFines || 0, color: 'danger' },
-                    { label: 'Waived', value: fineReport.waivedFines || 0, color: 'secondary' },
-                  ].map(s => (
-                    <Col md={2} key={s.label}>
-                      <Card className={`stat-card ${s.color} text-center`}>
-                        <Card.Body>
-                          <h5 className={`fw-bold text-${s.color} mb-0`}>{s.value}</h5>
-                          <small className="text-muted">{s.label}</small>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              )}
-            </Tab>
-
-          </Tabs>
-        </Card.Body>
-      </Card>
-    </Container>
+          <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+                Currently Overdue Items
+                <span style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '4px 10px', borderRadius: 999, fontSize: '0.8rem' }}>{overdueItems.length}</span>
+              </h3>
+              <button onClick={() => exportCSV(overdueItems, 'overdue_items.csv')} style={{ background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Export CSV</button>
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                <thead><tr style={{ background: 'white' }}>{['Borrower', 'Contact', 'Book', 'Due Date', 'Days Overdue'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {overdueItems.length === 0 ? <tr><td colSpan={5} style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>No overdue items.</td></tr> : overdueItems.map((o, i) => {
+                    const days = Math.ceil((new Date() - new Date(o.dueDate)) / 86400000);
+                    return (
+                      <tr key={i} style={{ borderBottom: '1px solid #f8fafc', background: 'rgba(239,68,68,0.02)' }}>
+                        <td style={{ padding: '16px 20px' }}><div style={{ fontWeight: 700, color: '#1a1a2e' }}>{o.userName}</div><div style={{ fontSize: '0.75rem', color: '#64748b' }}>{o.studentStaffId}</div></td>
+                        <td style={{ padding: '16px 20px', color: '#64748b' }}>{o.userEmail}</td>
+                        <td style={{ padding: '16px 20px' }}><div style={{ fontWeight: 700, color: '#1a1a2e' }}>{o.bookTitle}</div></td>
+                        <td style={{ padding: '16px 20px', color: '#ef4444', fontWeight: 600 }}>{o.dueDate}</td>
+                        <td style={{ padding: '16px 20px', color: '#ef4444', fontWeight: 800 }}>{days} Days</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

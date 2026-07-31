@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { reportAPI } from '../services/api';
-import { Container, Row, Col, Card, Table, Badge, Spinner, Button, Tabs, Tab } from 'react-bootstrap';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from 'chart.js';
+import { Spinner } from 'react-bootstrap';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -24,267 +15,125 @@ const Reports = () => {
   const [userActivity, setUserActivity] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchReports();
-  }, []);
+  useEffect(() => { fetchReports(); }, []);
 
   const fetchReports = async () => {
     try {
       const [popularRes, overdueRes, fineRes, inventoryRes, userRes] = await Promise.all([
-        reportAPI.getPopularBooks(10),
-        reportAPI.getOverdueItems(),
-        reportAPI.getFineCollection(),
-        reportAPI.getInventory(),
-        reportAPI.getUserActivity(),
+        reportAPI.getPopularBooks(10), reportAPI.getOverdueItems(), reportAPI.getFineCollection(), reportAPI.getInventory(), reportAPI.getUserActivity(),
       ]);
-      setPopularBooks(popularRes.data);
-      setOverdueItems(overdueRes.data);
-      setFineReport(fineRes.data);
-      setInventoryReport(inventoryRes.data);
-      setUserActivity(userRes.data);
-    } catch (err) {
-      console.error('Failed to fetch reports');
-    } finally {
-      setLoading(false);
-    }
+      setPopularBooks(popularRes.data); setOverdueItems(overdueRes.data); setFineReport(fineRes.data); setInventoryReport(inventoryRes.data); setUserActivity(userRes.data);
+    } catch { console.error('Failed to fetch reports'); }
+    finally { setLoading(false); }
   };
 
   const inventoryData = inventoryReport ? {
     labels: ['Available', 'Issued', 'Reserved'],
-    datasets: [{
-      data: [inventoryReport.availableBooks, inventoryReport.issuedBooks, inventoryReport.reservedBooks],
-      backgroundColor: ['#198754', '#dc3545', '#ffc107'],
-      borderWidth: 0,
-    }],
+    datasets: [{ data: [inventoryReport.availableBooks, inventoryReport.issuedBooks, inventoryReport.reservedBooks], backgroundColor: ['#10b981', '#ef4444', '#f59e0b'], borderWidth: 0 }],
   } : null;
 
   const fineData = fineReport ? {
     labels: ['Paid', 'Unpaid', 'Waived', 'Partially Paid'],
-    datasets: [{
-      label: 'Count',
-      data: [fineReport.paidFines, fineReport.unpaidFines, fineReport.waivedFines, 0],
-      backgroundColor: ['#198754', '#dc3545', '#6c757d', '#ffc107'],
-      borderRadius: 8,
-    }],
+    datasets: [{ label: 'Count', data: [fineReport.paidFines, fineReport.unpaidFines, fineReport.waivedFines, 0], backgroundColor: ['#10b981', '#ef4444', '#64748b', '#f59e0b'], borderRadius: 8 }],
   } : null;
 
-  if (loading) {
-    return (
-      <Container className="py-5 text-center">
-        <Spinner animation="border" variant="primary" />
-      </Container>
-    );
-  }
+  const thStyle = { padding: '14px 20px', textAlign: 'left', fontWeight: 600, fontSize: '0.73rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9', whiteSpace: 'nowrap' };
+  const tabStyle = (isActive) => ({ padding: '12px 24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', borderBottom: isActive ? '3px solid #1a1a2e' : '3px solid transparent', color: isActive ? '#1a1a2e' : '#64748b', transition: 'all 0.2s', background: 'none', borderTop: 'none', borderLeft: 'none', borderRight: 'none', fontFamily: 'Poppins, sans-serif' });
+
+  if (loading) return <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div>;
 
   return (
-    <Container fluid className="px-4">
-      <h2 className="fw-bold mb-4">
-        <i className="bi bi-graph-up me-2"></i>Reports & Analytics
-      </h2>
+    <div style={{ padding: '32px 28px', maxWidth: 1300, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
+      {/* Header */}
+      <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #4c1d95 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>📈 Reports & Analytics</h1>
+        <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Deep dive into library metrics and usage data</p>
+      </div>
 
-      <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} className="mb-4">
-        {/* Overview Tab */}
-        <Tab eventKey="overview" title={<span><i className="bi bi-grid me-1"></i>Overview</span>}>
-          <Row className="g-4">
-            <Col lg={6}>
-              <Card>
-                <Card.Header className="fw-semibold">Inventory Distribution</Card.Header>
-                <Card.Body>
-                  {inventoryData && (
-                    <div style={{ height: '250px' }}>
-                      <Doughnut
-                        data={inventoryData}
-                        options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }}
-                      />
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={6}>
-              <Card>
-                <Card.Header className="fw-semibold">Fine Status Distribution</Card.Header>
-                <Card.Body>
-                  {fineData && (
-                    <div style={{ height: '250px' }}>
-                      <Bar
-                        data={fineData}
-                        options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }}
-                      />
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+      <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid #e8ecf0', marginBottom: 24 }}>
+        <button style={tabStyle(activeTab === 'overview')} onClick={() => setActiveTab('overview')}>Overview</button>
+        <button style={tabStyle(activeTab === 'books')} onClick={() => setActiveTab('books')}>Popular Books</button>
+        <button style={tabStyle(activeTab === 'overdue')} onClick={() => setActiveTab('overdue')}>Overdue Items</button>
+      </div>
 
-          <Row className="g-4 mt-2">
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-primary fw-bold">{userActivity?.totalUsers || 0}</h3>
-                <small className="text-muted">Total Registered Users</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-success fw-bold">{userActivity?.activeUsers || 0}</h3>
-                <small className="text-muted">Active Users</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-warning fw-bold">{userActivity?.usersWithFines || 0}</h3>
-                <small className="text-muted">Users with Fines</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-info fw-bold">{userActivity?.totalBorrowRecords || 0}</h3>
-                <small className="text-muted">Total Borrow Records</small>
-              </Card>
-            </Col>
-          </Row>
-        </Tab>
+      {activeTab === 'overview' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          {inventoryData && (
+            <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 20px' }}>Inventory Distribution</h3>
+              <div style={{ height: 300 }}><Doughnut data={inventoryData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Poppins', size: 12 } } } } }} /></div>
+            </div>
+          )}
+          {fineData && (
+            <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+              <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 20px' }}>Fine Collection Stats</h3>
+              <div style={{ height: 300 }}><Bar data={fineData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }} /></div>
+            </div>
+          )}
+        </div>
+      )}
 
-        {/* Popular Books Tab */}
-        <Tab eventKey="popular" title={<span><i className="bi bi-fire me-1"></i>Popular Books</span>}>
-          <Card>
-            <Card.Header className="fw-semibold">Top 10 Most Borrowed Books</Card.Header>
-            <Card.Body className="p-0">
-              <Table striped hover>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>ISBN</th>
-                    <th>Total Borrows</th>
-                    <th>Available</th>
+      {activeTab === 'books' && (
+        <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 20px' }}>Top 10 Most Popular Books</h3>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+              <thead><tr style={{ background: 'white' }}>{['Book Title', 'Author', 'ISBN', 'Borrow Count'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+              <tbody>
+                {popularBooks.length === 0 ? <tr><td colSpan={4} style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>No data available</td></tr> : popularBooks.map((b, i) => (
+                  <tr key={b.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                    <td style={{ padding: '16px 20px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: '50%', background: i < 3 ? 'linear-gradient(135deg, #f59e0b, #fbbf24)' : '#f1f5f9', color: i < 3 ? 'white' : '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.8rem' }}>{i + 1}</div>
+                        <span style={{ fontWeight: 700, color: '#1a1a2e' }}>{b.title}</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: '16px 20px', color: '#64748b' }}>{b.author}</td>
+                    <td style={{ padding: '16px 20px', color: '#64748b' }}>{b.isbn}</td>
+                    <td style={{ padding: '16px 20px', fontWeight: 700, color: '#0ea5e9' }}>{b.borrowCount} Times</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {popularBooks.map((book, idx) => (
-                    <tr key={book.bookId}>
-                      <td>{idx + 1}</td>
-                      <td className="fw-semibold">{book.title}</td>
-                      <td>{book.author}</td>
-                      <td>{book.isbn}</td>
-                      <td>
-                        <Badge bg="primary">{book.borrowCount} borrows</Badge>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'overdue' && (
+        <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+          <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 20px', display: 'flex', alignItems: 'center', gap: 8 }}>
+            Currently Overdue Items
+            <span style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '4px 10px', borderRadius: 999, fontSize: '0.8rem' }}>{overdueItems.length}</span>
+          </h3>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+              <thead><tr style={{ background: 'white' }}>{['Borrower', 'Book', 'Issue Date', 'Due Date', 'Days Overdue'].map(h => <th key={h} style={thStyle}>{h}</th>)}</tr></thead>
+              <tbody>
+                {overdueItems.length === 0 ? <tr><td colSpan={5} style={{ padding: 24, textAlign: 'center', color: '#64748b' }}>No overdue items.</td></tr> : overdueItems.map((o, i) => {
+                  const days = Math.ceil((new Date() - new Date(o.dueDate)) / 86400000);
+                  return (
+                    <tr key={i} style={{ borderBottom: '1px solid #f8fafc', background: 'rgba(239,68,68,0.02)' }}>
+                      <td style={{ padding: '16px 20px' }}>
+                        <div style={{ fontWeight: 700, color: '#1a1a2e' }}>{o.userName}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{o.studentStaffId}</div>
                       </td>
-                      <td>
-                        <Badge bg={book.availableCopies > 0 ? 'success' : 'danger'}>
-                          {book.availableCopies}/{book.totalCopies}
-                        </Badge>
+                      <td style={{ padding: '16px 20px' }}>
+                        <div style={{ fontWeight: 700, color: '#1a1a2e' }}>{o.bookTitle}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{o.isbn}</div>
                       </td>
+                      <td style={{ padding: '16px 20px', color: '#64748b' }}>{o.issueDate}</td>
+                      <td style={{ padding: '16px 20px', color: '#ef4444', fontWeight: 600 }}>{o.dueDate}</td>
+                      <td style={{ padding: '16px 20px', color: '#ef4444', fontWeight: 800 }}>{days} Days</td>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Tab>
-
-        {/* Overdue Tab */}
-        <Tab eventKey="overdue" title={<span><i className="bi bi-exclamation-triangle me-1"></i>Overdue Items</span>}>
-          <Card>
-            <Card.Header className="fw-semibold text-danger">
-              Overdue Books ({overdueItems.length})
-            </Card.Header>
-            <Card.Body className="p-0">
-              <div style={{ maxHeight: '500px', overflow: 'auto' }}>
-                <Table striped hover className="mb-0">
-                  <thead>
-                    <tr>
-                      <th>User</th>
-                      <th>Student ID</th>
-                      <th>Book</th>
-                      <th>ISBN</th>
-                      <th>Due Date</th>
-                      <th>Days Overdue</th>
-                      <th>Fine (LKR)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {overdueItems.length === 0 ? (
-                      <tr>
-                        <td colSpan="7" className="text-center text-muted py-4">No overdue items</td>
-                      </tr>
-                    ) : (
-                      overdueItems.map((item) => (
-                        <tr key={item.borrowId}>
-                          <td>{item.userName}</td>
-                          <td>{item.studentStaffId}</td>
-                          <td className="fw-semibold">{item.bookTitle}</td>
-                          <td>{item.isbn}</td>
-                          <td className="text-danger">{item.dueDate}</td>
-                          <td className="text-danger fw-semibold">{item.overdueDays} days</td>
-                          <td className="text-danger fw-semibold">{item.fineAmount.toFixed(2)}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </Table>
-              </div>
-            </Card.Body>
-          </Card>
-        </Tab>
-
-        {/* Fine Collection Tab */}
-        <Tab eventKey="fines" title={<span><i className="bi bi-cash-coin me-1"></i>Fine Collection</span>}>
-          <Row className="g-4 mb-4">
-            <Col md={4}>
-              <Card className="text-center p-4 stat-card success">
-                <h3 className="text-success fw-bold">LKR {(fineReport?.totalCollected || 0).toFixed(2)}</h3>
-                <small className="text-muted">Total Collected</small>
-              </Card>
-            </Col>
-            <Col md={4}>
-              <Card className="text-center p-4 stat-card danger">
-                <h3 className="text-danger fw-bold">LKR {(fineReport?.totalOutstanding || 0).toFixed(2)}</h3>
-                <small className="text-muted">Total Outstanding</small>
-              </Card>
-            </Col>
-            <Col md={4}>
-              <Card className="text-center p-4 stat-card primary">
-                <h3 className="text-primary fw-bold">{fineReport?.totalFinesIssued || 0}</h3>
-                <small className="text-muted">Total Fines Issued</small>
-              </Card>
-            </Col>
-          </Row>
-        </Tab>
-
-        {/* Inventory Tab */}
-        <Tab eventKey="inventory" title={<span><i className="bi bi-box-seam me-1"></i>Inventory</span>}>
-          <Row className="g-4">
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-primary">{inventoryReport?.totalBooks || 0}</h4>
-                <small className="text-muted">Total Books</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-success">{inventoryReport?.availableBooks || 0}</h4>
-                <small className="text-muted">Available</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-danger">{inventoryReport?.issuedBooks || 0}</h4>
-                <small className="text-muted">Issued</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-warning">{inventoryReport?.reservedBooks || 0}</h4>
-                <small className="text-muted">Reserved</small>
-              </Card>
-            </Col>
-          </Row>
-        </Tab>
-      </Tabs>
-    </Container>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

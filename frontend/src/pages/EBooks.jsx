@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ebookAPI } from '../services/api';
-import { Container, Row, Col, Card, Form, Button, Badge, Spinner, Alert, Modal } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 
-const emptyEbookForm = {
-  title: '', author: '', isbn: '', description: '',
-  publisher: '', publicationYear: '', language: 'English',
-};
+const emptyEbookForm = { title: '', author: '', isbn: '', description: '', publisher: '', publicationYear: '', language: 'English' };
 
 const EBooks = () => {
   const { user } = useAuth();
@@ -19,26 +15,17 @@ const EBooks = () => {
 
   const isLibrarian = user?.role === 'LIBRARIAN' || user?.role === 'ADMIN';
 
-  // Upload modal state
   const [showUpload, setShowUpload] = useState(false);
   const [ebookForm, setEbookForm] = useState(emptyEbookForm);
   const [pdfFile, setPdfFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    fetchEBooks();
-  }, []);
+  useEffect(() => { fetchEBooks(); }, []);
 
   const fetchEBooks = async () => {
-    try {
-      setLoading(true);
-      const response = await ebookAPI.getAllPublic();
-      setEbooks(Array.isArray(response.data) ? response.data : []);
-    } catch (err) {
-      setError('Failed to load eBooks');
-    } finally {
-      setLoading(false);
-    }
+    try { setLoading(true); const res = await ebookAPI.getAllPublic(); setEbooks(Array.isArray(res.data) ? res.data : []); }
+    catch { setError('Failed to load eBooks'); }
+    finally { setLoading(false); }
   };
 
   const handleSearch = async (e) => {
@@ -46,308 +33,169 @@ const EBooks = () => {
     try {
       setLoading(true);
       if (searchKeyword.trim()) {
-        const response = await ebookAPI.search(searchKeyword, { page: 0, size: 12 });
-        setEbooks(response.data?.content || response.data || []);
-      } else {
-        fetchEBooks();
-      }
-    } catch (err) {
-      setError('Search failed');
-    } finally {
-      setLoading(false);
-    }
+        const res = await ebookAPI.search(searchKeyword, { page: 0, size: 12 });
+        setEbooks(res.data?.content || res.data || []);
+      } else { fetchEBooks(); }
+    } catch { setError('Search failed'); }
+    finally { setLoading(false); }
   };
 
   const handleUpload = async (e) => {
-    e.preventDefault();
-    if (!pdfFile) { setError('Please select a PDF file.'); return; }
-    setUploading(true);
-    setError('');
+    e.preventDefault(); if (!pdfFile) { setError('Please select a PDF file.'); return; }
+    setUploading(true); setError('');
     try {
-      const formData = new FormData();
-      formData.append('title', ebookForm.title);
-      formData.append('author', ebookForm.author);
-      if (ebookForm.isbn) formData.append('isbn', ebookForm.isbn);
-      if (ebookForm.description) formData.append('description', ebookForm.description);
-      if (ebookForm.publisher) formData.append('publisher', ebookForm.publisher);
-      if (ebookForm.publicationYear) formData.append('publicationYear', ebookForm.publicationYear);
-      if (ebookForm.language) formData.append('language', ebookForm.language);
-      formData.append('file', pdfFile);
-      await ebookAPI.upload(formData);
+      const fd = new FormData();
+      Object.keys(ebookForm).forEach(k => { if (ebookForm[k]) fd.append(k, ebookForm[k]); });
+      fd.append('file', pdfFile);
+      await ebookAPI.upload(fd);
       setSuccess('eBook uploaded successfully.');
-      setShowUpload(false);
-      setEbookForm(emptyEbookForm);
-      setPdfFile(null);
-      fetchEBooks();
-    } catch (err) {
-      setError(err.response?.data?.message || 'Upload failed.');
-    } finally {
-      setUploading(false);
-    }
+      setShowUpload(false); setEbookForm(emptyEbookForm); setPdfFile(null); fetchEBooks();
+      setTimeout(() => setSuccess(''), 4000);
+    } catch (err) { setError(err.response?.data?.message || 'Upload failed.'); }
+    finally { setUploading(false); }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this eBook?')) return;
-    try {
-      await ebookAPI.delete(id);
-      setSuccess('eBook deleted.');
-      fetchEBooks();
-    } catch {
-      setError('Delete failed.');
-    }
+    try { await ebookAPI.delete(id); setSuccess('eBook deleted.'); fetchEBooks(); setTimeout(() => setSuccess(''), 4000); }
+    catch { setError('Delete failed.'); }
   };
 
   const handleDownload = async (id, title) => {
-    const canDownload = user?.isMember || user?.role === 'LIBRARIAN' || user?.role === 'ADMIN';
-    if (!canDownload) {
-      setError('Library membership is required to download eBooks.');
-      return;
-    }
     try {
-      const response = await ebookAPI.download(id);
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${title}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      setError('Download failed. Please login first.');
-    }
+      const res = await ebookAPI.download(id);
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a'); link.href = url; link.setAttribute('download', `${title.replace(/\s+/g, '_')}.pdf`);
+      document.body.appendChild(link); link.click(); link.remove();
+    } catch { setError('Download failed.'); }
   };
 
-  const getFormatIcon = (format) => {
-    switch (format?.toUpperCase()) {
-      case 'PDF': return 'bi-file-earmark-pdf text-danger';
-      case 'EPUB': return 'bi-book text-primary';
-      case 'MP4': return 'bi-film text-warning';
-      default: return 'bi-file-earmark text-secondary';
-    }
-  };
-
-  const formatFileSize = (bytes) => {
-    if (!bytes) return 'Unknown';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
-  };
+  const inputStyle = { width: '100%', padding: '12px 16px', background: '#f8fafc', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontSize: '0.9rem', color: '#1e293b', outline: 'none', boxSizing: 'border-box' };
 
   return (
-    <Container>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold mb-0">
-          <i className="bi bi-file-earmark-pdf me-2"></i>eBooks & Digital Resources
-        </h2>
+    <div style={{ padding: '32px 28px', maxWidth: 1300, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
+      {/* Header */}
+      <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #8b5cf6 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>📱 E-Books Digital Library</h1>
+          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem' }}>Read and download digital books instantly anywhere</p>
+        </div>
         {isLibrarian && (
-          <Button variant="dark" className="btn-pill" onClick={() => { setShowUpload(true); setEbookForm(emptyEbookForm); setPdfFile(null); }}>
-            <i className="bi bi-upload me-2"></i>Upload eBook
-          </Button>
+          <button onClick={() => setShowUpload(true)} style={{ background: 'white', color: '#4c1d95', border: 'none', borderRadius: 10, padding: '10px 20px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', display: 'flex', alignItems: 'center', gap: 8, zIndex: 1 }}>
+            + Upload E-Book
+          </button>
         )}
       </div>
 
-      {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
-      {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
 
-      {/* Search */}
-      <Card className="mb-4">
-        <Card.Body>
-          <Form onSubmit={handleSearch} className="d-flex gap-2">
-            <div className="search-bar flex-grow-1">
-              <i className="bi bi-search search-icon"></i>
-              <Form.Control
-                type="text"
-                placeholder="Search eBooks by title, author, or ISBN..."
-                value={searchKeyword}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-              />
-            </div>
-            <Button type="submit" variant="dark" className="btn-pill">
-              Search
-            </Button>
-            {searchKeyword && (
-              <Button variant="dark" className="btn-pill" onClick={() => { setSearchKeyword(''); fetchEBooks(); }}>
-                Clear
-              </Button>
-            )}
-          </Form>
-        </Card.Body>
-      </Card>
+      <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px', marginBottom: 24 }}>
+        <form onSubmit={handleSearch} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <div style={{ flex: 1, position: 'relative' }}>
+            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1rem' }}>🔍</span>
+            <input type="text" placeholder="Search digital library..." value={searchKeyword} onChange={e => setSearchKeyword(e.target.value)}
+              style={{ ...inputStyle, paddingLeft: 42, background: 'white' }}
+              onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.12)'; }}
+              onBlur={e => { e.target.style.borderColor = '#e8ecf0'; e.target.style.boxShadow = 'none'; }} />
+          </div>
+          <button type="submit" style={{ background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', color: 'white', border: 'none', borderRadius: 10, padding: '0 28px', height: 46, fontWeight: 700, fontFamily: 'Poppins, sans-serif', fontSize: '0.9rem', cursor: 'pointer' }}>
+            Search
+          </button>
+        </form>
+      </div>
 
-      {/* eBooks Grid */}
       {loading ? (
-        <div className="text-center py-5">
-          <Spinner animation="border" variant="primary" />
-        </div>
+        <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#8b5cf6' }} /></div>
       ) : ebooks.length === 0 ? (
-        <Alert variant="info">No eBooks found.</Alert>
+        <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '60px', textAlign: 'center', color: '#9ca3af' }}>
+          <div style={{ fontSize: '3rem', marginBottom: 12 }}>📱</div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>No eBooks found</div>
+          <div style={{ fontSize: '0.88rem' }}>Adjust your search terms to find digital content.</div>
+        </div>
       ) : (
-        <Row>
-          {ebooks.map((ebook) => (
-            <Col key={ebook.id} lg={3} md={4} sm={6} className="mb-4">
-              <Card className="h-100">
-                <div
-                  className="d-flex align-items-center justify-content-center text-white"
-                  style={{
-                    height: '160px',
-                    background: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)',
-                    borderRadius: '12px 12px 0 0',
-                  }}
-                >
-                  <i className={`bi ${getFormatIcon(ebook.fileFormat).split(' ')[0]} fs-1`}></i>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 20 }}>
+          {ebooks.map(ebook => (
+            <div key={ebook.id} style={{ background: 'white', borderRadius: 16, overflow: 'hidden', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.1)'; e.currentTarget.style.borderColor = 'rgba(139,92,246,0.3)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}>
+              <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 12, background: 'linear-gradient(135deg, rgba(139,92,246,0.1), rgba(109,40,217,0.1))', color: '#6d28d9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem' }}>📱</div>
+                  <span style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '3px 10px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 700 }}>E-BOOK</span>
                 </div>
-                <Card.Body className="p-3">
-                  <div className="d-flex gap-2 mb-2">
-                    <Badge bg="danger">{ebook.fileFormat}</Badge>
-                    <Badge bg="secondary">{formatFileSize(ebook.fileSize)}</Badge>
-                  </div>
-                  <Card.Title className="book-title">{ebook.title}</Card.Title>
-                  <Card.Text className="text-muted mb-1" style={{ fontSize: '0.85rem' }}>
-                    <i className="bi bi-person me-1"></i>{ebook.author}
-                  </Card.Text>
-                  {ebook.publisher && (
-                    <Card.Text className="text-muted mb-1" style={{ fontSize: '0.8rem' }}>
-                      {ebook.publisher} {ebook.publicationYear && `(${ebook.publicationYear})`}
-                    </Card.Text>
+                <h3 style={{ fontWeight: 800, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 6px', lineHeight: 1.3 }}>{ebook.title}</h3>
+                <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0 0 12px' }}>by {ebook.author}</p>
+                {ebook.description && <p style={{ color: '#475569', fontSize: '0.85rem', lineHeight: 1.6, margin: '0 0 16px', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ebook.description}</p>}
+                
+                <div style={{ marginTop: 'auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, background: '#f8fafc', padding: '12px', borderRadius: 8, marginBottom: 20 }}>
+                  <div><div style={{ fontSize: '0.7rem', color: '#9ca3af' }}>Size</div><div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#374151' }}>{(ebook.fileSize / 1024 / 1024).toFixed(1)} MB</div></div>
+                  <div><div style={{ fontSize: '0.7rem', color: '#9ca3af' }}>Format</div><div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#374151' }}>PDF</div></div>
+                </div>
+                
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button onClick={() => handleDownload(ebook.id, ebook.title)} style={{ flex: 1, background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>⬇️ Download</button>
+                  {isLibrarian && (
+                    <button onClick={() => handleDelete(ebook.id)} style={{ padding: '0 16px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>🗑️</button>
                   )}
-                  <div className="d-flex justify-content-between align-items-center mt-2">
-                    <small className="text-muted">
-                      <i className="bi bi-download me-1"></i>{ebook.downloadCount} downloads
-                    </small>
-                  </div>
-                  {user?.isMember || user?.role === 'LIBRARIAN' || user?.role === 'ADMIN' ? (
-                    <div className="d-grid gap-1 mt-2">
-                      <Button
-                        variant="dark"
-                        size="sm"
-                        className="btn-pill"
-                        onClick={() => handleDownload(ebook.id, ebook.title)}
-                      >
-                        <i className="bi bi-download me-1"></i>Download
-                      </Button>
-                      {isLibrarian && (
-                        <Button variant="outline-danger" size="sm" className="btn-pill" onClick={() => handleDelete(ebook.id)}>
-                          <i className="bi bi-trash me-1"></i>Delete
-                        </Button>
-                      )}
-                    </div>
-                  ) : (
-                    <Button as={Link} to="/membership" variant="dark" size="sm" className="w-100 mt-2 btn-pill">
-                      Members Only
-                    </Button>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
+                </div>
+              </div>
+            </div>
           ))}
-        </Row>
+        </div>
       )}
 
-      {/* Upload eBook Modal — librarian only */}
-      <Modal show={showUpload} onHide={() => setShowUpload(false)} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title><i className="bi bi-upload me-2"></i>Upload eBook</Modal.Title>
-        </Modal.Header>
-        <Form onSubmit={handleUpload}>
-          <Modal.Body>
-            <Row className="g-3">
-              <Col md={8}>
-                <Form.Group>
-                  <Form.Label>Title <span className="text-danger">*</span></Form.Label>
-                  <Form.Control
-                    required
-                    value={ebookForm.title}
-                    onChange={e => setEbookForm({ ...ebookForm, title: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label>Author <span className="text-danger">*</span></Form.Label>
-                  <Form.Control
-                    required
-                    value={ebookForm.author}
-                    onChange={e => setEbookForm({ ...ebookForm, author: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label>ISBN</Form.Label>
-                  <Form.Control
-                    value={ebookForm.isbn}
-                    onChange={e => setEbookForm({ ...ebookForm, isbn: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label>Publisher</Form.Label>
-                  <Form.Control
-                    value={ebookForm.publisher}
-                    onChange={e => setEbookForm({ ...ebookForm, publisher: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Year</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={ebookForm.publicationYear}
-                    onChange={e => setEbookForm({ ...ebookForm, publicationYear: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={2}>
-                <Form.Group>
-                  <Form.Label>Language</Form.Label>
-                  <Form.Control
-                    value={ebookForm.language}
-                    onChange={e => setEbookForm({ ...ebookForm, language: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={12}>
-                <Form.Group>
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    value={ebookForm.description}
-                    onChange={e => setEbookForm({ ...ebookForm, description: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={12}>
-                <Form.Group>
-                  <Form.Label>PDF File <span className="text-danger">*</span></Form.Label>
-                  <Form.Control
-                    type="file"
-                    accept="application/pdf"
-                    onChange={e => setPdfFile(e.target.files[0] || null)}
-                  />
-                  {pdfFile && (
-                    <Form.Text className="text-success">
-                      <i className="bi bi-file-earmark-pdf me-1"></i>
-                      {pdfFile.name} ({(pdfFile.size / 1024 / 1024).toFixed(2)} MB)
-                    </Form.Text>
-                  )}
-                </Form.Group>
-              </Col>
-            </Row>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowUpload(false)}>Cancel</Button>
-            <Button variant="dark" className="btn-pill" type="submit" disabled={uploading}>
-              {uploading ? <><Spinner size="sm" className="me-2" />Uploading...</> : <><i className="bi bi-upload me-2"></i>Upload eBook</>}
-            </Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
-    </Container>
+      {/* Upload Modal */}
+      {showUpload && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)', padding: 20 }}>
+          <div style={{ background: 'white', borderRadius: 24, padding: '32px', width: '100%', maxWidth: 600, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
+            <h3 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: '0 0 24px' }}>Upload E-Book</h3>
+            <form onSubmit={handleUpload}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Title *</label>
+                  <input required value={ebookForm.title} onChange={e => setEbookForm({ ...ebookForm, title: e.target.value })} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Author *</label>
+                  <input required value={ebookForm.author} onChange={e => setEbookForm({ ...ebookForm, author: e.target.value })} style={inputStyle} />
+                </div>
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Description</label>
+                <textarea rows="3" value={ebookForm.description} onChange={e => setEbookForm({ ...ebookForm, description: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>ISBN</label>
+                  <input value={ebookForm.isbn} onChange={e => setEbookForm({ ...ebookForm, isbn: e.target.value })} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Year</label>
+                  <input type="number" value={ebookForm.publicationYear} onChange={e => setEbookForm({ ...ebookForm, publicationYear: e.target.value })} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Language</label>
+                  <input value={ebookForm.language} onChange={e => setEbookForm({ ...ebookForm, language: e.target.value })} style={inputStyle} />
+                </div>
+              </div>
+              <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 12, border: '1.5px dashed #cbd5e1', textAlign: 'center', marginBottom: 24 }}>
+                <div style={{ fontSize: '2rem', marginBottom: 8 }}>📄</div>
+                <div style={{ fontWeight: 600, color: '#374151', marginBottom: 8 }}>Select PDF File *</div>
+                <input type="file" accept="application/pdf" required onChange={e => setPdfFile(e.target.files[0])} style={{ fontSize: '0.85rem' }} />
+              </div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button type="button" onClick={() => setShowUpload(false)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" disabled={uploading} style={{ flex: 1, padding: '12px', background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', color: 'white', border: 'none', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 700, cursor: uploading ? 'not-allowed' : 'pointer' }}>
+                  {uploading ? <Spinner size="sm" /> : 'Upload'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
