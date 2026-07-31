@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { reportAPI, borrowAPI, reservationAPI } from '../services/api';
-import { Container, Row, Col, Card, Table, Badge, Spinner, Alert, Button } from 'react-bootstrap';
+import { Spinner, Container, Row, Col, Card, Table, Badge, Alert, Button } from 'react-bootstrap';
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement,
   Title, Tooltip, Legend, ArcElement,
@@ -9,6 +9,66 @@ import {
 import { Bar, Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+
+const S = {
+  page: { padding: '32px 24px', maxWidth: '1400px', margin: '0 auto' },
+  banner: {
+    background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)',
+    borderRadius: '20px', padding: '32px 40px', color: 'white',
+    marginBottom: '28px', position: 'relative', overflow: 'hidden',
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  },
+  card: {
+    background: 'white', borderRadius: '16px',
+    border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    overflow: 'hidden',
+  },
+};
+
+const StatCard = ({ icon, value, label, color }) => {
+  const colors = {
+    orange: { bg: 'rgba(239,90,36,0.10)', text: '#ef5a24' },
+    green:  { bg: 'rgba(16,185,129,0.10)', text: '#10b981' },
+    red:    { bg: 'rgba(239,68,68,0.10)',  text: '#ef4444' },
+    purple: { bg: 'rgba(99,102,241,0.10)', text: '#6366f1' },
+    amber:  { bg: 'rgba(245,158,11,0.10)', text: '#f59e0b' },
+    pink:   { bg: 'rgba(244,114,182,0.10)', text: '#ec4899' },
+  };
+  const c = colors[color] || colors.orange;
+  return (
+    <div style={{
+      background: 'white', borderRadius: '16px', padding: '24px',
+      border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+      position: 'relative', overflow: 'hidden', transition: 'all 0.22s',
+    }}>
+      <div style={{
+        width: 48, height: 48, borderRadius: 12, background: c.bg,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        marginBottom: 16, fontSize: '1.4rem', color: c.text,
+      }}>{icon}</div>
+      <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1a1a2e', lineHeight: 1 }}>{value}</div>
+      <div style={{ fontSize: '0.78rem', fontWeight: 500, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: 6 }}>{label}</div>
+    </div>
+  );
+};
+
+const TableCard = ({ title, badge, badgeColor = '#ef4444', children }) => (
+  <div style={{ ...S.card, marginBottom: 0 }}>
+    <div style={{
+      padding: '16px 24px', borderBottom: '1px solid #f1f5f9',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+      <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}>{title}</span>
+      {badge !== undefined && (
+        <span style={{
+          background: badgeColor + '18', color: badgeColor, borderRadius: 6,
+          padding: '3px 10px', fontSize: '0.78rem', fontWeight: 700,
+        }}>{badge}</span>
+      )}
+    </div>
+    <div style={{ maxHeight: 300, overflowY: 'auto' }}>{children}</div>
+  </div>
+);
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
@@ -45,21 +105,6 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading && !stats) return (
-    <Container className="py-5 text-center">
-      <Spinner animation="border" variant="primary" />
-    </Container>
-  );
-
-  if (error && !stats) return (
-    <Container className="py-4">
-      <Alert variant="danger">
-        {error}
-        <div className="mt-2"><Button size="sm" variant="outline-danger" onClick={fetchData}>Retry</Button></div>
-      </Alert>
-    </Container>
-  );
-
   const usersByRole = stats?.usersByRole || {};
 
   const bookStatusData = {
@@ -70,7 +115,7 @@ const Dashboard = () => {
         stats?.activeLoans || 0,
         stats?.pendingReservations || 0,
       ],
-      backgroundColor: ['#198754', '#dc3545', '#ffc107'],
+      backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
       borderWidth: 0,
     }],
   };
@@ -80,209 +125,311 @@ const Dashboard = () => {
     datasets: [{
       label: 'Count',
       data: [stats?.todayLoans || 0, stats?.todayReturns || 0, stats?.activeLoans || 0, stats?.overdueLoans || 0],
-      backgroundColor: ['#0d6efd', '#198754', '#0dcaf0', '#dc3545'],
+      backgroundColor: ['#ef5a24', '#10b981', '#6366f1', '#ef4444'],
       borderRadius: 8,
+      borderSkipped: false,
     }],
   };
 
+  if (loading && !stats) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+      <Spinner animation="border" style={{ color: '#ef5a24' }} />
+    </div>
+  );
+
+  if (error && !stats) return (
+    <div style={S.page}>
+      <Alert variant="danger">
+        {error}
+        <div className="mt-2">
+          <Button size="sm" variant="outline-danger" onClick={fetchData}>Retry</Button>
+        </div>
+      </Alert>
+    </div>
+  );
+
+  const quickActions = [
+    { to: '/users',      label: 'Manage Users',   icon: '👥', color: '#ef5a24' },
+    { to: '/books',      label: 'Manage Books',   icon: '📚', color: '#10b981' },
+    { to: '/categories', label: 'Categories',     icon: '🏷️', color: '#6366f1' },
+    { to: '/reports',    label: 'Reports',        icon: '📈', color: '#f59e0b' },
+    { to: '/books',      label: 'Inventory',      icon: '📦', color: '#0ea5e9' },
+    { to: '/reports',    label: 'Audit Logs',     icon: '🔍', color: '#ec4899' },
+  ];
+
   return (
-    <Container fluid>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold mb-0">
-          <i className="bi bi-speedometer2 me-2"></i>Admin Dashboard
-        </h2>
-        <Button variant="outline-primary" size="sm" onClick={fetchData}>
-          <i className="bi bi-arrow-clockwise me-1"></i>Refresh
-        </Button>
+    <div style={S.page} className="animate-fade-in">
+      {/* Banner */}
+      <div style={S.banner}>
+        <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', bottom: -60, right: 80, width: 150, height: 150, background: 'rgba(255,255,255,0.04)', borderRadius: '50%' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.7, marginBottom: 8, fontFamily: 'Poppins, sans-serif' }}>
+            Admin Portal
+          </div>
+          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8, fontFamily: 'Poppins, sans-serif' }}>Dashboard</h1>
+          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem', fontFamily: 'Poppins, sans-serif' }}>
+            Real-time overview of library operations
+          </p>
+        </div>
+        <button
+          onClick={fetchData}
+          style={{
+            background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)',
+            color: 'white', borderRadius: 10, padding: '10px 20px', cursor: 'pointer',
+            fontWeight: 600, fontSize: '0.85rem', fontFamily: 'Poppins, sans-serif',
+            position: 'relative', zIndex: 1, backdropFilter: 'blur(8px)',
+          }}
+        >
+          🔄 Refresh
+        </button>
       </div>
 
-      {/* Top stat cards */}
-      <Row className="g-3 mb-4">
-        <Col lg={3} md={6}>
-          <Card className="stat-card primary h-100">
-            <Card.Body>
-              <div className="d-flex align-items-center mb-2">
-                <i className="bi bi-people fs-2 text-primary me-3"></i>
-                <div>
-                  <h4 className="mb-0">{stats?.totalUsers || 0}</h4>
-                  <small className="text-muted">Total Users</small>
-                </div>
-              </div>
-              <div className="d-flex flex-wrap gap-1 mt-2">
-                <Badge bg="info" className="fw-normal">Students: {usersByRole.STUDENT || 0}</Badge>
-                <Badge bg="warning" text="dark" className="fw-normal">Faculty: {usersByRole.FACULTY || 0}</Badge>
-                <Badge bg="success" className="fw-normal">Librarians: {usersByRole.LIBRARIAN || 0}</Badge>
-                <Badge bg="danger" className="fw-normal">Admins: {usersByRole.ADMIN || 0}</Badge>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={2} md={6}>
-          <Card className="stat-card success text-center h-100">
-            <Card.Body>
-              <i className="bi bi-book fs-2 text-success mb-2 d-block"></i>
-              <h4 className="mb-0">{stats?.totalBooks || 0}</h4>
-              <small className="text-muted">Total Books</small>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={2} md={6}>
-          <Card className="stat-card warning text-center h-100">
-            <Card.Body>
-              <i className="bi bi-journal-check fs-2 text-warning mb-2 d-block"></i>
-              <h4 className="mb-0">{stats?.activeLoans || 0}</h4>
-              <small className="text-muted">Active Loans</small>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={2} md={6}>
-          <Card className="stat-card danger text-center h-100">
-            <Card.Body>
-              <i className="bi bi-exclamation-triangle fs-2 text-danger mb-2 d-block"></i>
-              <h4 className="mb-0">{stats?.overdueLoans || 0}</h4>
-              <small className="text-muted">Overdue</small>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={3} md={6}>
-          <Card className="stat-card danger text-center h-100">
-            <Card.Body>
-              <i className="bi bi-cash-coin fs-2 text-danger mb-2 d-block"></i>
-              <h5 className="mb-0">LKR {(stats?.outstandingFines || 0).toFixed(2)}</h5>
-              <small className="text-muted">Outstanding Fines</small>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      {/* Quick Actions */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 28 }}>
+        {quickActions.map(a => (
+          <Link
+            key={a.label}
+            to={a.to}
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+              padding: '18px 12px', background: 'white', borderRadius: 14,
+              border: '1.5px solid #e8ecf0', textDecoration: 'none',
+              transition: 'all 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+              fontFamily: 'Poppins, sans-serif',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = a.color;
+              e.currentTarget.style.transform = 'translateY(-3px)';
+              e.currentTarget.style.boxShadow = `0 8px 24px ${a.color}22`;
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = '#e8ecf0';
+              e.currentTarget.style.transform = '';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
+            }}
+          >
+            <span style={{ fontSize: '1.6rem' }}>{a.icon}</span>
+            <span style={{ fontWeight: 600, fontSize: '0.8rem', color: '#374151', textAlign: 'center' }}>{a.label}</span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Stats Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16, marginBottom: 28 }}>
+        <StatCard icon="👥" value={stats?.totalUsers || 0} label="Total Users" color="purple" />
+        <StatCard icon="📚" value={stats?.totalBooks || 0} label="Total Books" color="green" />
+        <StatCard icon="🏷️" value={stats?.totalCategories || 0} label="Categories" color="pink" />
+        <StatCard icon="📒" value={stats?.activeLoans || 0} label="Active Loans" color="amber" />
+        <StatCard icon="⚠️" value={stats?.overdueLoans || 0} label="Overdue" color="red" />
+        <StatCard icon="💰" value={`LKR ${(stats?.outstandingFines || 0).toFixed(0)}`} label="Fines Due" color="orange" />
+      </div>
 
       {/* Charts */}
-      <Row className="g-4 mb-4">
-        <Col lg={4}>
-          <Card>
-            <Card.Header className="fw-semibold"><i className="bi bi-pie-chart me-2"></i>Book Status</Card.Header>
-            <Card.Body>
-              <div className="chart-container">
-                <Doughnut data={bookStatusData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }} />
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={8}>
-          <Card>
-            <Card.Header className="fw-semibold"><i className="bi bi-bar-chart me-2"></i>Loan Activity</Card.Header>
-            <Card.Body>
-              <div className="chart-container">
-                <Bar data={loanActivityData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }} />
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, marginBottom: 28 }}>
+        <div style={S.card}>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>
+            📊 Book Status
+          </div>
+          <div style={{ padding: 20, height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Doughnut
+              data={bookStatusData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { position: 'bottom', labels: { font: { family: 'Poppins' }, padding: 16 } },
+                },
+              }}
+            />
+          </div>
+          {/* Role breakdown (moved from the first stat card) */}
+          <div style={{ padding: '12px 24px 20px', borderTop: '1px solid #f1f5f9' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <span style={{ background: 'rgba(99,102,241,0.10)', color: '#6366f1', borderRadius: 8, padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'Poppins, sans-serif' }}>
+                Students: {usersByRole.STUDENT || 0}
+              </span>
+              <span style={{ background: 'rgba(245,158,11,0.12)', color: '#d97706', borderRadius: 8, padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'Poppins, sans-serif' }}>
+                Faculty: {usersByRole.FACULTY || 0}
+              </span>
+              <span style={{ background: 'rgba(16,185,129,0.10)', color: '#059669', borderRadius: 8, padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'Poppins, sans-serif' }}>
+                Librarians: {usersByRole.LIBRARIAN || 0}
+              </span>
+              <span style={{ background: 'rgba(239,68,68,0.10)', color: '#dc2626', borderRadius: 8, padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600, fontFamily: 'Poppins, sans-serif' }}>
+                Admins: {usersByRole.ADMIN || 0}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div style={S.card}>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>
+            📈 Loan Activity
+          </div>
+          <div style={{ padding: 20, height: 340 }}>
+            <Bar
+              data={loanActivityData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0, font: { family: 'Poppins' } },
+                    grid: { color: '#f1f5f9' },
+                  },
+                  x: {
+                    ticks: { font: { family: 'Poppins' } },
+                    grid: { display: false },
+                  },
+                },
+              }}
+            />
+          </div>
+        </div>
+      </div>
 
-      {/* Quick actions */}
-      <Row className="g-3 mb-4">
-        <Col md={12}>
-          <Card>
-            <Card.Header className="fw-semibold"><i className="bi bi-lightning me-2"></i>Quick Actions</Card.Header>
-            <Card.Body className="d-flex flex-wrap gap-3">
-              <Button as={Link} to="/users" variant="primary"><i className="bi bi-people me-2"></i>Manage Users</Button>
-              <Button as={Link} to="/books" variant="outline-primary"><i className="bi bi-book me-2"></i>Manage Books</Button>
-              <Button as={Link} to="/categories" variant="outline-secondary"><i className="bi bi-tags me-2"></i>Categories</Button>
-              <Button as={Link} to="/reports" variant="outline-success"><i className="bi bi-graph-up me-2"></i>Reports</Button>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      {/* Tables */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
+        <TableCard title="⚠️ Overdue Loans" badge={overdueLoans.length} badgeColor="#ef4444">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
+            <thead>
+              <tr style={{ background: '#f8fafc' }}>
+                {['User', 'Book', 'Due Date', 'Fine'].map(h => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: '10px 16px', textAlign: 'left', fontWeight: 600,
+                      fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase',
+                      letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9',
+                    }}
+                  >{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {overdueLoans.length === 0
+                ? <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>🚫 No overdue loans</td></tr>
+                : overdueLoans.slice(0, 8).map(loan => {
+                    const days = Math.floor((new Date() - new Date(loan.dueDate)) / 86400000);
+                    return (
+                      <tr key={loan.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                        <td style={{ padding: '10px 16px' }}>
+                          <div style={{ fontWeight: 600, color: '#1a1a2e' }}>{loan.userName}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{loan.studentStaffId}</div>
+                        </td>
+                        <td style={{ padding: '10px 16px', color: '#374151' }}>{loan.bookTitle}</td>
+                        <td style={{ padding: '10px 16px' }}>
+                          <span style={{ color: '#ef4444', fontWeight: 600, fontSize: '0.82rem' }}>{loan.dueDate}</span>
+                          <div style={{ fontSize: '0.73rem', color: '#9ca3af' }}>{days}d overdue</div>
+                        </td>
+                        <td style={{ padding: '10px 16px', color: '#ef4444', fontWeight: 700 }}>LKR {(days * 5).toFixed(0)}</td>
+                      </tr>
+                    );
+                  })}
+            </tbody>
+          </table>
+        </TableCard>
 
-      {/* Overdue + Today's Loans */}
-      <Row className="g-4 mb-4">
-        <Col lg={6}>
-          <Card>
-            <Card.Header className="d-flex justify-content-between align-items-center">
-              <span className="fw-semibold text-danger"><i className="bi bi-exclamation-triangle me-2"></i>Overdue Loans</span>
-              <Badge bg="danger">{overdueLoans.length}</Badge>
-            </Card.Header>
-            <Card.Body className="p-0">
-              <div style={{ maxHeight: 280, overflow: 'auto' }}>
-                <Table striped hover className="mb-0">
-                  <thead><tr><th>User</th><th>Book</th><th>Due Date</th><th>Fine</th></tr></thead>
-                  <tbody>
-                    {overdueLoans.length === 0
-                      ? <tr><td colSpan="4" className="text-center text-muted py-3">No overdue loans</td></tr>
-                      : overdueLoans.slice(0, 8).map((loan) => {
-                          const days = Math.floor((new Date() - new Date(loan.dueDate)) / 86400000);
-                          return (
-                            <tr key={loan.id}>
-                              <td><div className="fw-semibold">{loan.userName}</div><small className="text-muted">{loan.studentStaffId}</small></td>
-                              <td>{loan.bookTitle}</td>
-                              <td><span className="text-danger">{loan.dueDate}</span><br /><small className="text-muted">{days}d overdue</small></td>
-                              <td className="text-danger fw-semibold">LKR {(days * 5).toFixed(2)}</td>
-                            </tr>
-                          );
-                        })}
-                  </tbody>
-                </Table>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={6}>
-          <Card>
-            <Card.Header className="fw-semibold"><i className="bi bi-calendar-check me-2"></i>Today's Loans</Card.Header>
-            <Card.Body className="p-0">
-              <div style={{ maxHeight: 280, overflow: 'auto' }}>
-                <Table striped hover className="mb-0">
-                  <thead><tr><th>User</th><th>Book</th><th>Due Date</th><th>Status</th></tr></thead>
-                  <tbody>
-                    {todayLoans.length === 0
-                      ? <tr><td colSpan="4" className="text-center text-muted py-3">No loans today</td></tr>
-                      : todayLoans.map((loan) => (
-                          <tr key={loan.id}>
-                            <td><div className="fw-semibold">{loan.userName}</div><small className="text-muted">{loan.studentStaffId}</small></td>
-                            <td>{loan.bookTitle}</td>
-                            <td>{loan.dueDate}</td>
-                            <td><Badge bg={loan.status === 'ACTIVE' ? 'success' : 'secondary'}>{loan.status}</Badge></td>
-                          </tr>
-                        ))}
-                  </tbody>
-                </Table>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+        <TableCard title="📅 Today's Loans" badge={todayLoans.length} badgeColor="#10b981">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
+            <thead>
+              <tr style={{ background: '#f8fafc' }}>
+                {['User', 'Book', 'Due', 'Status'].map(h => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: '10px 16px', textAlign: 'left', fontWeight: 600,
+                      fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase',
+                      letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9',
+                    }}
+                  >{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {todayLoans.length === 0
+                ? <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>No loans today</td></tr>
+                : todayLoans.map(loan => (
+                    <tr key={loan.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                      <td style={{ padding: '10px 16px' }}>
+                        <div style={{ fontWeight: 600, color: '#1a1a2e' }}>{loan.userName}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{loan.studentStaffId}</div>
+                      </td>
+                      <td style={{ padding: '10px 16px', color: '#374151' }}>{loan.bookTitle}</td>
+                      <td style={{ padding: '10px 16px', fontSize: '0.82rem', color: '#374151' }}>{loan.dueDate}</td>
+                      <td style={{ padding: '10px 16px' }}>
+                        <span style={{
+                          background: loan.status === 'ACTIVE' ? 'rgba(16,185,129,0.1)' : 'rgba(100,116,139,0.1)',
+                          color: loan.status === 'ACTIVE' ? '#10b981' : '#64748b',
+                          borderRadius: 6, padding: '3px 10px', fontSize: '0.73rem', fontWeight: 700,
+                        }}>
+                          {loan.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </TableCard>
+      </div>
 
       {/* Pending Reservations */}
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header className="d-flex justify-content-between align-items-center">
-              <span className="fw-semibold text-warning"><i className="bi bi-bookmark me-2"></i>Pending Reservations</span>
-              <Badge bg="warning" text="dark">{pendingReservations.length}</Badge>
-            </Card.Header>
-            <Card.Body className="p-0">
-              <div style={{ maxHeight: 240, overflow: 'auto' }}>
-                <Table striped hover className="mb-0">
-                  <thead><tr><th>User</th><th>Book</th><th>Queue</th><th>Reserved On</th></tr></thead>
-                  <tbody>
-                    {pendingReservations.length === 0
-                      ? <tr><td colSpan="4" className="text-center text-muted py-3">No pending reservations</td></tr>
-                      : pendingReservations.map((res) => (
-                          <tr key={res.id}>
-                            <td><div className="fw-semibold">{res.userName}</div><small className="text-muted">{res.studentStaffId}</small></td>
-                            <td>{res.bookTitle}</td>
-                            <td>#{res.queuePosition}</td>
-                            <td>{new Date(res.reservationDate).toLocaleDateString()}</td>
-                          </tr>
-                        ))}
-                  </tbody>
-                </Table>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+      <div style={{ ...S.card, marginBottom: 0 }}>
+        <div style={{
+          padding: '16px 24px', borderBottom: '1px solid #f1f5f9',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>
+            📑 Pending Reservations
+          </span>
+          <span style={{
+            background: 'rgba(245,158,11,0.12)', color: '#f59e0b', borderRadius: 6,
+            padding: '3px 10px', fontSize: '0.78rem', fontWeight: 700, fontFamily: 'Poppins, sans-serif',
+          }}>{pendingReservations.length}</span>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
+            <thead>
+              <tr style={{ background: '#f8fafc' }}>
+                {['User', 'Book', 'Queue #', 'Reserved On'].map(h => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: '10px 20px', textAlign: 'left', fontWeight: 600,
+                      fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase',
+                      letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9', whiteSpace: 'nowrap',
+                    }}
+                  >{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {pendingReservations.length === 0
+                ? <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>No pending reservations</td></tr>
+                : pendingReservations.map(res => (
+                    <tr key={res.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                      <td style={{ padding: '12px 20px' }}>
+                        <div style={{ fontWeight: 600, color: '#1a1a2e' }}>{res.userName}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{res.studentStaffId}</div>
+                      </td>
+                      <td style={{ padding: '12px 20px', color: '#374151' }}>{res.bookTitle}</td>
+                      <td style={{ padding: '12px 20px' }}>
+                        <span style={{
+                          background: 'rgba(99,102,241,0.1)', color: '#6366f1',
+                          borderRadius: 6, padding: '3px 10px', fontSize: '0.78rem', fontWeight: 700,
+                        }}>#{res.queuePosition}</span>
+                      </td>
+                      <td style={{ padding: '12px 20px', fontSize: '0.82rem', color: '#374151' }}>
+                        {new Date(res.reservationDate).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 };
 

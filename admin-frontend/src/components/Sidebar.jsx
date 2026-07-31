@@ -26,10 +26,20 @@ const Sidebar = () => {
     <div className="admin-sidebar">
       <div className="sidebar-brand">
         <div className="d-flex align-items-center gap-2">
-          <i className="bi bi-shield-lock fs-4" style={{ color: 'var(--accent-blue)' }}></i>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: 'linear-gradient(135deg, rgba(239,90,36,0.25), rgba(239,90,36,0.08))',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(239,90,36,0.20)',
+            flexShrink: 0,
+          }}>
+            <i className="bi bi-shield-lock-fill" style={{ color: '#ef5a24', fontSize: '1.15rem' }}></i>
+          </div>
           <div>
-            <div className="fw-bold fs-6">SLIIT Library</div>
-            <small className="opacity-75">Admin Portal</small>
+            <div className="fw-bold fs-6" style={{ fontFamily: 'Poppins, sans-serif', letterSpacing: '-0.2px' }}>
+              <span style={{ color: '#ffffff' }}>Library</span><span style={{ color: '#ef5a24' }}>Hub</span>
+            </div>
+            <small className="opacity-75" style={{ fontFamily: 'Poppins, sans-serif' }}>Admin Portal</small>
           </div>
         </div>
       </div>
@@ -50,14 +60,14 @@ const Sidebar = () => {
       <div className="p-3 border-top border-secondary border-opacity-25">
         <div className="d-flex align-items-center gap-2 mb-3">
           <div className="rounded-circle d-flex align-items-center justify-content-center"
-               style={{ width: 36, height: 36, flexShrink: 0, background: 'var(--accent-blue)' }}>
+               style={{ width: 36, height: 36, flexShrink: 0, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', boxShadow: '0 4px 12px rgba(239,90,36,0.35)' }}>
             <i className="bi bi-person text-white"></i>
           </div>
           <div className="overflow-hidden">
-            <div className="fw-semibold text-truncate" style={{ fontSize: '0.85rem' }}>
+            <div className="fw-semibold text-truncate" style={{ fontSize: '0.85rem', fontFamily: 'Poppins, sans-serif' }}>
               {user?.fullName}
             </div>
-            <div className="opacity-75 text-truncate" style={{ fontSize: '0.75rem' }}>
+            <div className="opacity-75 text-truncate" style={{ fontSize: '0.75rem', fontFamily: 'Poppins, sans-serif' }}>
               {user?.email}
             </div>
           </div>
