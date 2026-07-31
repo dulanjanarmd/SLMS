@@ -793,4 +793,3 @@ const labelStyle = {
 };
 
 export default Events;
-     
