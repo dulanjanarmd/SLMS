@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface LibraryHoursRepository extends JpaRepository<LibraryHours, Long> {
     Optional<LibraryHours> findByDayOfWeek(String dayOfWeek);
-    List<LibraryHours> findAllByOrderByDisplayOrderAsc();
 }
