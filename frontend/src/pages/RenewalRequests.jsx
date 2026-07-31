@@ -135,17 +135,17 @@ const RenewalRequests = () => {
         <Modal.Body>
           {actionModal?.type === 'approve' ? (
             <>
-              <p>Approve renewal for <strong>"{actionModal.loan.bookTitle}"</strong>?</p>
+              <p>Approve renewal for <strong>"{actionModal?.loan?.bookTitle}"</strong>?</p>
               <p className="text-muted small mb-0">
-                Borrower: {actionModal.loan.userName} ({actionModal.loan.studentStaffId})<br />
+                Borrower: {actionModal?.loan?.userName} ({actionModal?.loan?.studentStaffId})<br />
                 A new due date will be set from today.
               </p>
             </>
           ) : (
             <>
-              <p>Deny renewal for <strong>"{actionModal.loan.bookTitle}"</strong>?</p>
+              <p>Deny renewal for <strong>"{actionModal?.loan?.bookTitle}"</strong>?</p>
               <p className="text-muted small mb-0">
-                The member will be notified and must return the book by the current due date: <strong>{actionModal?.loan.dueDate}</strong>.
+                The member will be notified and must return the book by the current due date: <strong>{actionModal?.loan?.dueDate}</strong>.
               </p>
             </>
           )}
