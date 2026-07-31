@@ -143,16 +143,16 @@ const AppNavbar = () => {
           {/* Desktop Nav Links — Center Middle */}
           <div className="navbar-desktop-links" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', flex: 1 }}>
             {[
-              { to: '/', label: 'Home', icon: '⌂' },
-              { to: '/books', label: 'Catalog', icon: '' },
-              { to: '/events', label: 'Events', icon: '' },
-              ...(user.role === 'LIBRARIAN' ? [{ to: '/dashboard', label: 'Dashboard', icon: '' }] : []),
-              ...(user.role === 'STUDENT' ? [{ to: '/student/dashboard', label: 'My Dashboard', icon: '' }] : []),
-              ...(user.role === 'FACULTY' ? [{ to: '/faculty/dashboard', label: 'My Dashboard', icon: '' }] : []),
-              ...((user.role === 'STUDENT' || user.role === 'FACULTY') ? [{ to: '/membership', label: 'Membership', icon: '🪪' }] : []),
-              { to: '/ebooks', label: 'eBooks', icon: '' },
-              { to: '/research-papers', label: 'Research', icon: '' },
-              { to: '/past-papers', label: 'Past Papers', icon: '' },
+              { to: '/', label: 'Home' },
+              { to: '/books', label: 'Catalog' },
+              { to: '/events', label: 'Events' },
+              ...(user.role === 'LIBRARIAN' ? [{ to: '/dashboard', label: 'Dashboard' }] : []),
+              ...(user.role === 'STUDENT' ? [{ to: '/student/dashboard', label: 'My Dashboard' }] : []),
+              ...(user.role === 'FACULTY' ? [{ to: '/faculty/dashboard', label: 'My Dashboard' }] : []),
+              ...((user.role === 'STUDENT' || user.role === 'FACULTY') ? [{ to: '/membership', label: 'Membership' }] : []),
+              { to: '/ebooks', label: 'eBooks' },
+              { to: '/research-papers', label: 'Research' },
+              { to: '/past-papers', label: 'Past Papers' },
             ].map(({ to, label }) => (
               <Link key={to} to={to} style={{
                 textDecoration: 'none',
@@ -206,9 +206,6 @@ const AppNavbar = () => {
                   }}
                 >
                   Librarian Tools
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: showLibrarianMenu ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
                 </button>
 
                 {showLibrarianMenu && (
@@ -226,19 +223,19 @@ const AppNavbar = () => {
                   }}>
                     <div style={{ padding: '8px' }}>
                       {[
-                        { to: '/librarian/issue', label: 'Issue Book', icon: '' },
-                        { to: '/librarian/return', label: 'Return Book', icon: '' },
+                        { to: '/librarian/issue', label: 'Issue Book' },
+                        { to: '/librarian/return', label: 'Return Book' },
                         null,
-                        { to: '/librarian/inventory', label: 'Inventory', icon: '' },
-                        { to: '/librarian/reservations', label: 'Reservations', icon: '' },
-                        { to: '/librarian/renewals', label: 'Renewal Requests', icon: '' },
-                        { to: '/librarian/fines', label: 'Fines', icon: '' },
-                        { to: '/librarian/events', label: 'Events', icon: '' },
+                        { to: '/librarian/inventory', label: 'Inventory' },
+                        { to: '/librarian/reservations', label: 'Reservations' },
+                        { to: '/librarian/renewals', label: 'Renewal Requests' },
+                        { to: '/librarian/fines', label: 'Fines' },
+                        { to: '/librarian/events', label: 'Events' },
                         null,
-                        { to: '/librarian/library-hours', label: 'Library Hours', icon: '' },
-                        { to: '/librarian/contact-info', label: 'Contact & Help', icon: '' },
+                        { to: '/librarian/library-hours', label: 'Library Hours' },
+                        { to: '/librarian/contact-info', label: 'Contact & Help' },
                         null,
-                        { to: '/librarian/reports', label: 'Reports', icon: '' },
+                        { to: '/librarian/reports', label: 'Reports' },
                       ].map((item, idx) => item === null ? (
                         <div key={`div-${idx}`} style={{ height: '1px', background: '#f3f4f6', margin: '4px 0' }} />
                       ) : (
@@ -262,7 +259,6 @@ const AppNavbar = () => {
                           onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.07)'; e.currentTarget.style.color = '#ef5a24'; }}
                           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#374151'; }}
                         >
-                          <span>{item.icon}</span>
                           {item.label}
                         </Link>
                       ))}
@@ -282,9 +278,8 @@ const AppNavbar = () => {
                 onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) fetchNotifications(); setShowUserMenu(false); setShowLibrarianMenu(false); }}
                 style={{
                   position: 'relative',
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
+                  padding: '6px 14px',
+                  borderRadius: '8px',
                   border: '1.5px solid rgba(0,0,0,0.08)',
                   background: showNotifications ? 'rgba(239,90,36,0.07)' : 'rgba(248,249,250,0.8)',
                   cursor: 'pointer',
@@ -293,19 +288,17 @@ const AppNavbar = () => {
                   justifyContent: 'center',
                   transition: 'all 0.2s',
                   color: showNotifications ? '#ef5a24' : '#000000',
+                  fontFamily: "'Poppins', sans-serif",
+                  fontWeight: 500,
+                  fontSize: '0.875rem',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.07)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.25)'; }}
                 onMouseLeave={e => { if (!showNotifications) { e.currentTarget.style.background = 'rgba(248,249,250,0.8)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; }}}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
+                Notifications
                 {unreadCount > 0 && (
                   <span style={{
-                    position: 'absolute',
-                    top: '-4px',
-                    right: '-4px',
+                    marginLeft: '6px',
                     background: '#ef5a24',
                     color: 'white',
                     borderRadius: '999px',
@@ -316,8 +309,8 @@ const AppNavbar = () => {
                     justifyContent: 'center',
                     fontSize: '0.65rem',
                     fontWeight: 700,
-                    border: '2px solid white',
-                    fontFamily: "'Poppins', sans-serif",
+                    padding: '0 6px',
+                    fontFamily: 'Poppins, sans-serif',
                   }}>
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
@@ -520,10 +513,10 @@ const AppNavbar = () => {
 
                   <div style={{ padding: '8px' }}>
                     {[
-                      { to: '/profile', label: 'My Profile', icon: '' },
-                      { to: '/my-books', label: 'My Books', icon: '' },
-                      { to: '/my-reservations', label: 'My Reservations', icon: '' },
-                      { to: '/my-fines', label: 'My Fines', icon: '' },
+                      { to: '/profile', label: 'My Profile' },
+                      { to: '/my-books', label: 'My Books' },
+                      { to: '/my-reservations', label: 'My Reservations' },
+                      { to: '/my-fines', label: 'My Fines' },
                     ].map(item => (
                       <Link
                         key={item.to}
@@ -545,7 +538,6 @@ const AppNavbar = () => {
                         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.07)'; e.currentTarget.style.color = '#ef5a24'; }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#374151'; }}
                       >
-                        <span>{item.icon}</span>
                         {item.label}
                       </Link>
                     ))}
@@ -574,7 +566,6 @@ const AppNavbar = () => {
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.07)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <span></span>
                       Logout
                     </button>
                   </div>
@@ -588,20 +579,18 @@ const AppNavbar = () => {
               onClick={() => setMobileOpen(!mobileOpen)}
               style={{
                 display: 'none',
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
+                padding: '6px 14px',
+                borderRadius: '8px',
                 border: '1.5px solid rgba(0,0,0,0.08)',
                 background: 'transparent',
                 cursor: 'pointer',
-                alignItems: 'center',
-                justifyContent: 'center',
                 color: '#374151',
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: 500,
+                fontSize: '0.875rem',
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                {mobileOpen ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></> : <><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></>}
-              </svg>
+              {mobileOpen ? 'Close' : 'Menu'}
             </button>
           </div>
         </div>

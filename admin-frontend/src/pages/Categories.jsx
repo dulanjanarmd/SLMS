@@ -169,10 +169,10 @@ const Categories = () => {
     <Container fluid>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold">
-          <i className="bi bi-tags me-2"></i>Category Management
+          Category Management
         </h2>
         <Button variant="primary" onClick={openAddModal}>
-          <i className="bi bi-plus-circle me-2"></i>Add Category
+          Add Category
         </Button>
       </div>
 
@@ -183,21 +183,18 @@ const Categories = () => {
       <Card className="mb-4">
         <Card.Body>
           <InputGroup>
-            <InputGroup.Text>
-              <i className="bi bi-search"></i>
-            </InputGroup.Text>
             <Form.Control
               type="text"
-              placeholder="Search by category name or description..."
+              placeholder="Search categories..."
               value={searchKeyword}
-              onChange={handleSearch}
+              onChange={(e) => setSearchKeyword(e.target.value)}
             />
             {searchKeyword && (
               <Button 
                 variant="outline-secondary" 
                 onClick={() => setSearchKeyword('')}
               >
-                <i className="bi bi-x-lg"></i>
+                Clear
               </Button>
             )}
           </InputGroup>
@@ -228,7 +225,6 @@ const Categories = () => {
                 filteredCategories.map((category) => (
                   <tr key={category.id}>
                     <td className="fw-semibold align-middle">
-                      <i className="bi bi-tag-fill me-2 text-primary"></i>
                       {category.name}
                     </td>
                     <td className="align-middle text-muted">
@@ -250,7 +246,7 @@ const Categories = () => {
                           onClick={() => openEditModal(category)}
                           title="Edit"
                         >
-                          <i className="bi bi-pencil"></i>
+                          Edit
                         </Button>
                         <Button
                           variant="outline-danger"
@@ -258,7 +254,7 @@ const Categories = () => {
                           onClick={() => openDeleteModal(category)}
                           title="Delete"
                         >
-                          <i className="bi bi-trash"></i>
+                          Delete
                         </Button>
                       </div>
                     </td>
@@ -338,7 +334,6 @@ const Categories = () => {
           {selectedCategory && (
             <div className="alert alert-warning">
               <strong>
-                <i className="bi bi-tag-fill me-2"></i>
                 {selectedCategory.name}
               </strong>
               <br />
@@ -351,7 +346,6 @@ const Categories = () => {
           )}
           {selectedCategory?.bookCount > 0 && (
             <p className="text-danger small mb-0">
-              <i className="bi bi-exclamation-triangle me-1"></i>
               Warning: Deleting this category may affect associated books. 
               Please reassign books to another category first.
             </p>

@@ -215,7 +215,7 @@ const Events = () => {
           }} />
         ))}
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0, marginBottom: 6 }}>📅 Event Management</h1>
+          <h1 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0, marginBottom: 6 }}>Event Management</h1>
           <p style={{ margin: 0, opacity: 0.78, fontSize: '0.92rem', maxWidth: 480 }}>
             Create, schedule and manage library events — workshops, author talks, closures, study sessions and more.
           </p>
@@ -232,17 +232,17 @@ const Events = () => {
         onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
         onMouseLeave={e => e.currentTarget.style.transform = ''}
         >
-          ➕ Create New Event
+          Create New Event
         </button>
       </div>
 
       {/* Stat row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 24 }}>
         {[
-          { i: '📅', l: 'Total Events', v: events.length, c: '#6366f1' },
-          { i: '🟢', l: 'Active', v: totalActive, c: '#10b981' },
-          { i: '⏳', l: 'Upcoming', v: totalUpcoming, c: '#ef5a24' },
-          { i: '🌐', l: 'Public', v: totalPublic, c: '#8b5cf6' },
+          { i: '', l: 'Total Events', v: events.length, c: '#6366f1' },
+          { i: '', l: 'Active', v: totalActive, c: '#10b981' },
+          { i: '', l: 'Upcoming', v: totalUpcoming, c: '#ef5a24' },
+          { i: '', l: 'Public', v: totalPublic, c: '#8b5cf6' },
         ].map(s => (
           <div key={s.l} style={{
             background: 'white', borderRadius: 18, padding: '20px 20px 22px',
@@ -293,14 +293,13 @@ const Events = () => {
           gap: 12, alignItems: 'center',
         }}>
           <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontSize: '1rem' }}>🔎</span>
             <input
               placeholder="Search by title, location or description..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               onFocus={() => setFocusField('search')}
               onBlur={() => setFocusField(null)}
-              style={{ ...inputStyle, paddingLeft: 42, ...(focusField === 'search' ? focusStyle : {}) }}
+              style={{ ...inputStyle, ...(focusField === 'search' ? focusStyle : {}) }}
             />
           </div>
           <select
@@ -310,7 +309,7 @@ const Events = () => {
             onBlur={() => setFocusField(null)}
             style={{ ...inputStyle, cursor: 'pointer', ...(focusField === 'cat' ? focusStyle : {}) }}
           >
-            <option value="ALL">📂 All Categories</option>
+            <option value="ALL">All Categories</option>
             {categoryOptions.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
           <button onClick={() => { setSearch(''); setFilterCat('ALL'); }} style={{
@@ -319,7 +318,7 @@ const Events = () => {
             border: '1.5px solid #6366f130',
             color: '#4f46e5', fontWeight: 700, fontSize: '0.82rem',
             cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
-          }}>✕ Clear</button>
+          }}>Clear</button>
         </div>
       </div>
 
@@ -353,7 +352,6 @@ const Events = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: '60px 40px', textAlign: 'center' }}>
-            <div style={{ fontSize: '3.2rem', marginBottom: 14 }}>📭</div>
             <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1a1a2e', marginBottom: 6 }}>No events found</div>
             <div style={{ color: '#64748b', fontSize: '0.88rem', marginBottom: 20 }}>
               {events.length === 0 ? "Get started by creating your first event." : "Try changing your filters or search query."}
@@ -363,7 +361,7 @@ const Events = () => {
                 background: 'linear-gradient(135deg, #1a1a2e, #4c1d95)',
                 color: 'white', border: 'none', padding: '11px 22px', borderRadius: 999,
                 fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
-              }}>➕ Create First Event</button>
+              }}>Create First Event</button>
             )}
           </div>
         ) : (
@@ -421,7 +419,6 @@ const Events = () => {
                 {/* Time */}
                 <div style={{ fontSize: '0.82rem', color: '#374151', fontWeight: 600 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span style={{ color: '#94a3b8' }}>🕒</span>
                     {fmtTime(ev.startTime)}
                     {ev.endTime && <span style={{ color: '#94a3b8' }}> — {fmtTime(ev.endTime)}</span>}
                   </div>
@@ -436,7 +433,6 @@ const Events = () => {
                       fontSize: '0.82rem', fontWeight: 600, color: '#374151', marginBottom: 4,
                       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     }}>
-                      <span style={{ color: '#ef5a24' }}>📍</span>
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{ev.location}</span>
                     </div>
                   )}
@@ -447,7 +443,7 @@ const Events = () => {
                     padding: '4px 12px', borderRadius: 999,
                     fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.3,
                   }}>
-                    🏷️ {ev.category || 'General'}
+                    {ev.category || 'General'}
                   </span>
                   {!ev.isPublic && ev.isActive && (
                     <span style={{
@@ -455,7 +451,7 @@ const Events = () => {
                       background: 'rgba(245,158,11,0.12)', color: '#d97706',
                       padding: '4px 10px', borderRadius: 999,
                       fontSize: '0.65rem', fontWeight: 700,
-                    }}>🔒 Private</span>
+                    }}>Private</span>
                   )}
                 </div>
 
@@ -797,3 +793,4 @@ const labelStyle = {
 };
 
 export default Events;
+     

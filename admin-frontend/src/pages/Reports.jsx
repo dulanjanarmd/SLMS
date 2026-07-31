@@ -79,12 +79,12 @@ const Reports = () => {
   return (
     <Container fluid className="px-4">
       <h2 className="fw-bold mb-4">
-        <i className="bi bi-graph-up me-2"></i>Reports & Analytics
+        Reports & Analytics
       </h2>
 
       <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} className="mb-4">
         {/* Overview Tab */}
-        <Tab eventKey="overview" title={<span><i className="bi bi-grid me-1"></i>Overview</span>}>
+        <Tab eventKey="overview" title="Overview">
           <Row className="g-4">
             <Col lg={6}>
               <Card>
@@ -147,7 +147,7 @@ const Reports = () => {
         </Tab>
 
         {/* Popular Books Tab */}
-        <Tab eventKey="popular" title={<span><i className="bi bi-fire me-1"></i>Popular Books</span>}>
+        <Tab eventKey="popular" title="Popular Books">
           <Card>
             <Card.Header className="fw-semibold">Top 10 Most Borrowed Books</Card.Header>
             <Card.Body className="p-0">
@@ -186,7 +186,7 @@ const Reports = () => {
         </Tab>
 
         {/* Overdue Tab */}
-        <Tab eventKey="overdue" title={<span><i className="bi bi-exclamation-triangle me-1"></i>Overdue Items</span>}>
+        <Tab eventKey="overdue" title="Overdue Items">
           <Card>
             <Card.Header className="fw-semibold text-danger">
               Overdue Books ({overdueItems.length})
@@ -231,7 +231,7 @@ const Reports = () => {
         </Tab>
 
         {/* Fine Collection Tab */}
-        <Tab eventKey="fines" title={<span><i className="bi bi-cash-coin me-1"></i>Fine Collection</span>}>
+        <Tab eventKey="fines" title="Fine Collection">
           <Row className="g-4 mb-4">
             <Col md={4}>
               <Card className="text-center p-4 stat-card success">
@@ -255,7 +255,7 @@ const Reports = () => {
         </Tab>
 
         {/* Inventory Tab */}
-        <Tab eventKey="inventory" title={<span><i className="bi bi-box-seam me-1"></i>Inventory</span>}>
+        <Tab eventKey="inventory" title="Inventory">
           <Row className="g-4">
             <Col md={3}>
               <Card className="text-center p-3">

@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
-import AdminLayout from './components/AdminLayout';
+import AdminNavbar from './components/AdminNavbar';
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -25,7 +25,10 @@ function App() {
             path="/dashboard"
             element={
               <PrivateRoute>
-                <AdminLayout><Dashboard /></AdminLayout>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Dashboard />
+                </div>
               </PrivateRoute>
             }
           />
@@ -33,7 +36,10 @@ function App() {
             path="/users"
             element={
               <PrivateRoute>
-                <AdminLayout><Users /></AdminLayout>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Users />
+                </div>
               </PrivateRoute>
             }
           />
@@ -41,7 +47,10 @@ function App() {
             path="/books"
             element={
               <PrivateRoute>
-                <AdminLayout><Books /></AdminLayout>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Books />
+                </div>
               </PrivateRoute>
             }
           />
@@ -49,7 +58,10 @@ function App() {
             path="/categories"
             element={
               <PrivateRoute>
-                <AdminLayout><Categories /></AdminLayout>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Categories />
+                </div>
               </PrivateRoute>
             }
           />
@@ -57,7 +69,10 @@ function App() {
             path="/reports"
             element={
               <PrivateRoute>
-                <AdminLayout><Reports /></AdminLayout>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Reports />
+                </div>
               </PrivateRoute>
             }
           />
@@ -65,7 +80,10 @@ function App() {
             path="/events"
             element={
               <PrivateRoute>
-                <AdminLayout><Events /></AdminLayout>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Events />
+                </div>
               </PrivateRoute>
             }
           />

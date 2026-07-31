@@ -92,7 +92,6 @@ const Login = () => {
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, background: 'white' }}>
           <div style={{ width: '100%', maxWidth: 460 }} className="animate-fade-in">
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
-              <i className="bi bi-key" style={{ fontSize: '3rem', color: '#ef5a24' }}></i>
               <h3 className="mt-2 fw-bold" style={{ color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>Reset Admin Password</h3>
             </div>
 
@@ -266,7 +265,6 @@ const Login = () => {
           <hr style={{ margin: '32px 0', borderColor: '#f1f5f9' }} />
 
           <div style={{ textAlign: 'center', color: '#64748b', fontSize: '0.95rem' }}>
-            <i className="bi bi-info-circle me-1"></i>
             Admin demo: <strong>admin@example.com</strong> / password
           </div>
 

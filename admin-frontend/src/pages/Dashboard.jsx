@@ -149,12 +149,12 @@ const Dashboard = () => {
   );
 
   const quickActions = [
-    { to: '/users',      label: 'Manage Users',   icon: '👥', color: '#ef5a24' },
-    { to: '/books',      label: 'Manage Books',   icon: '📚', color: '#10b981' },
-    { to: '/categories', label: 'Categories',     icon: '🏷️', color: '#6366f1' },
-    { to: '/reports',    label: 'Reports',        icon: '📈', color: '#f59e0b' },
-    { to: '/books',      label: 'Inventory',      icon: '📦', color: '#0ea5e9' },
-    { to: '/reports',    label: 'Audit Logs',     icon: '🔍', color: '#ec4899' },
+    { to: '/users',      label: 'Manage Users',   icon: '', color: '#ef5a24' },
+    { to: '/books',      label: 'Manage Books',   icon: '', color: '#10b981' },
+    { to: '/categories', label: 'Categories',     icon: '', color: '#6366f1' },
+    { to: '/reports',    label: 'Reports',        icon: '', color: '#f59e0b' },
+    { to: '/books',      label: 'Inventory',      icon: '', color: '#0ea5e9' },
+    { to: '/reports',    label: 'Audit Logs',     icon: '', color: '#ec4899' },
   ];
 
   return (
@@ -181,7 +181,7 @@ const Dashboard = () => {
             position: 'relative', zIndex: 1, backdropFilter: 'blur(8px)',
           }}
         >
-          🔄 Refresh
+          Refresh
         </button>
       </div>
 
@@ -217,19 +217,19 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16, marginBottom: 28 }}>
-        <StatCard icon="👥" value={stats?.totalUsers || 0} label="Total Users" color="purple" />
-        <StatCard icon="📚" value={stats?.totalBooks || 0} label="Total Books" color="green" />
-        <StatCard icon="🏷️" value={stats?.totalCategories || 0} label="Categories" color="pink" />
-        <StatCard icon="📒" value={stats?.activeLoans || 0} label="Active Loans" color="amber" />
-        <StatCard icon="⚠️" value={stats?.overdueLoans || 0} label="Overdue" color="red" />
-        <StatCard icon="💰" value={`LKR ${(stats?.outstandingFines || 0).toFixed(0)}`} label="Fines Due" color="orange" />
+        <StatCard icon="" value={stats?.totalUsers || 0} label="Total Users" color="purple" />
+        <StatCard icon="" value={stats?.totalBooks || 0} label="Total Books" color="green" />
+        <StatCard icon="" value={stats?.totalCategories || 0} label="Categories" color="pink" />
+        <StatCard icon="" value={stats?.activeLoans || 0} label="Active Loans" color="amber" />
+        <StatCard icon="" value={stats?.overdueLoans || 0} label="Overdue" color="red" />
+        <StatCard icon="" value={`LKR ${(stats?.outstandingFines || 0).toFixed(0)}`} label="Fines Due" color="orange" />
       </div>
 
       {/* Charts */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, marginBottom: 28 }}>
         <div style={S.card}>
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>
-            📊 Book Status
+            Book Status
           </div>
           <div style={{ padding: 20, height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Doughnut
@@ -263,7 +263,7 @@ const Dashboard = () => {
         </div>
         <div style={S.card}>
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>
-            📈 Loan Activity
+            Loan Activity
           </div>
           <div style={{ padding: 20, height: 340 }}>
             <Bar
@@ -291,7 +291,7 @@ const Dashboard = () => {
 
       {/* Tables */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
-        <TableCard title="⚠️ Overdue Loans" badge={overdueLoans.length} badgeColor="#ef4444">
+        <TableCard title="Overdue Loans" badge={overdueLoans.length} badgeColor="#ef4444">
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ background: '#f8fafc' }}>
@@ -309,7 +309,7 @@ const Dashboard = () => {
             </thead>
             <tbody>
               {overdueLoans.length === 0
-                ? <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>🚫 No overdue loans</td></tr>
+                ? <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>No overdue loans</td></tr>
                 : overdueLoans.slice(0, 8).map(loan => {
                     const days = Math.floor((new Date() - new Date(loan.dueDate)) / 86400000);
                     return (
@@ -331,7 +331,7 @@ const Dashboard = () => {
           </table>
         </TableCard>
 
-        <TableCard title="📅 Today's Loans" badge={todayLoans.length} badgeColor="#10b981">
+        <TableCard title="Today's Loans" badge={todayLoans.length} badgeColor="#10b981">
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ background: '#f8fafc' }}>
@@ -381,7 +381,7 @@ const Dashboard = () => {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e', fontFamily: 'Poppins, sans-serif' }}>
-            📑 Pending Reservations
+            Pending Reservations
           </span>
           <span style={{
             background: 'rgba(245,158,11,0.12)', color: '#f59e0b', borderRadius: 6,

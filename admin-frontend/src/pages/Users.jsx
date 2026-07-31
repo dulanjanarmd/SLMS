@@ -106,14 +106,14 @@ const Users = () => {
 
   return (
     <Container fluid>
-      <h2 className="fw-bold mb-4"><i className="bi bi-people me-2"></i>User Management</h2>
+      <h2 className="fw-bold mb-4">User Management</h2>
 
       {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
       {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
 
       <div className="d-flex justify-content-end mb-3">
         <Button variant="primary" onClick={() => setShowCreateModal(true)}>
-          <i className="bi bi-person-plus me-2"></i>Create Librarian Account
+          Create Librarian Account
         </Button>
       </div>
 
@@ -139,10 +139,10 @@ const Users = () => {
               <option value="LIBRARIAN">Librarian</option>
               <option value="ADMIN">Admin</option>
             </Form.Select>
-            <Button type="submit" variant="primary"><i className="bi bi-search"></i></Button>
+            <Button type="submit" variant="primary">Search</Button>
             {(searchKeyword || roleFilter) && (
               <Button variant="outline-secondary" onClick={() => { setSearchKeyword(''); setRoleFilter(''); setCurrentPage(0); fetchUsers(); }}>
-                <i className="bi bi-x-lg"></i>
+                Clear
               </Button>
             )}
           </Form>
@@ -183,7 +183,7 @@ const Users = () => {
                             onClick={() => handleToggleActive(u.id, u.isActive)}
                             title={u.isActive ? 'Deactivate' : 'Activate'}
                           >
-                            <i className={`bi ${u.isActive ? 'bi-person-x' : 'bi-person-check'}`}></i>
+                            {u.isActive ? 'Deactivate' : 'Activate'}
                           </Button>
                           <Button
                             variant="outline-primary"
@@ -191,7 +191,7 @@ const Users = () => {
                             onClick={() => openRoleModal(u)}
                             title="Change Role"
                           >
-                            <i className="bi bi-pencil"></i>
+                            Edit Role
                           </Button>
                         </div>
                       </td>

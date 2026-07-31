@@ -194,10 +194,10 @@ const Books = () => {
     <Container fluid>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold">
-          <i className="bi bi-book me-2"></i>Book Management
+          Book Management
         </h2>
         <Button variant="primary" onClick={openAddModal}>
-          <i className="bi bi-plus-circle me-2"></i>Add Book
+          Add Book
         </Button>
       </div>
 
@@ -230,7 +230,7 @@ const Books = () => {
               ))}
             </Form.Select>
             <Button type="submit" variant="primary">
-              <i className="bi bi-search"></i>
+              Search
             </Button>
             {(searchKeyword || categoryFilter) && (
               <Button 
@@ -242,7 +242,7 @@ const Books = () => {
                   fetchBooks();
                 }}
               >
-                <i className="bi bi-x-lg"></i>
+                Clear
               </Button>
             )}
           </Form>
@@ -312,7 +312,7 @@ const Books = () => {
                           onClick={() => openEditModal(book)}
                           title="Edit"
                         >
-                          <i className="bi bi-pencil"></i>
+                          Edit
                         </Button>
                         <Button
                           variant="outline-danger"
@@ -320,7 +320,7 @@ const Books = () => {
                           onClick={() => openDeleteModal(book)}
                           title="Delete"
                         >
-                          <i className="bi bi-trash"></i>
+                          Delete
                         </Button>
                       </div>
                     </td>
