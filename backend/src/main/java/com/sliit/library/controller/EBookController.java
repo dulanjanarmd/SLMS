@@ -3,6 +3,7 @@ package com.sliit.library.controller;
 import com.sliit.library.dto.*;
 import com.sliit.library.service.EBookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -42,11 +45,32 @@ public class EBookController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<byte[]> downloadEBook(@PathVariable Long id) throws IOException {
         byte[] fileContent = eBookService.downloadEBook(id);
-
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"ebook.pdf\"")
                 .body(fileContent);
+    }
+
+    @GetMapping("/ebooks/view/{id}")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<Resource> viewEBookOnline(@PathVariable Long id) throws MalformedURLException {
+        Resource resource = eBookService.viewEBookOnline(id);
+        if (!resource.exists()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"ebook.pdf\"")
+                .body(resource);
+    }
+
+    @GetMapping("/uploads/ebook-covers/{filename:.+}")
+    public ResponseEntity<Resource> getEBookCover(@PathVariable String filename) throws MalformedURLException {
+        Resource resource = eBookService.getEBookCover(filename);
+        if (!resource.exists()) return ResponseEntity.notFound().build();
+        String contentType = "image/jpeg";
+        try { contentType = Files.probeContentType(resource.getFile().toPath()); } catch (Exception ignored) {}
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType != null ? contentType : "image/jpeg"))
+                .body(resource);
     }
 
     @PostMapping(value = "/librarian/ebooks/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -59,10 +83,11 @@ public class EBookController {
             @RequestParam(value = "publisher", required = false) String publisher,
             @RequestParam(value = "publicationYear", required = false) Integer publicationYear,
             @RequestParam(value = "language", required = false) String language,
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "coverImage", required = false) MultipartFile coverImage) throws IOException {
 
         return ResponseEntity.ok(eBookService.uploadEBook(
-                title, author, isbn, description, publisher, publicationYear, language, file));
+                title, author, isbn, description, publisher, publicationYear, language, file, coverImage));
     }
 
     @DeleteMapping("/librarian/ebooks/{id}")

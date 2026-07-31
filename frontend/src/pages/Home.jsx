@@ -5,11 +5,15 @@ import { useAuth } from '../context/AuthContext';
 import { bookAPI, ebookAPI } from '../services/api';
 import { Spinner } from 'react-bootstrap';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+
 const Home = () => {
   const { user } = useAuth();
   const [popularBooks, setPopularBooks] = useState([]);
   const [newestBooks, setNewestBooks] = useState([]);
   const [ebooks, setEbooks] = useState([]);
+  const [viewingEbook, setViewingEbook] = useState(null);
+  const [viewBlob, setViewBlob] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { fetchData(); }, [user]);
@@ -33,6 +37,27 @@ const Home = () => {
       }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
+  };
+
+  const handleReadOnline = async (ebook) => {
+    try {
+      setViewingEbook(ebook);
+      setViewBlob(null);
+      const res = await fetch(`${API}/ebooks/view/${ebook.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      if (!res.ok) throw new Error('View failed');
+      const blob = await res.blob();
+      setViewBlob(URL.createObjectURL(blob));
+    } catch {
+      setViewingEbook(null); setViewBlob(null);
+      window.location.href = '/ebooks';
+    }
+  };
+
+  const closeReader = () => {
+    if (viewBlob) URL.revokeObjectURL(viewBlob);
+    setViewingEbook(null); setViewBlob(null);
   };
 
   const services = [
@@ -204,9 +229,15 @@ const Home = () => {
                   onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(99,102,241,0.15)'; e.currentTarget.style.borderColor = '#6366f160'; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}
                 >
-                  <div style={{ height: 110, background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '2.6rem' }}>
-                    📚
-                  </div>
+                  {ebook.coverImageUrl ? (
+                    <div style={{ height: 140, background: '#f8fafc', overflow: 'hidden', borderBottom: '1px solid #f1f5f9' }}>
+                      <img src={ebook.coverImageUrl} alt={ebook.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.currentTarget.style.display = 'none'; }} />
+                    </div>
+                  ) : (
+                    <div style={{ height: 110, background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '2.6rem' }}>
+                      📚
+                    </div>
+                  )}
                   <div style={{ padding: '16px 16px 18px', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
                     <div>
                       <h3 style={{ fontWeight: 800, fontSize: '0.98rem', color: '#1a1a2e', margin: '0 0 6px', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{ebook.title}</h3>
@@ -218,15 +249,45 @@ const Home = () => {
                       {ebook.fileSize != null && <div><div style={{ fontSize: '0.68rem', color: '#9ca3af' }}>Size</div><div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>{(ebook.fileSize / 1024 / 1024).toFixed(1)} MB</div></div>}
                       {ebook.language && <div><div style={{ fontSize: '0.68rem', color: '#9ca3af' }}>Lang</div><div style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>{ebook.language}</div></div>}
                     </div>
-                    <Link to="/ebooks" style={{ background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', color: 'white', border: 'none', borderRadius: 10, padding: '9px 14px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', textAlign: 'center', textDecoration: 'none' }}>
-                      ⬇️ Read / Download
-                    </Link>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button onClick={() => handleReadOnline(ebook)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '9px 12px', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.25)' }}>
+                        👁️ Read
+                      </button>
+                      <Link to="/ebooks" style={{ flex: 1, background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', color: 'white', border: 'none', borderRadius: 10, padding: '9px 12px', fontWeight: 700, fontSize: '0.78rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        ⬇️ Download
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        {/* PDF Viewer (Home) */}
+        {viewingEbook && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', zIndex: 10000, padding: 20 }} onClick={e => { if (e.target === e.currentTarget) closeReader(); }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'white', marginBottom: 12, fontFamily: 'Poppins, sans-serif' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(239,90,36,0.2)', color: '#ef5a24', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>👁️</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 600 }}>{viewingEbook.title}</div>
+                  <div style={{ opacity: 0.7, fontSize: '0.82rem' }}>by {viewingEbook.author}</div>
+                </div>
+              </div>
+              <button onClick={closeReader} style={{ padding: '9px 18px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 10, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>✕ Close</button>
+            </div>
+            <div style={{ flex: 1, background: '#f1f5f9', borderRadius: 14, overflow: 'hidden', minHeight: 0, position: 'relative' }}>
+              {!viewBlob && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', flexDirection: 'column', gap: 12, fontFamily: 'Poppins, sans-serif' }}>
+                  <Spinner animation="border" style={{ color: '#ef5a24' }} />
+                  <div style={{ fontWeight: 600 }}>Loading PDF viewer...</div>
+                </div>
+              )}
+              {viewBlob && <iframe src={viewBlob} style={{ width: '100%', height: '100%', border: 'none' }} title="PDF Viewer" />}
+            </div>
+          </div>
+        )}
 
         {/* Services */}
         <div style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #fdf1ec 100%)', borderRadius: 20, padding: '48px 40px', marginBottom: 40 }}>

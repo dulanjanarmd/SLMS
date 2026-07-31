@@ -6,8 +6,10 @@ import com.sliit.library.repository.*;
 import com.sliit.library.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.core.io.Resource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.util.List;
 import java.util.UUID;
@@ -28,8 +31,11 @@ public class EBookService {
     @Autowired
     private UserRepository userRepository;
 
-    @Value("${upload.path:uploads/ebooks}")
+    @Value("${app.upload.ebooks:uploads/ebooks}")
     private String uploadPath;
+
+    @Value("${app.upload.ebook-covers:uploads/ebook-covers}")
+    private String coverUploadDir;
 
     @Transactional(readOnly = true)
     public List<EBookResponse> getAllPublicEBooks() {
@@ -54,7 +60,7 @@ public class EBookService {
     @Transactional
     public EBookResponse uploadEBook(String title, String author, String isbn, String description,
             String publisher, Integer publicationYear, String language,
-            MultipartFile file) throws IOException {
+            MultipartFile file, MultipartFile coverImage) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userRepository.findById(userDetails.getId())
@@ -73,6 +79,11 @@ public class EBookService {
         Path filePath = uploadDir.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+        String coverImageUrl = null;
+        if (coverImage != null && !coverImage.isEmpty()) {
+            coverImageUrl = saveCoverImage(coverImage);
+        }
+
         EBook eBook = EBook.builder()
                 .title(title)
                 .author(author)
@@ -84,6 +95,7 @@ public class EBookService {
                 .fileFormat(extension.toUpperCase())
                 .filePath(filePath.toString())
                 .fileSize(file.getSize())
+                .coverImageUrl(coverImageUrl)
                 .uploadedBy(user)
                 .isPublic(true)
                 .downloadCount(0)
@@ -105,6 +117,14 @@ public class EBookService {
             // Log but continue
         }
 
+        if (eBook.getCoverImageUrl() != null) {
+            String fileName = eBook.getCoverImageUrl().replace("/api/uploads/ebook-covers/", "");
+            try {
+                Path coverPath = Paths.get(coverUploadDir).resolve(fileName);
+                Files.deleteIfExists(coverPath);
+            } catch (IOException ignored) { }
+        }
+
         eBookRepository.delete(eBook);
     }
 
@@ -117,6 +137,32 @@ public class EBookService {
         eBookRepository.save(eBook);
 
         return Files.readAllBytes(Paths.get(eBook.getFilePath()));
+    }
+
+    @Transactional
+    public Resource viewEBookOnline(Long id) throws MalformedURLException {
+        EBook eBook = eBookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("eBook not found"));
+        Path filePath = Paths.get(eBook.getFilePath());
+        return new UrlResource(filePath.toUri());
+    }
+
+    public Resource getEBookCover(String filename) throws MalformedURLException {
+        Path file = Paths.get(coverUploadDir).resolve(filename);
+        return new UrlResource(file.toUri());
+    }
+
+    private String saveCoverImage(MultipartFile file) throws IOException {
+        String ext = "";
+        String original = file.getOriginalFilename();
+        if (original != null && original.contains(".")) {
+            ext = original.substring(original.lastIndexOf("."));
+        }
+        String fileName = UUID.randomUUID() + ext;
+        Path dir = Paths.get(coverUploadDir);
+        if (!Files.exists(dir)) Files.createDirectories(dir);
+        Files.copy(file.getInputStream(), dir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+        return "/api/uploads/ebook-covers/" + fileName;
     }
 
     private EBookResponse mapToEBookResponse(EBook eBook) {

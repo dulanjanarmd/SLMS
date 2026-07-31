@@ -1,10 +1,12 @@
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\PopularBookDTO.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\BorrowResponse.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\security\AuthEntryPointJwt.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\ResearchPaperResponse.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\Book.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\MessageResponse.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\FineController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\FacultyRepository.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\ResearchPaperRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\NotificationController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\BorrowController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\EBookService.java
@@ -12,13 +14,16 @@ C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repo
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\MembershipRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\DashboardStats.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\ReservationResponse.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\ResearchPaper.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\security\UserDetailsImpl.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\ResearchPaperController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\FineStatus.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\BookStatus.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\UserService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\AuthController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\JwtResponse.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\NotificationResponse.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\PastPaperService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\exception\GlobalExceptionHandler.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\BookRequestRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\EBookResponse.java
@@ -27,6 +32,7 @@ C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\MembershipReviewRequest.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\FineService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\BookRequestDTO.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\PastPaper.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\BookService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\ReservationRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\FineRepository.java
@@ -48,6 +54,7 @@ C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\enti
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\ReservationStatus.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\CategoryController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\Role.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\PastPaperRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\User.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\UserRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\CategoryRepository.java
@@ -70,7 +77,9 @@ C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\secu
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\BorrowService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\BorrowRecordRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\NotificationService.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\PastPaperResponse.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\NotificationRepository.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\PastPaperController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\BookRepository.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\Faculty.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\LibraryManagementSystemApplication.java
@@ -80,6 +89,7 @@ C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\serv
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\config\DataInitializer.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\ReservationRequest.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\PaymentRequest.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\ResearchPaperService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\LoginRequest.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\UserProfileResponse.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\ReservationService.java

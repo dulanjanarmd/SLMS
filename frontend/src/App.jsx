@@ -19,6 +19,8 @@ import MyFines from './pages/MyFines';
 import Profile from './pages/Profile';
 import Notifications from './pages/Notifications';
 import EBooks from './pages/EBooks';
+import ResearchPapers from './pages/ResearchPapers';
+import PastPapers from './pages/PastPapers';
 import MembershipApplication from './pages/MembershipApplication';
 import IssueBook from './pages/IssueBook';
 import ReturnBook from './pages/ReturnBook';
@@ -78,6 +80,8 @@ function App() {
           <Route path="/books" element={<PrivateRoute><AppNavbar /><div className="pt-3"><Books /></div></PrivateRoute>} />
           <Route path="/books/:id" element={<PrivateRoute><AppNavbar /><div className="pt-3"><BookDetail /></div></PrivateRoute>} />
           <Route path="/ebooks" element={<PrivateRoute><AppNavbar /><div className="pt-3"><EBooks /></div></PrivateRoute>} />
+          <Route path="/research-papers" element={<PrivateRoute><AppNavbar /><div className="pt-3"><ResearchPapers /></div></PrivateRoute>} />
+          <Route path="/past-papers" element={<PrivateRoute><AppNavbar /><div className="pt-3"><PastPapers /></div></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><AppNavbar /><div className="pt-3"><Profile /></div></PrivateRoute>} />
           <Route path="/my-books" element={<PrivateRoute><AppNavbar /><div className="pt-3"><MyBooks /></div></PrivateRoute>} />
           <Route path="/my-reservations" element={<PrivateRoute><AppNavbar /><div className="pt-3"><MyReservations /></div></PrivateRoute>} />

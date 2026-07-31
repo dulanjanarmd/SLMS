@@ -165,6 +165,8 @@ const AppNavbar = () => {
               ...(user.role === 'FACULTY' ? [{ to: '/faculty/dashboard', label: 'My Dashboard', icon: '' }] : []),
               ...((user.role === 'STUDENT' || user.role === 'FACULTY') ? [{ to: '/membership', label: 'Membership', icon: '🪪' }] : []),
               { to: '/ebooks', label: 'eBooks', icon: '' },
+              { to: '/research-papers', label: 'Research', icon: '' },
+              { to: '/past-papers', label: 'Past Papers', icon: '' },
             ].map(({ to, label }) => (
               <Link key={to} to={to} style={{
                 textDecoration: 'none',
