@@ -213,4 +213,22 @@ export const configAPI = {
   getMemberTypes: () => api.get('/config/member-types'),
 };
 
+export const libraryHoursAPI = {
+  getAll: () => api.get('/library-hours'),
+  getById: (id) => api.get(`/library-hours/${id}`),
+  getByDay: (day) => api.get(`/library-hours/day/${day}`),
+  create: (data) => api.post('/librarian/library-hours', data),
+  update: (id, data) => api.put(`/librarian/library-hours/${id}`, data),
+  delete: (id) => api.delete(`/librarian/library-hours/${id}`),
+};
+
+export const contactInfoAPI = {
+  getAll: () => api.get('/contact-info'),
+  getActive: () => api.get('/contact-info/active'),
+  getById: (id) => api.get(`/contact-info/${id}`),
+  create: (data) => api.post('/librarian/contact-info', data),
+  update: (id, data) => api.put(`/librarian/contact-info/${id}`, data),
+  delete: (id) => api.delete(`/librarian/contact-info/${id}`),
+};
+
 export default api;

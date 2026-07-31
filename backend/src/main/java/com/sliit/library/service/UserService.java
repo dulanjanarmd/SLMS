@@ -15,8 +15,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -195,5 +202,64 @@ public class UserService {
             case LIBRARIAN -> 30;
             case ADMIN -> 30;
         };
+    }
+
+    public UserProfileResponse uploadProfilePicture(MultipartFile file) {
+        User user = getCurrentAuthenticatedUser();
+        
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+        
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Only image files are allowed");
+        }
+        
+        try {
+            String uploadDir = "uploads/profile-pictures/";
+            Path uploadPath = Paths.get(uploadDir);
+            
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+            
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename != null ? 
+                originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
+            String newFilename = UUID.randomUUID().toString() + extension;
+            
+            Path filePath = uploadPath.resolve(newFilename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            
+            String fileUrl = "/uploads/profile-pictures/" + newFilename;
+            
+            user.setProfileImageUrl(fileUrl);
+            userRepository.save(user);
+            
+            return mapToProfileResponse(user);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload profile picture", e);
+        }
+    }
+
+    public MessageResponse deleteProfilePicture() {
+        User user = getCurrentAuthenticatedUser();
+        
+        if (user.getProfileImageUrl() != null) {
+            try {
+                Path filePath = Paths.get(user.getProfileImageUrl());
+                if (Files.exists(filePath)) {
+                    Files.delete(filePath);
+                }
+            } catch (IOException e) {
+                // Continue even if file deletion fails
+            }
+            
+            user.setProfileImageUrl(null);
+            userRepository.save(user);
+        }
+        
+        return new MessageResponse("Profile picture deleted successfully");
     }
 }

@@ -143,6 +143,7 @@ const AppNavbar = () => {
             {[
               { to: '/', label: 'Home', icon: '⌂' },
               { to: '/books', label: 'Catalog', icon: '' },
+              { to: '/events', label: 'Events', icon: '' },
               ...(user.role === 'LIBRARIAN' ? [{ to: '/dashboard', label: 'Dashboard', icon: '' }] : []),
               ...(user.role === 'STUDENT' ? [{ to: '/student/dashboard', label: 'My Dashboard', icon: '' }] : []),
               ...(user.role === 'FACULTY' ? [{ to: '/faculty/dashboard', label: 'My Dashboard', icon: '' }] : []),
@@ -230,6 +231,10 @@ const AppNavbar = () => {
                         { to: '/librarian/reservations', label: 'Reservations', icon: '' },
                         { to: '/librarian/renewals', label: 'Renewal Requests', icon: '' },
                         { to: '/librarian/fines', label: 'Fines', icon: '' },
+                        { to: '/librarian/events', label: 'Events', icon: '' },
+                        null,
+                        { to: '/librarian/library-hours', label: 'Library Hours', icon: '' },
+                        { to: '/librarian/contact-info', label: 'Contact & Help', icon: '' },
                         null,
                         { to: '/librarian/reports', label: 'Reports', icon: '' },
                       ].map((item, idx) => item === null ? (

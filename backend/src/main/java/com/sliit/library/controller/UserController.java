@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -89,5 +90,17 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> createLibrarian(@Valid @RequestBody SignupRequest request) {
         return ResponseEntity.ok(userService.createLibrarian(request));
+    }
+
+    @PostMapping("/user/profile-picture")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<UserProfileResponse> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(userService.uploadProfilePicture(file));
+    }
+
+    @DeleteMapping("/user/profile-picture")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<MessageResponse> deleteProfilePicture() {
+        return ResponseEntity.ok(userService.deleteProfilePicture());
     }
 }

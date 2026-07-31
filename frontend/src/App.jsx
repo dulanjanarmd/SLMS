@@ -29,6 +29,11 @@ import ReservationManagement from './pages/ReservationManagement';
 import RenewalRequests from './pages/RenewalRequests';
 import FineManagement from './pages/FineManagement';
 import LibrarianReports from './pages/LibrarianReports';
+import Events from './pages/Events';
+import EventManagement from './pages/EventManagement';
+import EventDetail from './pages/EventDetail';
+import LibraryHoursManagement from './pages/LibraryHoursManagement';
+import ContactInfoManagement from './pages/ContactInfoManagement';
 import NotFound from './pages/NotFound';
 
 class ErrorBoundary extends React.Component {
@@ -96,6 +101,11 @@ function App() {
           <Route path="/librarian/renewals" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><RenewalRequests /></div></PrivateRoute>} />
           <Route path="/librarian/fines" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><FineManagement /></div></PrivateRoute>} />
           <Route path="/librarian/reports" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><LibrarianReports /></div></PrivateRoute>} />
+          <Route path="/librarian/events" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><EventManagement /></div></PrivateRoute>} />
+          <Route path="/librarian/library-hours" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><LibraryHoursManagement /></div></PrivateRoute>} />
+          <Route path="/librarian/contact-info" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><ContactInfoManagement /></div></PrivateRoute>} />
+          <Route path="/events" element={<PrivateRoute><AppNavbar /><div className="pt-3"><Events /></div></PrivateRoute>} />
+          <Route path="/events/:id" element={<PrivateRoute><AppNavbar /><div className="pt-3"><EventDetail /></div></PrivateRoute>} />
           <Route path="/student/dashboard" element={<PrivateRoute allowedRoles={['STUDENT']}><AppNavbar /><div className="pt-3"><StudentDashboard /></div></PrivateRoute>} />
           <Route path="/faculty/dashboard" element={<PrivateRoute allowedRoles={['FACULTY']}><AppNavbar /><div className="pt-3"><FacultyDashboard /></div></PrivateRoute>} />
           <Route path="*" element={<NotFound />} />

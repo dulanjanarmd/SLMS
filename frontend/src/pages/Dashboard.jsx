@@ -114,6 +114,7 @@ const Dashboard = () => {
     { to: '/librarian/reservations', label: 'Reservations', icon: '', color: '#f59e0b' },
     { to: '/librarian/fines', label: 'Fines', icon: '', color: '#ef4444' },
     { to: '/librarian/reports', label: 'Reports', icon: '', color: '#0ea5e9' },
+    { to: '/librarian/events', label: 'Events', icon: '', color: '#8b5cf6' },
   ];
 
   return (
