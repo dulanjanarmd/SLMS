@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { reportAPI } from '../services/api';
-import { Container, Row, Col, Card, Table, Badge, Spinner, Button, Tabs, Tab } from 'react-bootstrap';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,9 +23,7 @@ const Reports = () => {
   const [userActivity, setUserActivity] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchReports();
-  }, []);
+  useEffect(() => { fetchReports(); }, []);
 
   const fetchReports = async () => {
     try {
@@ -53,7 +50,7 @@ const Reports = () => {
     labels: ['Available', 'Issued', 'Reserved'],
     datasets: [{
       data: [inventoryReport.availableBooks, inventoryReport.issuedBooks, inventoryReport.reservedBooks],
-      backgroundColor: ['#198754', '#dc3545', '#ffc107'],
+      backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
       borderWidth: 0,
     }],
   } : null;
@@ -63,228 +60,207 @@ const Reports = () => {
     datasets: [{
       label: 'Count',
       data: [fineReport.paidFines, fineReport.unpaidFines, fineReport.waivedFines, 0],
-      backgroundColor: ['#198754', '#dc3545', '#6c757d', '#ffc107'],
+      backgroundColor: ['#10b981', '#ef4444', '#64748b', '#f59e0b'],
       borderRadius: 8,
     }],
   } : null;
 
-  if (loading) {
-    return (
-      <Container className="py-5 text-center">
-        <Spinner animation="border" variant="primary" />
-      </Container>
-    );
-  }
+  const tabStyle = (isActive) => ({
+    padding: '10px 20px',
+    borderRadius: 999,
+    cursor: 'pointer',
+    fontWeight: 600,
+    fontSize: '0.85rem',
+    fontFamily: 'Poppins, sans-serif',
+    background: isActive ? 'linear-gradient(135deg, #ef5a24, #ff8c5a)' : 'transparent',
+    color: isActive ? 'white' : '#64748b',
+    border: isActive ? 'none' : '1px solid #e8ecf0',
+    transition: 'all 0.18s',
+  });
+
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', fontFamily: 'Poppins, sans-serif' }}>
+      <div style={{ width: 40, height: 40, border: '3px solid #f3f3f3', borderTop: '3px solid #ef5a24', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+    </div>
+  );
 
   return (
-    <Container fluid className="px-4">
-      <h2 className="fw-bold mb-4">
-        Reports & Analytics
-      </h2>
+    <div style={{ padding: '0 20px 24px 20px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
+      <div style={{
+        background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)',
+        borderRadius: 20, padding: '32px 40px', color: 'white',
+        marginBottom: 28, position: 'relative', overflow: 'hidden',
+      }}>
+        <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', bottom: -60, right: 80, width: 150, height: 150, background: 'rgba(255,255,255,0.04)', borderRadius: '50%' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.7, marginBottom: 8 }}>
+            Admin Portal
+          </div>
+          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8 }}>Reports & Analytics</h1>
+          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem' }}>
+            View library statistics, inventory reports, and fine collection data
+          </p>
+        </div>
+      </div>
 
-      <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} className="mb-4">
-        {/* Overview Tab */}
-        <Tab eventKey="overview" title="Overview">
-          <Row className="g-4">
-            <Col lg={6}>
-              <Card>
-                <Card.Header className="fw-semibold">Inventory Distribution</Card.Header>
-                <Card.Body>
-                  {inventoryData && (
-                    <div style={{ height: '250px' }}>
-                      <Doughnut
-                        data={inventoryData}
-                        options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }}
-                      />
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col lg={6}>
-              <Card>
-                <Card.Header className="fw-semibold">Fine Status Distribution</Card.Header>
-                <Card.Body>
-                  {fineData && (
-                    <div style={{ height: '250px' }}>
-                      <Bar
-                        data={fineData}
-                        options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }}
-                      />
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+        {['overview', 'popular', 'overdue', 'fines', 'inventory'].map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)} style={tabStyle(activeTab === tab)}>
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
 
-          <Row className="g-4 mt-2">
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-primary fw-bold">{userActivity?.totalUsers || 0}</h3>
-                <small className="text-muted">Total Registered Users</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-success fw-bold">{userActivity?.activeUsers || 0}</h3>
-                <small className="text-muted">Active Users</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-warning fw-bold">{userActivity?.usersWithFines || 0}</h3>
-                <small className="text-muted">Users with Fines</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h3 className="text-info fw-bold">{userActivity?.totalBorrowRecords || 0}</h3>
-                <small className="text-muted">Total Borrow Records</small>
-              </Card>
-            </Col>
-          </Row>
-        </Tab>
+      {activeTab === 'overview' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginBottom: 24 }}>
+            <div style={{ background: 'white', borderRadius: 20, padding: '24px', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e', marginBottom: 16, fontFamily: 'Poppins, sans-serif' }}>Inventory Distribution</div>
+              {inventoryData && (
+                <div style={{ height: '250px' }}>
+                  <Doughnut data={inventoryData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Poppins, sans-serif' } } } } }} />
+                </div>
+              )}
+            </div>
+            <div style={{ background: 'white', borderRadius: 20, padding: '24px', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e', marginBottom: 16, fontFamily: 'Poppins, sans-serif' }}>Fine Status Distribution</div>
+              {fineData && (
+                <div style={{ height: '250px' }}>
+                  <Bar data={fineData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
+                </div>
+              )}
+            </div>
+          </div>
 
-        {/* Popular Books Tab */}
-        <Tab eventKey="popular" title="Popular Books">
-          <Card>
-            <Card.Header className="fw-semibold">Top 10 Most Borrowed Books</Card.Header>
-            <Card.Body className="p-0">
-              <Table striped hover>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>ISBN</th>
-                    <th>Total Borrows</th>
-                    <th>Available</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {popularBooks.map((book, idx) => (
-                    <tr key={book.bookId}>
-                      <td>{idx + 1}</td>
-                      <td className="fw-semibold">{book.title}</td>
-                      <td>{book.author}</td>
-                      <td>{book.isbn}</td>
-                      <td>
-                        <Badge bg="primary">{book.borrowCount} borrows</Badge>
-                      </td>
-                      <td>
-                        <Badge bg={book.availableCopies > 0 ? 'success' : 'danger'}>
-                          {book.availableCopies}/{book.totalCopies}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </Card.Body>
-          </Card>
-        </Tab>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+            <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: '#3b82f6', marginBottom: 8 }}>{userActivity?.totalUsers || 0}</div>
+              <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Total Registered Users</div>
+            </div>
+            <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', marginBottom: 8 }}>{userActivity?.activeUsers || 0}</div>
+              <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Active Users</div>
+            </div>
+            <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b', marginBottom: 8 }}>{userActivity?.usersWithFines || 0}</div>
+              <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Users with Fines</div>
+            </div>
+            <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: '#0ea5e9', marginBottom: 8 }}>{userActivity?.totalBorrowRecords || 0}</div>
+              <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Total Borrow Records</div>
+            </div>
+          </div>
+        </div>
+      )}
 
-        {/* Overdue Tab */}
-        <Tab eventKey="overdue" title="Overdue Items">
-          <Card>
-            <Card.Header className="fw-semibold text-danger">
-              Overdue Books ({overdueItems.length})
-            </Card.Header>
-            <Card.Body className="p-0">
-              <div style={{ maxHeight: '500px', overflow: 'auto' }}>
-                <Table striped hover className="mb-0">
-                  <thead>
-                    <tr>
-                      <th>User</th>
-                      <th>Student ID</th>
-                      <th>Book</th>
-                      <th>ISBN</th>
-                      <th>Due Date</th>
-                      <th>Days Overdue</th>
-                      <th>Fine (LKR)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {overdueItems.length === 0 ? (
-                      <tr>
-                        <td colSpan="7" className="text-center text-muted py-4">No overdue items</td>
-                      </tr>
-                    ) : (
-                      overdueItems.map((item) => (
-                        <tr key={item.borrowId}>
-                          <td>{item.userName}</td>
-                          <td>{item.studentStaffId}</td>
-                          <td className="fw-semibold">{item.bookTitle}</td>
-                          <td>{item.isbn}</td>
-                          <td className="text-danger">{item.dueDate}</td>
-                          <td className="text-danger fw-semibold">{item.overdueDays} days</td>
-                          <td className="text-danger fw-semibold">{item.fineAmount.toFixed(2)}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </Table>
+      {activeTab === 'popular' && (
+        <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+          <div style={{ padding: '18px 26px', background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.03))', fontWeight: 700, fontSize: '0.95rem', color: '#4c1d95', fontFamily: 'Poppins, sans-serif', borderBottom: '1px solid #eef2ff' }}>
+            Top 10 Most Borrowed Books
+          </div>
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '60px 2fr 1.5fr 140px 120px 120px', gap: 14, padding: '16px 26px', fontWeight: 700, fontSize: '0.78rem', color: '#4c1d95', textTransform: 'uppercase', letterSpacing: 0.6, borderBottom: '1px solid #f1f5f9' }}>
+              <div>#</div>
+              <div>Title</div>
+              <div>Author</div>
+              <div>ISBN</div>
+              <div>Total Borrows</div>
+              <div>Available</div>
+            </div>
+            {popularBooks.map((book, idx) => (
+              <div key={book.bookId} style={{ display: 'grid', gridTemplateColumns: '60px 2fr 1.5fr 140px 120px 120px', gap: 14, padding: '16px 26px', borderBottom: '1px solid #f1f5f9', transition: 'background 0.15s' }} onMouseEnter={e => e.currentTarget.style.background = '#fafbff'} onMouseLeave={e => e.currentTarget.style.background = 'white'}>
+                <div style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{idx + 1}</div>
+                <div style={{ fontWeight: 600, color: '#1a1a2e', fontSize: '0.9rem' }}>{book.title}</div>
+                <div style={{ color: '#374151', fontSize: '0.85rem' }}>{book.author}</div>
+                <div style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{book.isbn}</div>
+                <div><span style={{ background: 'rgba(59,130,246,0.1)', color: '#2563eb', borderRadius: 6, padding: '3px 10px', fontSize: '0.75rem', fontWeight: 700 }}>{book.borrowCount} borrows</span></div>
+                <div><span style={{ background: book.availableCopies > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: book.availableCopies > 0 ? '#059669' : '#dc2626', borderRadius: 6, padding: '3px 10px', fontSize: '0.75rem', fontWeight: 700 }}>{book.availableCopies}/{book.totalCopies}</span></div>
               </div>
-            </Card.Body>
-          </Card>
-        </Tab>
+            ))}
+          </div>
+        </div>
+      )}
 
-        {/* Fine Collection Tab */}
-        <Tab eventKey="fines" title="Fine Collection">
-          <Row className="g-4 mb-4">
-            <Col md={4}>
-              <Card className="text-center p-4 stat-card success">
-                <h3 className="text-success fw-bold">LKR {(fineReport?.totalCollected || 0).toFixed(2)}</h3>
-                <small className="text-muted">Total Collected</small>
-              </Card>
-            </Col>
-            <Col md={4}>
-              <Card className="text-center p-4 stat-card danger">
-                <h3 className="text-danger fw-bold">LKR {(fineReport?.totalOutstanding || 0).toFixed(2)}</h3>
-                <small className="text-muted">Total Outstanding</small>
-              </Card>
-            </Col>
-            <Col md={4}>
-              <Card className="text-center p-4 stat-card primary">
-                <h3 className="text-primary fw-bold">{fineReport?.totalFinesIssued || 0}</h3>
-                <small className="text-muted">Total Fines Issued</small>
-              </Card>
-            </Col>
-          </Row>
-        </Tab>
+      {activeTab === 'overdue' && (
+        <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+          <div style={{ padding: '18px 26px', background: 'linear-gradient(135deg, rgba(239,68,68,0.06), rgba(239,68,68,0.03))', fontWeight: 700, fontSize: '0.95rem', color: '#dc2626', fontFamily: 'Poppins, sans-serif', borderBottom: '1px solid #fee2e2' }}>
+            Overdue Books ({overdueItems.length})
+          </div>
+          <div style={{ maxHeight: '500px', overflow: 'auto' }}>
+            {overdueItems.length === 0 ? (
+              <div style={{ padding: '60px 40px', textAlign: 'center' }}>
+                <div style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1a1a2e', marginBottom: 6 }}>No overdue items</div>
+                <div style={{ color: '#64748b', fontSize: '0.88rem' }}>All books have been returned on time.</div>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 140px 2fr 140px 120px 120px 120px', gap: 14, padding: '16px 26px', fontWeight: 700, fontSize: '0.78rem', color: '#dc2626', textTransform: 'uppercase', letterSpacing: 0.6, borderBottom: '1px solid #fee2e2' }}>
+                  <div>User</div>
+                  <div>Student ID</div>
+                  <div>Book</div>
+                  <div>ISBN</div>
+                  <div>Due Date</div>
+                  <div>Days Overdue</div>
+                  <div>Fine (LKR)</div>
+                </div>
+                {overdueItems.map((item) => (
+                  <div key={item.borrowId} style={{ display: 'grid', gridTemplateColumns: '2fr 140px 2fr 140px 120px 120px 120px', gap: 14, padding: '16px 26px', borderBottom: '1px solid #f1f5f9', transition: 'background 0.15s' }} onMouseEnter={e => e.currentTarget.style.background = '#fafbff'} onMouseLeave={e => e.currentTarget.style.background = 'white'}>
+                    <div style={{ color: '#374151', fontSize: '0.85rem' }}>{item.userName}</div>
+                    <div style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{item.studentStaffId}</div>
+                    <div style={{ fontWeight: 600, color: '#1a1a2e', fontSize: '0.9rem' }}>{item.bookTitle}</div>
+                    <div style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{item.isbn}</div>
+                    <div style={{ color: '#dc2626', fontSize: '0.85rem' }}>{item.dueDate}</div>
+                    <div style={{ color: '#dc2626', fontWeight: 700, fontSize: '0.85rem' }}>{item.overdueDays} days</div>
+                    <div style={{ color: '#dc2626', fontWeight: 700, fontSize: '0.85rem' }}>{item.fineAmount.toFixed(2)}</div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
-        {/* Inventory Tab */}
-        <Tab eventKey="inventory" title="Inventory">
-          <Row className="g-4">
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-primary">{inventoryReport?.totalBooks || 0}</h4>
-                <small className="text-muted">Total Books</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-success">{inventoryReport?.availableBooks || 0}</h4>
-                <small className="text-muted">Available</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-danger">{inventoryReport?.issuedBooks || 0}</h4>
-                <small className="text-muted">Issued</small>
-              </Card>
-            </Col>
-            <Col md={3}>
-              <Card className="text-center p-3">
-                <h4 className="fw-bold text-warning">{inventoryReport?.reservedBooks || 0}</h4>
-                <small className="text-muted">Reserved</small>
-              </Card>
-            </Col>
-          </Row>
-        </Tab>
-      </Tabs>
-    </Container>
+      {activeTab === 'fines' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
+          <div style={{ background: 'white', borderRadius: 20, padding: '32px 24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#10b981', marginBottom: 8 }}>LKR {(fineReport?.totalCollected || 0).toFixed(2)}</div>
+            <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Total Collected</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: 20, padding: '32px 24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ef4444', marginBottom: 8 }}>LKR {(fineReport?.totalOutstanding || 0).toFixed(2)}</div>
+            <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Total Outstanding</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: 20, padding: '32px 24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#3b82f6', marginBottom: 8 }}>{fineReport?.totalFinesIssued || 0}</div>
+            <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Total Fines Issued</div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'inventory' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+          <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#3b82f6', marginBottom: 8 }}>{inventoryReport?.totalBooks || 0}</div>
+            <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Total Books</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', marginBottom: 8 }}>{inventoryReport?.availableBooks || 0}</div>
+            <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Available</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ef4444', marginBottom: 8 }}>{inventoryReport?.issuedBooks || 0}</div>
+            <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Issued</div>
+          </div>
+          <div style={{ background: 'white', borderRadius: 20, padding: '24px', textAlign: 'center', border: '1px solid #e8ecf0', boxShadow: '0 12px 40px rgba(0,0,0,0.05)' }}>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f59e0b', marginBottom: 8 }}>{inventoryReport?.reservedBooks || 0}</div>
+            <div style={{ color: '#64748b', fontSize: '0.85rem' }}>Reserved</div>
+          </div>
+        </div>
+      )}
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
   );
 };
 

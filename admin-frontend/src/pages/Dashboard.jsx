@@ -11,7 +11,7 @@ import { Bar, Doughnut } from 'react-chartjs-2';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 const S = {
-  page: { padding: '32px 24px', maxWidth: '1400px', margin: '0 auto' },
+  page: { padding: '100px 24px 24px 24px', maxWidth: '1400px', margin: '0 auto' },
   banner: {
     background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)',
     borderRadius: '20px', padding: '32px 40px', color: 'white',

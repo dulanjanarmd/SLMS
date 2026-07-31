@@ -56,9 +56,9 @@ export const bookAPI = {
 export const categoryAPI = {
   getAll: () => api.get('/categories'),
   getById: (id) => api.get(`/categories/${id}`),
-  add: (data) => api.post('/librarian/categories', data),
-  update: (id, data) => api.put(`/librarian/categories/${id}`, data),
-  delete: (id) => api.delete(`/librarian/categories/${id}`),
+  add: (data) => api.post('/admin/categories', data),
+  update: (id, data) => api.put(`/admin/categories/${id}`, data),
+  delete: (id) => api.delete(`/admin/categories/${id}`),
 };
 
 export const borrowAPI = {
@@ -100,13 +100,13 @@ export const ebookAPI = {
 };
 
 export const eventAPI = {
-  getAll: () => api.get('/librarian/events'),
-  getUpcoming: () => api.get('/librarian/events/upcoming'),
+  getAll: () => api.get('/admin/events'),
+  getUpcoming: () => api.get('/admin/events/upcoming'),
   getById: (id) => api.get(`/events/${id}`),
-  create: (data) => api.post('/librarian/events', data),
-  update: (id, data) => api.put(`/librarian/events/${id}`, data),
-  toggleActive: (id) => api.patch(`/librarian/events/${id}/toggle`),
-  delete: (id) => api.delete(`/librarian/events/${id}`),
+  create: (data) => api.post('/admin/events', data),
+  update: (id, data) => api.put(`/admin/events/${id}`, data),
+  toggleActive: (id) => api.patch(`/admin/events/${id}/toggle`),
+  delete: (id) => api.delete(`/admin/events/${id}`),
 };
 
 export default api;

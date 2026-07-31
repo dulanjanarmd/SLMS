@@ -33,15 +33,34 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.addCategory(category));
     }
 
+    @PostMapping("/admin/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Category> addCategoryAdmin(@RequestBody Category category) {
+        return ResponseEntity.ok(categoryService.addCategory(category));
+    }
+
     @PutMapping("/librarian/categories/{id}")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category) {
         return ResponseEntity.ok(categoryService.updateCategory(id, category));
     }
 
+    @PutMapping("/admin/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Category> updateCategoryAdmin(@PathVariable Long id, @RequestBody Category category) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, category));
+    }
+
     @DeleteMapping("/librarian/categories/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/admin/categories/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteCategoryAdmin(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.ok().build();
     }

@@ -111,6 +111,7 @@ const Events = () => {
         ...form,
         maxAttendees: form.maxAttendees === '' || form.maxAttendees == null ? null : Number(form.maxAttendees),
       };
+      console.log('Submitting event:', payload);
       if (editingId) {
         await eventAPI.update(editingId, payload);
         flash('Event updated successfully!');
@@ -121,6 +122,8 @@ const Events = () => {
       setShowModal(false);
       loadEvents();
     } catch (err) {
+      console.error('Event creation error:', err);
+      console.error('Error response:', err.response);
       const msgText = err?.response?.data?.message || err?.message || 'Save failed.';
       flash(msgText, false);
     } finally {
@@ -192,7 +195,7 @@ const Events = () => {
   const totalPublic = events.filter(e => e.isPublic && e.isActive).length;
 
   return (
-    <div style={{ padding: '24px 20px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
+    <div style={{ padding: '0 20px 24px 20px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
 
       {/* Banner */}
       <div style={{
@@ -485,7 +488,7 @@ const Events = () => {
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = ''}
                   >
-                    {ev.isActive ? '👁️ Hide' : '🟢 Show'}
+                    {ev.isActive ? 'Hide' : 'Show'}
                   </button>
                   <button onClick={() => openEdit(ev)} style={{
                     padding: '7px 14px', borderRadius: 999, cursor: 'pointer',
@@ -496,7 +499,7 @@ const Events = () => {
                   }}
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = ''}
-                  >✏️ Edit</button>
+                  >Edit</button>
                   <button onClick={() => handleDelete(ev)} style={{
                     padding: '7px 12px', borderRadius: 999, cursor: 'pointer',
                     background: 'rgba(239,68,68,0.1)',
@@ -506,7 +509,7 @@ const Events = () => {
                   }}
                   onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
                   onMouseLeave={e => e.currentTarget.style.transform = ''}
-                  >🗑️</button>
+                  >Delete</button>
                 </div>
               </div>
             );

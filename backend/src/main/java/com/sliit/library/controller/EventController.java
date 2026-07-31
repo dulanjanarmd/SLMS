@@ -48,9 +48,21 @@ public class EventController {
         return ResponseEntity.ok(eventService.getAll());
     }
 
+    @GetMapping("/admin/events")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<EventResponse>> getAllEventsAdmin() {
+        return ResponseEntity.ok(eventService.getAll());
+    }
+
     @GetMapping("/librarian/events/upcoming")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<List<EventResponse>> getUpcomingEvents() {
+        return ResponseEntity.ok(eventService.getUpcoming());
+    }
+
+    @GetMapping("/admin/events/upcoming")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<EventResponse>> getUpcomingEventsAdmin() {
         return ResponseEntity.ok(eventService.getUpcoming());
     }
 
@@ -61,9 +73,22 @@ public class EventController {
         return ResponseEntity.ok(eventService.create(event, uid));
     }
 
+    @PostMapping("/admin/events")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EventResponse> createEventAdmin(@RequestBody Event event, Authentication auth) {
+        Long uid = extractUserId(auth);
+        return ResponseEntity.ok(eventService.create(event, uid));
+    }
+
     @PutMapping("/librarian/events/{id}")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @RequestBody Event event) {
+        return ResponseEntity.ok(eventService.update(id, event));
+    }
+
+    @PutMapping("/admin/events/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EventResponse> updateEventAdmin(@PathVariable Long id, @RequestBody Event event) {
         return ResponseEntity.ok(eventService.update(id, event));
     }
 
@@ -73,9 +98,22 @@ public class EventController {
         return ResponseEntity.ok(eventService.toggleActive(id));
     }
 
+    @PatchMapping("/admin/events/{id}/toggle")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EventResponse> toggleEventActiveAdmin(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.toggleActive(id));
+    }
+
     @DeleteMapping("/librarian/events/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<?> deleteEvent(@PathVariable Long id) {
+        eventService.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/admin/events/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteEventAdmin(@PathVariable Long id) {
         eventService.delete(id);
         return ResponseEntity.ok().build();
     }

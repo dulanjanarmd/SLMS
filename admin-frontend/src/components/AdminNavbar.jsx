@@ -45,7 +45,7 @@ const AdminNavbar = () => {
       height: '72px',
       background: 'white',
       borderBottom: '1px solid rgba(0,0,0,0.06)',
-      zIndex: 1000,
+      zIndex: 9999,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
