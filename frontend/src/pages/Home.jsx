@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
-import { bookAPI, borrowAPI, reservationAPI, fineAPI } from '../services/api';
+import { bookAPI } from '../services/api';
 import { Spinner } from 'react-bootstrap';
 
 const Home = () => {
   const { user } = useAuth();
   const [popularBooks, setPopularBooks] = useState([]);
-  const [stats, setStats] = useState({ activeLoans: 0, overdueLoans: 0, pendingReservations: 0, outstandingFines: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { fetchData(); }, [user]);
@@ -17,29 +16,9 @@ const Home = () => {
     try {
       const booksRes = await bookAPI.getPopular(6);
       setPopularBooks(booksRes.data || []);
-      if (user) {
-        const today = new Date().toISOString().split('T')[0];
-        const [loansRes, reservationsRes, finesRes] = await Promise.all([
-          borrowAPI.getActiveLoans(user.id),
-          reservationAPI.getUserReservations(user.id),
-          fineAPI.getUnpaidFines(user.id),
-        ]);
-        const loans = loansRes.data || [];
-        const overdue = loans.filter(l => l.dueDate < today);
-        const pending = (reservationsRes.data || []).filter(r => r.status === 'PENDING' || r.status === 'NOTIFIED');
-        const totalFines = (finesRes.data || []).reduce((sum, f) => sum + (f.remainingAmount || 0), 0);
-        setStats({ activeLoans: loans.length, overdueLoans: overdue.length, pendingReservations: pending.length, outstandingFines: totalFines });
-      }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
-
-  const quickStats = [
-    { label: 'Active Loans', value: stats.activeLoans, icon: '', color: '#ef5a24', bg: 'rgba(239,90,36,0.10)', to: '/my-books' },
-    { label: 'Overdue', value: stats.overdueLoans, icon: '️', color: '#ef4444', bg: 'rgba(239,68,68,0.10)', to: '/my-books' },
-    { label: 'Reservations', value: stats.pendingReservations, icon: '', color: '#f59e0b', bg: 'rgba(245,158,11,0.10)', to: '/my-reservations' },
-    { label: 'Fines Due', value: `LKR ${stats.outstandingFines.toFixed(0)}`, icon: '', color: '#6366f1', bg: 'rgba(99,102,241,0.10)', to: '/my-fines' },
-  ];
 
   const services = [
     { icon: '', title: 'Advanced Search', desc: 'Find books by title, author, ISBN, category and more with powerful filters.', color: '#ef5a24' },
@@ -103,26 +82,6 @@ const Home = () => {
       </div>
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 28px' }}>
-        {/* Quick Stats */}
-        {user && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 48 }}>
-            {quickStats.map(s => (
-              <Link key={s.to} to={s.to} style={{ textDecoration: 'none' }}>
-                <div style={{ background: 'white', borderRadius: 16, padding: '22px 24px', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: 16, transition: 'all 0.22s', cursor: 'pointer' }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 8px 24px ${s.color}22`; e.currentTarget.style.borderColor = s.color + '50'; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}
-                >
-                  <div style={{ width: 48, height: 48, borderRadius: 12, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>{s.icon}</div>
-                  <div>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1a1a2e', lineHeight: 1 }}>{s.value}</div>
-                    <div style={{ fontSize: '0.78rem', fontWeight: 500, color: '#64748b', marginTop: 4 }}>{s.label}</div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-
         {/* Popular Books */}
         <div style={{ marginBottom: 48 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
