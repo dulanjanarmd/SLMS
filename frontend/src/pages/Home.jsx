@@ -51,10 +51,6 @@ const Home = () => {
         ))}
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 28px', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 40 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 999, padding: '6px 16px', marginBottom: 20, backdropFilter: 'blur(8px)' }}>
-              <span style={{ color: '#ff8c5a', fontSize: '0.8rem', fontWeight: 600 }}>● LIVE</span>
-              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.82rem' }}>University Digital Library System</span>
-            </div>
             <h1 style={{ color: 'white', fontSize: '3rem', fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
               Welcome to{' '}
               <span style={{ background: 'linear-gradient(135deg, #ff8c5a, #ef5a24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -74,8 +70,8 @@ const Home = () => {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <div style={{ width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)' }}>
-              <img src={logo} alt="LibraryHub" style={{ width: 140, height: 140, borderRadius: '50%', objectFit: 'cover' }} />
+            <div style={{ width: 230, height: 230, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)' }}>
+              <img src={logo} alt="LibraryHub" style={{ width: 185, height: 185, borderRadius: '50%', objectFit: 'cover' }} />
             </div>
           </div>
         </div>

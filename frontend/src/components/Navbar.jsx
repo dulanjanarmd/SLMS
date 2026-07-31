@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
 import { notificationAPI } from '../services/api';
 
@@ -135,30 +136,22 @@ const AppNavbar = () => {
             <div style={{
               width: '36px',
               height: '36px',
-              background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)',
               borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(239,90,36,0.35)',
+              boxShadow: '0 4px 12px rgba(239,90,36,0.25)',
+              overflow: 'hidden',
             }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="white" strokeWidth="1.5" fill="none"/>
-                <line x1="12" y1="7" x2="16" y2="7" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                <line x1="12" y1="11" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+              <img src={logo} alt="LibraryHub" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <span style={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 700,
               fontSize: '1.2rem',
-              background: 'linear-gradient(135deg, #1a1a2e, #ef5a24)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
               letterSpacing: '-0.3px',
             }}>
-              LibraryHub
+              <span style={{ color: '#000000' }}>Library</span><span style={{ color: '#ef5a24' }}>Hub</span>
             </span>
           </Link>
 
@@ -180,14 +173,14 @@ const AppNavbar = () => {
                 fontFamily: "'Poppins', sans-serif",
                 fontWeight: isActive(to) ? 600 : 500,
                 fontSize: '0.875rem',
-                color: isActive(to) ? '#ef5a24' : '#374151',
+                color: isActive(to) ? '#ef5a24' : '#000000',
                 background: isActive(to) ? 'rgba(239,90,36,0.08)' : 'transparent',
                 transition: 'all 0.2s ease',
                 whiteSpace: 'nowrap',
                 position: 'relative',
               }}
-              onMouseEnter={e => { if (!isActive(to)) { e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = '#1a1a2e'; }}}
-              onMouseLeave={e => { if (!isActive(to)) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#374151'; }}}
+              onMouseEnter={e => { if (!isActive(to)) { e.currentTarget.style.background = 'rgba(0,0,0,0.04)'; e.currentTarget.style.color = '#000000'; }}}
+              onMouseLeave={e => { if (!isActive(to)) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#000000'; }}}
               >
                 {label}
                 {isActive(to) && <span style={{
@@ -219,7 +212,7 @@ const AppNavbar = () => {
                     fontFamily: "'Poppins', sans-serif",
                     fontWeight: 500,
                     fontSize: '0.875rem',
-                    color: showLibrarianMenu ? '#ef5a24' : '#374151',
+                    color: showLibrarianMenu ? '#ef5a24' : '#000000',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                   }}
@@ -307,7 +300,7 @@ const AppNavbar = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.2s',
-                  color: showNotifications ? '#ef5a24' : '#6b7280',
+                  color: showNotifications ? '#ef5a24' : '#000000',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.07)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.25)'; }}
                 onMouseLeave={e => { if (!showNotifications) { e.currentTarget.style.background = 'rgba(248,249,250,0.8)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; }}}
@@ -461,14 +454,14 @@ const AppNavbar = () => {
                   {getInitials(user.fullName)}
                 </div>
                 <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
-                  <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: '0.82rem', color: '#1a1a2e', maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: '0.82rem', color: '#000000', maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {user.fullName?.split(' ')[0]}
                   </div>
-                  <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: '0.7rem', color: '#9ca3af', fontWeight: 500 }}>
+                  <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: '0.7rem', color: '#000000', fontWeight: 500 }}>
                     {user.role}
                   </div>
                 </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.5" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
