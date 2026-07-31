@@ -39,11 +39,11 @@ const ForgotPassword = () => {
         <div style={{ position: 'absolute', top: -50, left: -50, width: 300, height: 300, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }}></div>
         <div style={{ position: 'absolute', bottom: -100, right: -50, width: 400, height: 400, borderRadius: '50%', background: 'rgba(255,255,255,0.03)' }}></div>
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 480 }}>
-          <div style={{ fontSize: '3rem', marginBottom: 24 }}>🔐</div>
+          <div style={{ fontSize: '3rem', marginBottom: 24 }}></div>
           <h1 style={{ fontWeight: 900, fontSize: '3rem', margin: '0 0 16px', lineHeight: 1.1 }}>Recover Access</h1>
           <p style={{ fontSize: '1.1rem', opacity: 0.9, lineHeight: 1.6, marginBottom: 40 }}>We'll help you get back into your LibraryHub account securely and quickly.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            {[{i: '🛡️', t: 'Secure Recovery Process'}, {i: '📧', t: 'Token-Based Authentication'}, {i: '⚡', t: 'Quick & Easy Reset'}].map(f => (
+            {[{i: '️', t: 'Secure Recovery Process'}, {i: '', t: 'Token-Based Authentication'}, {i: '', t: 'Quick & Easy Reset'}].map(f => (
               <div key={f.t} style={{ display: 'flex', alignItems: 'center', gap: 16, background: 'rgba(255,255,255,0.1)', padding: '16px 24px', borderRadius: 16, backdropFilter: 'blur(10px)' }}>
                 <span style={{ fontSize: '1.5rem' }}>{f.i}</span>
                 <span style={{ fontWeight: 600, fontSize: '1.05rem', letterSpacing: 0.5 }}>{f.t}</span>
@@ -61,12 +61,12 @@ const ForgotPassword = () => {
             <p style={{ color: '#64748b', fontSize: '1rem', margin: 0 }}>Enter your credentials to reset your password</p>
           </div>
 
-          {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 12, padding: '16px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500, textAlign: 'center' }}>⚠️ {error}</div>}
+          {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 12, padding: '16px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500, textAlign: 'center' }}>️ {error}</div>}
           
           {resetDone ? (
             <div style={{ textAlign: 'center' }}>
               <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 12, padding: '32px 24px', color: '#065f46' }}>
-                <div style={{ fontSize: '4rem', marginBottom: 16 }}>✅</div>
+                <div style={{ fontSize: '4rem', marginBottom: 16 }}></div>
                 <h3 style={{ fontWeight: 800, fontSize: '1.4rem', margin: '0 0 12px' }}>Password Reset Successful!</h3>
                 <p style={{ color: '#047857', marginBottom: 24 }}>You can now sign in with your new password.</p>
                 <Link to="/login" style={{ display: 'inline-block', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', textDecoration: 'none', padding: '14px 40px', borderRadius: 12, fontWeight: 700, fontSize: '1rem', boxShadow: '0 8px 24px rgba(16,185,129,0.3)' }}>Sign In</Link>

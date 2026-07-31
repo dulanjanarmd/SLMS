@@ -72,12 +72,12 @@ const Profile = () => {
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)', borderRadius: 20, padding: '32px 40px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -40, right: -40, width: 180, height: 180, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.7rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>👤 My Profile</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.7rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}> My Profile</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.88rem', position: 'relative', zIndex: 1 }}>Manage your personal information and preferences</p>
       </div>
 
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}> {success}</div>}
 
       <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 24 }}>
         {/* Left: Avatar Card */}
@@ -93,10 +93,10 @@ const Profile = () => {
 
             <div style={{ borderTop: '1px solid #f1f5f9', marginTop: 20, paddingTop: 20, textAlign: 'left' }}>
               {[
-                { icon: '📧', val: profile?.email },
-                { icon: '📱', val: profile?.phoneNumber || '—' },
-                { icon: '🏛️', val: profile?.faculty || '—' },
-                { icon: '🎓', val: profile?.programme || '—' },
+                { icon: '', val: profile?.email },
+                { icon: '', val: profile?.phoneNumber || '—' },
+                { icon: '️', val: profile?.faculty || '—' },
+                { icon: '', val: profile?.programme || '—' },
               ].map(item => (
                 <div key={item.icon} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, fontSize: '0.85rem' }}>
                   <span style={{ fontSize: '1rem', flexShrink: 0 }}>{item.icon}</span>
@@ -108,7 +108,7 @@ const Profile = () => {
 
           {/* Borrowing Limits */}
           <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
-            <div style={{ padding: '14px 20px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.88rem', color: '#1a1a2e' }}>🏆 Borrowing Privileges</div>
+            <div style={{ padding: '14px 20px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.88rem', color: '#1a1a2e' }}> Borrowing Privileges</div>
             <div style={{ padding: '16px 20px' }}>
               {[
                 { label: 'Max Books', value: profile?.maxBooksAllowed, color: '#ef5a24' },
@@ -130,7 +130,7 @@ const Profile = () => {
           <div style={{ padding: '18px 28px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}>Profile Information</span>
             <button onClick={() => setEditMode(!editMode)} style={{ background: editMode ? '#f1f5f9' : 'rgba(239,90,36,0.08)', color: editMode ? '#64748b' : '#ef5a24', border: `1.5px solid ${editMode ? '#e8ecf0' : 'rgba(239,90,36,0.2)'}`, borderRadius: 8, padding: '7px 16px', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s' }}>
-              {editMode ? '✕ Cancel' : '✏️ Edit Profile'}
+              {editMode ? ' Cancel' : '️ Edit Profile'}
             </button>
           </div>
 
@@ -181,7 +181,7 @@ const Profile = () => {
 
             {editMode && (
               <button onClick={handleSave} disabled={saving} style={{ background: 'linear-gradient(135deg, #ef5a24, #ff6b35)', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: '0.9rem', cursor: saving ? 'not-allowed' : 'pointer', transition: 'all 0.2s', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                {saving ? <><Spinner size="sm" /> Saving...</> : '💾 Save Changes'}
+                {saving ? <><Spinner size="sm" /> Saving...</> : ' Save Changes'}
               </button>
             )}
           </div>

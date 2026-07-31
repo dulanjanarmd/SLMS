@@ -35,17 +35,17 @@ const Home = () => {
   };
 
   const quickStats = [
-    { label: 'Active Loans', value: stats.activeLoans, icon: '📚', color: '#ef5a24', bg: 'rgba(239,90,36,0.10)', to: '/my-books' },
-    { label: 'Overdue', value: stats.overdueLoans, icon: '⚠️', color: '#ef4444', bg: 'rgba(239,68,68,0.10)', to: '/my-books' },
-    { label: 'Reservations', value: stats.pendingReservations, icon: '🔖', color: '#f59e0b', bg: 'rgba(245,158,11,0.10)', to: '/my-reservations' },
-    { label: 'Fines Due', value: `LKR ${stats.outstandingFines.toFixed(0)}`, icon: '💳', color: '#6366f1', bg: 'rgba(99,102,241,0.10)', to: '/my-fines' },
+    { label: 'Active Loans', value: stats.activeLoans, icon: '', color: '#ef5a24', bg: 'rgba(239,90,36,0.10)', to: '/my-books' },
+    { label: 'Overdue', value: stats.overdueLoans, icon: '️', color: '#ef4444', bg: 'rgba(239,68,68,0.10)', to: '/my-books' },
+    { label: 'Reservations', value: stats.pendingReservations, icon: '', color: '#f59e0b', bg: 'rgba(245,158,11,0.10)', to: '/my-reservations' },
+    { label: 'Fines Due', value: `LKR ${stats.outstandingFines.toFixed(0)}`, icon: '', color: '#6366f1', bg: 'rgba(99,102,241,0.10)', to: '/my-fines' },
   ];
 
   const services = [
-    { icon: '🔍', title: 'Advanced Search', desc: 'Find books by title, author, ISBN, category and more with powerful filters.', color: '#ef5a24' },
-    { icon: '📅', title: 'Online Reservations', desc: 'Reserve books online and collect them at the library counter anytime.', color: '#10b981' },
-    { icon: '📱', title: 'Digital Library', desc: 'Access our growing collection of eBooks, journals and research papers.', color: '#6366f1' },
-    { icon: '🔔', title: 'Smart Alerts', desc: 'Get notified for due dates, overdue reminders, and reservation status updates.', color: '#f59e0b' },
+    { icon: '', title: 'Advanced Search', desc: 'Find books by title, author, ISBN, category and more with powerful filters.', color: '#ef5a24' },
+    { icon: '', title: 'Online Reservations', desc: 'Reserve books online and collect them at the library counter anytime.', color: '#10b981' },
+    { icon: '', title: 'Digital Library', desc: 'Access our growing collection of eBooks, journals and research papers.', color: '#6366f1' },
+    { icon: '', title: 'Smart Alerts', desc: 'Get notified for due dates, overdue reminders, and reservation status updates.', color: '#f59e0b' },
   ];
 
   return (
@@ -74,7 +74,7 @@ const Home = () => {
           <div style={{ flex: 1 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 999, padding: '6px 16px', marginBottom: 20, backdropFilter: 'blur(8px)' }}>
               <span style={{ color: '#ff8c5a', fontSize: '0.8rem', fontWeight: 600 }}>● LIVE</span>
-              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.82rem' }}>SLIIT Digital Library System</span>
+              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.82rem' }}>University Digital Library System</span>
             </div>
             <h1 style={{ color: 'white', fontSize: '3rem', fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
               Welcome to{' '}
@@ -87,10 +87,10 @@ const Home = () => {
             </p>
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
               <Link to="/books" style={{ background: '#ef5a24', color: 'white', padding: '13px 28px', borderRadius: 999, fontWeight: 700, fontSize: '0.95rem', textDecoration: 'none', boxShadow: '0 8px 24px rgba(239,90,36,0.4)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                📚 Browse Catalog
+                 Browse Catalog
               </Link>
               <Link to="/ebooks" style={{ background: 'rgba(255,255,255,0.12)', color: 'white', padding: '13px 28px', borderRadius: 999, fontWeight: 600, fontSize: '0.95rem', textDecoration: 'none', border: '1.5px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                📱 eBooks
+                 eBooks
               </Link>
             </div>
           </div>
@@ -127,7 +127,7 @@ const Home = () => {
         <div style={{ marginBottom: 48 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
             <div>
-              <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0, marginBottom: 4 }}>🔥 Popular Now</h2>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0, marginBottom: 4 }}> Popular Now</h2>
               <p style={{ color: '#64748b', margin: 0, fontSize: '0.88rem' }}>Most borrowed books this month</p>
             </div>
             <Link to="/books" style={{ background: '#1a1a2e', color: 'white', padding: '10px 22px', borderRadius: 999, fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none' }}>
@@ -148,13 +148,13 @@ const Home = () => {
                     <div style={{ height: 200, background: 'linear-gradient(135deg, #667eea, #764ba2)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                       {book.coverImageUrl
                         ? <img src={book.coverImageUrl} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : <span style={{ fontSize: '3.5rem' }}>📖</span>}
+                        : <span style={{ fontSize: '3.5rem' }}></span>}
                     </div>
                     <div style={{ padding: '14px 14px 16px' }}>
                       <div style={{ fontWeight: 700, fontSize: '0.88rem', color: '#1a1a2e', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', marginBottom: 6 }}>{book.title}</div>
                       <div style={{ fontSize: '0.78rem', color: '#64748b', marginBottom: 10 }}>{book.author}</div>
                       <span style={{ background: book.availableCopies > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: book.availableCopies > 0 ? '#059669' : '#dc2626', borderRadius: 6, padding: '3px 10px', fontSize: '0.72rem', fontWeight: 600 }}>
-                        {book.availableCopies > 0 ? '✓ Available' : '✗ Unavailable'}
+                        {book.availableCopies > 0 ? ' Available' : ' Unavailable'}
                       </span>
                     </div>
                   </div>

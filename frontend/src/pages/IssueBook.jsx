@@ -77,18 +77,18 @@ const IssueBook = () => {
     <div style={{ padding: '32px 28px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>📤 Issue Book</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}> Issue Book</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Process new book loans for members</p>
       </div>
 
       {success && (
         <div style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.04) 100%)', border: '1.5px solid rgba(16,185,129,0.25)', borderRadius: 14, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>✅</div>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}></div>
           <div>
             <div style={{ fontWeight: 700, color: '#065f46', marginBottom: 2 }}>Book Issued Successfully!</div>
             <div style={{ color: '#047857', fontSize: '0.88rem' }}>"{success.bookTitle}" issued to {success.userName}. Due on <strong>{success.dueDate}</strong>.</div>
           </div>
-          <button onClick={() => setSuccess(null)} style={{ background: 'none', border: 'none', color: '#10b981', marginLeft: 'auto', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+          <button onClick={() => setSuccess(null)} style={{ background: 'none', border: 'none', color: '#10b981', marginLeft: 'auto', fontSize: '1.2rem', cursor: 'pointer' }}></button>
         </div>
       )}
 
@@ -112,7 +112,7 @@ const IssueBook = () => {
               </button>
             </form>
 
-            {studentError && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: 16 }}>⚠️ {studentError}</div>}
+            {studentError && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: 16 }}>️ {studentError}</div>}
 
             {student && (
               <div style={{ background: 'linear-gradient(135deg, rgba(239,90,36,0.04), rgba(239,90,36,0.01))', border: '1px solid rgba(239,90,36,0.15)', borderRadius: 14, padding: '20px' }}>
@@ -164,14 +164,14 @@ const IssueBook = () => {
               </button>
             </form>
 
-            {bookError && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: 16 }}>⚠️ {bookError}</div>}
+            {bookError && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: 16 }}>️ {bookError}</div>}
 
             {selectedBook ? (
               <div style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.04), rgba(99,102,241,0.01))', border: '1px solid rgba(99,102,241,0.15)', borderRadius: 14, padding: '20px', position: 'relative' }}>
-                <button onClick={() => setSelectedBook(null)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
+                <button onClick={() => setSelectedBook(null)} style={{ position: 'absolute', top: 12, right: 12, background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '1rem' }}></button>
                 <div style={{ display: 'flex', gap: 16 }}>
                   <div style={{ width: 60, height: 80, borderRadius: 6, background: '#e8ecf0', overflow: 'hidden', flexShrink: 0 }}>
-                    {selectedBook.coverImageUrl ? <img src={selectedBook.coverImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>📖</div>}
+                    {selectedBook.coverImageUrl ? <img src={selectedBook.coverImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}></div>}
                   </div>
                   <div>
                     <div style={{ fontWeight: 700, color: '#1a1a2e', fontSize: '1.05rem', marginBottom: 2 }}>{selectedBook.title}</div>
@@ -189,7 +189,7 @@ const IssueBook = () => {
                   <div key={book.id} onClick={() => setSelectedBook(book)} style={{ display: 'flex', gap: 12, padding: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', transition: 'background 0.2s', opacity: book.availableCopies > 0 ? 1 : 0.6 }}
                     onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; }} onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}>
                     <div style={{ width: 40, height: 50, borderRadius: 4, background: '#e8ecf0', overflow: 'hidden', flexShrink: 0 }}>
-                      {book.coverImageUrl ? <img src={book.coverImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>📖</div>}
+                      {book.coverImageUrl ? <img src={book.coverImageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}></div>}
                     </div>
                     <div>
                       <div style={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a2e' }}>{book.title}</div>

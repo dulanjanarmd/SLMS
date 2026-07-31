@@ -108,12 +108,12 @@ const Dashboard = () => {
   );
 
   const quickActions = [
-    { to: '/librarian/issue', label: 'Issue Book', icon: '📤', color: '#ef5a24' },
-    { to: '/librarian/return', label: 'Return Book', icon: '📥', color: '#10b981' },
-    { to: '/librarian/inventory', label: 'Inventory', icon: '📦', color: '#6366f1' },
-    { to: '/librarian/reservations', label: 'Reservations', icon: '🔖', color: '#f59e0b' },
-    { to: '/librarian/fines', label: 'Fines', icon: '💰', color: '#ef4444' },
-    { to: '/librarian/reports', label: 'Reports', icon: '📈', color: '#0ea5e9' },
+    { to: '/librarian/issue', label: 'Issue Book', icon: '', color: '#ef5a24' },
+    { to: '/librarian/return', label: 'Return Book', icon: '', color: '#10b981' },
+    { to: '/librarian/inventory', label: 'Inventory', icon: '', color: '#6366f1' },
+    { to: '/librarian/reservations', label: 'Reservations', icon: '', color: '#f59e0b' },
+    { to: '/librarian/fines', label: 'Fines', icon: '', color: '#ef4444' },
+    { to: '/librarian/reports', label: 'Reports', icon: '', color: '#0ea5e9' },
   ];
 
   return (
@@ -124,11 +124,11 @@ const Dashboard = () => {
         <div style={{ position: 'absolute', bottom: -60, right: 80, width: 150, height: 150, background: 'rgba(255,255,255,0.04)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.7, marginBottom: 8 }}>Librarian Portal</div>
-          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8 }}>📊 Dashboard</h1>
+          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8 }}> Dashboard</h1>
           <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem' }}>Real-time overview of library operations</p>
         </div>
         <button onClick={fetchDashboardData} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', color: 'white', borderRadius: 10, padding: '10px 20px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', fontFamily: 'Poppins, sans-serif', position: 'relative', zIndex: 1, backdropFilter: 'blur(8px)' }}>
-          🔄 Refresh
+           Refresh
         </button>
       </div>
 
@@ -152,24 +152,24 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16, marginBottom: 28 }}>
-        <StatCard icon="📚" value={stats?.totalBooks || 0} label="Total Books" color="orange" />
-        <StatCard icon="📱" value={stats?.totalEBooks || 0} label="eBooks" color="purple" />
-        <StatCard icon="👥" value={stats?.totalUsers || 0} label="Members" color="green" />
-        <StatCard icon="🔄" value={stats?.activeLoans || 0} label="Active Loans" color="amber" />
-        <StatCard icon="⚠️" value={stats?.overdueLoans || 0} label="Overdue" color="red" to="/librarian/reports" />
-        <StatCard icon="💰" value={`LKR ${(stats?.outstandingFines || 0).toFixed(0)}`} label="Fines Due" color="red" to="/librarian/fines" />
+        <StatCard icon="" value={stats?.totalBooks || 0} label="Total Books" color="orange" />
+        <StatCard icon="" value={stats?.totalEBooks || 0} label="eBooks" color="purple" />
+        <StatCard icon="" value={stats?.totalUsers || 0} label="Members" color="green" />
+        <StatCard icon="" value={stats?.activeLoans || 0} label="Active Loans" color="amber" />
+        <StatCard icon="️" value={stats?.overdueLoans || 0} label="Overdue" color="red" to="/librarian/reports" />
+        <StatCard icon="" value={`LKR ${(stats?.outstandingFines || 0).toFixed(0)}`} label="Fines Due" color="red" to="/librarian/fines" />
       </div>
 
       {/* Charts */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20, marginBottom: 28 }}>
         <div style={S.card}>
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e' }}>📊 Book Status</div>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e' }}> Book Status</div>
           <div style={{ padding: 20, height: 260, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Doughnut data={bookStatusData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Poppins' }, padding: 16 } } } }} />
           </div>
         </div>
         <div style={S.card}>
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e' }}>📈 Loan Activity</div>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, fontSize: '0.9rem', color: '#1a1a2e' }}> Loan Activity</div>
           <div style={{ padding: 20, height: 260 }}>
             <Bar data={loanActivityData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0, font: { family: 'Poppins' } }, grid: { color: '#f1f5f9' } }, x: { ticks: { font: { family: 'Poppins' } }, grid: { display: false } } } }} />
           </div>
@@ -178,13 +178,13 @@ const Dashboard = () => {
 
       {/* Tables */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
-        <TableCard title="⚠️ Overdue Loans" badge={overdueLoans.length} badgeColor="#ef4444">
+        <TableCard title="️ Overdue Loans" badge={overdueLoans.length} badgeColor="#ef4444">
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
             <thead><tr style={{ background: '#f8fafc' }}>
               {['User', 'Book', 'Due Date', 'Fine'].map(h => <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9' }}>{h}</th>)}
             </tr></thead>
             <tbody>
-              {overdueLoans.length === 0 ? <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>✅ No overdue loans</td></tr>
+              {overdueLoans.length === 0 ? <tr><td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}> No overdue loans</td></tr>
                 : overdueLoans.slice(0, 8).map(loan => {
                   const days = Math.floor((new Date() - new Date(loan.dueDate)) / 86400000);
                   return <tr key={loan.id} style={{ borderBottom: '1px solid #f8fafc' }}>
@@ -198,7 +198,7 @@ const Dashboard = () => {
           </table>
         </TableCard>
 
-        <TableCard title="📋 Today's Loans" badge={todayLoans.length} badgeColor="#10b981">
+        <TableCard title=" Today's Loans" badge={todayLoans.length} badgeColor="#10b981">
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
             <thead><tr style={{ background: '#f8fafc' }}>
               {['User', 'Book', 'Due', 'Status'].map(h => <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9' }}>{h}</th>)}
@@ -219,7 +219,7 @@ const Dashboard = () => {
       {/* Pending Reservations */}
       <div style={{ ...S.card, marginBottom: 20 }}>
         <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}>🔖 Pending Reservations</span>
+          <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}> Pending Reservations</span>
           <span style={{ background: 'rgba(245,158,11,0.12)', color: '#f59e0b', borderRadius: 6, padding: '3px 10px', fontSize: '0.78rem', fontWeight: 700 }}>{pendingReservations.length}</span>
         </div>
         <div style={{ overflowX: 'auto' }}>

@@ -6,7 +6,7 @@ import { Spinner } from 'react-bootstrap';
 
 const statusMap = {
   PENDING:   { label: 'Pending',    color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-  NOTIFIED:  { label: 'Ready! 🎉', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+  NOTIFIED:  { label: 'Ready! ', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
   FULFILLED: { label: 'Fulfilled',  color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
   CANCELLED: { label: 'Cancelled',  color: '#9ca3af', bg: 'rgba(156,163,175,0.1)' },
   EXPIRED:   { label: 'Expired',    color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
@@ -62,18 +62,18 @@ const MyReservations = () => {
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>🔖 My Reservations</h1>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}> My Reservations</h1>
           <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem' }}>{reservations.length} reservation{reservations.length !== 1 ? 's' : ''} · {notified.length} ready for pickup</p>
         </div>
       </div>
 
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}> {success}</div>}
 
       {/* Ready for pickup alerts */}
       {notified.map(r => (
         <div key={r.id} style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.04) 100%)', border: '1.5px solid rgba(16,185,129,0.25)', borderRadius: 14, padding: '16px 20px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>✅</div>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}></div>
           <div>
             <div style={{ fontWeight: 700, color: '#065f46', marginBottom: 2 }}>Book Ready for Pickup!</div>
             <div style={{ color: '#047857', fontSize: '0.88rem' }}>
@@ -87,10 +87,10 @@ const MyReservations = () => {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 14, marginBottom: 24 }}>
         {[
-          { icon: '⏳', val: pending.length, label: 'In Queue', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-          { icon: '🎉', val: notified.length, label: 'Ready Pickup', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
-          { icon: '✅', val: reservations.filter(r => r.status === 'FULFILLED').length, label: 'Fulfilled', color: '#6366f1', bg: 'rgba(99,102,241,0.1)' },
-          { icon: '📋', val: reservations.length, label: 'Total', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
+          { icon: '', val: pending.length, label: 'In Queue', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+          { icon: '', val: notified.length, label: 'Ready Pickup', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+          { icon: '', val: reservations.filter(r => r.status === 'FULFILLED').length, label: 'Fulfilled', color: '#6366f1', bg: 'rgba(99,102,241,0.1)' },
+          { icon: '', val: reservations.length, label: 'Total', color: '#64748b', bg: 'rgba(100,116,139,0.1)' },
         ].map(s => (
           <div key={s.label} style={{ background: 'white', borderRadius: 14, padding: '16px', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>{s.icon}</div>
@@ -113,7 +113,7 @@ const MyReservations = () => {
             <tbody>
               {reservations.length === 0 ? (
                 <tr><td colSpan={7} style={{ padding: '48px', textAlign: 'center', color: '#9ca3af' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🔖</div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: 12 }}></div>
                   No reservations yet. <Link to="/books" style={{ color: '#ef5a24', fontWeight: 600 }}>Browse catalog →</Link>
                 </td></tr>
               ) : reservations.map(res => {
@@ -140,7 +140,7 @@ const MyReservations = () => {
                         <button onClick={() => handleCancel(res.id)} style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 8, padding: '7px 14px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s' }}
                           onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = 'white'; }}
                           onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = '#ef4444'; }}>
-                          ✕ Cancel
+                           Cancel
                         </button>
                       )}
                     </td>

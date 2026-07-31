@@ -60,29 +60,29 @@ const ReturnBook = () => {
     <div style={{ padding: '32px 28px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #1a365d 50%, #0ea5e9 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>📥 Return Book</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}> Return Book</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Process returned books and collect fines</p>
       </div>
 
       {success && (
         <div style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.04) 100%)', border: '1.5px solid rgba(16,185,129,0.25)', borderRadius: 14, padding: '16px 20px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>✅</div>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(16,185,129,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}></div>
           <div>
             <div style={{ fontWeight: 700, color: '#065f46', marginBottom: 2 }}>Book Returned Successfully!</div>
             <div style={{ color: '#047857', fontSize: '0.88rem' }}>"{success.bookTitle}" returned by {success.userName}.
               {success.fineAmount > 0 && <span style={{ color: '#ef4444', fontWeight: 700, marginLeft: 8 }}>Fine imposed: LKR {success.fineAmount.toFixed(2)}</span>}
             </div>
           </div>
-          <button onClick={() => setSuccess(null)} style={{ background: 'none', border: 'none', color: '#10b981', marginLeft: 'auto', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+          <button onClick={() => setSuccess(null)} style={{ background: 'none', border: 'none', color: '#10b981', marginLeft: 'auto', fontSize: '1.2rem', cursor: 'pointer' }}></button>
         </div>
       )}
 
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
 
       <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '24px', marginBottom: 24 }}>
         <form onSubmit={handleSearch} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <div style={{ flex: 1, position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1rem' }}>🔍</span>
+            <span style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1rem' }}></span>
             <input type="text" placeholder="Search active loans by ID, Name, Book Title, or ISBN..." value={query} onChange={e => setQuery(e.target.value)} required style={{ ...inputStyle, paddingLeft: 44 }}
               onFocus={e => { e.target.style.borderColor = '#0ea5e9'; e.target.style.boxShadow = '0 0 0 3px rgba(14,165,233,0.12)'; e.target.style.background = 'white'; }}
               onBlur={e => { e.target.style.borderColor = '#e8ecf0'; e.target.style.boxShadow = 'none'; e.target.style.background = '#f8fafc'; }} />
@@ -134,7 +134,7 @@ const ReturnBook = () => {
                         <button onClick={() => { setSelected(loan); setShowConfirm(true); }} style={{ background: 'rgba(16,185,129,0.08)', color: '#10b981', border: '1.5px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '7px 16px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s' }}
                           onMouseEnter={e => { e.currentTarget.style.background = '#10b981'; e.currentTarget.style.color = 'white'; }}
                           onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = '#10b981'; }}>
-                          📥 Return
+                           Return
                         </button>
                       </td>
                     </tr>

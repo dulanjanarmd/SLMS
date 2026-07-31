@@ -19,7 +19,7 @@ const AdminDashboard = () => {
   if (loading) return <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div>;
   if (error) return (
     <div style={{ padding: '80px 24px', textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
-      <div style={{ fontSize: '4rem', marginBottom: 16 }}>⚠️</div>
+      <div style={{ fontSize: '4rem', marginBottom: 16 }}>️</div>
       <h2 style={{ fontWeight: 800, color: '#1a1a2e', marginBottom: 12 }}>{error}</h2>
       <button onClick={fetchStats} style={{ background: '#1a1a2e', color: 'white', border: 'none', borderRadius: 999, padding: '12px 28px', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>Retry</button>
     </div>
@@ -28,10 +28,10 @@ const AdminDashboard = () => {
   const usersByRole = stats?.usersByRole || {};
 
   const statCards = [
-    { title: 'Total Books', val: stats?.totalBooks || 0, icon: '📚', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
-    { title: 'Active Loans', val: stats?.activeLoans || 0, icon: '🔄', color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)' },
-    { title: 'Pending Reservations', val: stats?.pendingReservations || 0, icon: '🔖', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-    { title: 'Overdue Books', val: stats?.overdueLoans || 0, icon: '⚠️', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' }
+    { title: 'Total Books', val: stats?.totalBooks || 0, icon: '', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+    { title: 'Active Loans', val: stats?.activeLoans || 0, icon: '', color: '#0ea5e9', bg: 'rgba(14,165,233,0.1)' },
+    { title: 'Pending Reservations', val: stats?.pendingReservations || 0, icon: '', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+    { title: 'Overdue Books', val: stats?.overdueLoans || 0, icon: '️', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' }
   ];
 
   return (
@@ -39,7 +39,7 @@ const AdminDashboard = () => {
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #4c1d95 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>🛡️ Admin Dashboard</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>️ Admin Dashboard</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>System overview and high-level statistics</p>
       </div>
 
@@ -47,7 +47,7 @@ const AdminDashboard = () => {
         {/* User Summary Card */}
         <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '32px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-            <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(76,29,149,0.1)', color: '#4c1d95', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>👥</div>
+            <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(76,29,149,0.1)', color: '#4c1d95', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}></div>
             <div>
               <div style={{ fontSize: '2rem', fontWeight: 900, color: '#1a1a2e', lineHeight: 1 }}>{stats?.totalUsers || 0}</div>
               <div style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 600 }}>Total Users</div>

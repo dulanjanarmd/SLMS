@@ -60,7 +60,7 @@ const Books = () => {
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>📚 Book Catalog</h1>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}> Book Catalog</h1>
           <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem' }}>Browse, search, and discover books from our collection</p>
         </div>
         {!loading && <div style={{ background: 'rgba(255,255,255,0.15)', borderRadius: 10, padding: '10px 20px', backdropFilter: 'blur(8px)', position: 'relative', zIndex: 1 }}>
@@ -69,23 +69,23 @@ const Books = () => {
         </div>}
       </div>
 
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
 
       {/* Search Area */}
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px', marginBottom: 20 }}>
         <form onSubmit={handleSearch} style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: 240, position: 'relative' }}>
-            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1rem' }}>🔍</span>
+            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1rem' }}></span>
             <input type="text" placeholder="Search by title, author, ISBN, or keywords..." value={searchKeyword} onChange={e => setSearchKeyword(e.target.value)}
               style={{ ...inputStyle, paddingLeft: 42 }}
               onFocus={e => { e.target.style.borderColor = '#ef5a24'; e.target.style.boxShadow = '0 0 0 3px rgba(239,90,36,0.12)'; }}
               onBlur={e => { e.target.style.borderColor = '#e8ecf0'; e.target.style.boxShadow = 'none'; }} />
           </div>
-          <button type="submit" style={btnPrimary}>🔍 Search</button>
+          <button type="submit" style={btnPrimary}> Search</button>
           <button type="button" onClick={() => setShowAdvanced(!showAdvanced)} style={{ ...btnPrimary, background: showAdvanced ? '#1a1a2e' : 'rgba(26,26,46,0.08)', color: showAdvanced ? 'white' : '#1a1a2e' }}>
-            ⚙️ {showAdvanced ? 'Hide Filters' : 'Filters'}
+            ️ {showAdvanced ? 'Hide Filters' : 'Filters'}
           </button>
-          <button type="button" onClick={handleClear} style={{ ...btnPrimary, background: 'rgba(100,116,139,0.08)', color: '#64748b' }}>✕ Clear</button>
+          <button type="button" onClick={handleClear} style={{ ...btnPrimary, background: 'rgba(100,116,139,0.08)', color: '#64748b' }}> Clear</button>
         </form>
 
         {showAdvanced && (
@@ -121,7 +121,7 @@ const Books = () => {
                 </select>
               </div>
             </div>
-            <button type="submit" style={btnPrimary}>⚙️ Apply Filters</button>
+            <button type="submit" style={btnPrimary}>️ Apply Filters</button>
           </form>
         )}
       </div>
@@ -143,7 +143,7 @@ const Books = () => {
         <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div>
       ) : books.length === 0 ? (
         <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '60px', textAlign: 'center', color: '#9ca3af' }}>
-          <div style={{ fontSize: '3rem', marginBottom: 12 }}>📭</div>
+          <div style={{ fontSize: '3rem', marginBottom: 12 }}></div>
           <div style={{ fontWeight: 600, marginBottom: 8 }}>No books found</div>
           <div style={{ fontSize: '0.88rem' }}>Try adjusting your search terms or filters</div>
         </div>
@@ -161,10 +161,10 @@ const Books = () => {
                     <div style={{ height: 200, background: 'linear-gradient(135deg, #667eea, #764ba2)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
                       {book.coverImageUrl
                         ? <img src={book.coverImageUrl} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : <span style={{ fontSize: '4rem' }}>📖</span>}
+                        : <span style={{ fontSize: '4rem' }}></span>}
                       <div style={{ position: 'absolute', top: 10, right: 10 }}>
                         <span style={{ background: avail ? 'rgba(16,185,129,0.85)' : 'rgba(239,68,68,0.85)', color: 'white', borderRadius: 6, padding: '3px 10px', fontSize: '0.7rem', fontWeight: 700, backdropFilter: 'blur(4px)' }}>
-                          {avail ? `✓ ${book.availableCopies} avail.` : '✗ Unavail.'}
+                          {avail ? ` ${book.availableCopies} avail.` : ' Unavail.'}
                         </span>
                       </div>
                     </div>

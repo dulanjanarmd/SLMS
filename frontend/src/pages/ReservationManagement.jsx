@@ -68,12 +68,12 @@ const ReservationManagement = () => {
     <div style={{ padding: '32px 28px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #4c1d95 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>🔖 Reservation Management</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}> Reservation Management</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Fulfill and manage book reservations</p>
       </div>
 
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}> {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24, marginBottom: 24 }}>
         {/* Lookup Card */}
@@ -88,7 +88,7 @@ const ReservationManagement = () => {
             </button>
           </form>
 
-          {lookupError && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: 12 }}>⚠️ {lookupError}</div>}
+          {lookupError && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: 12 }}>️ {lookupError}</div>}
 
           {lookupResult && (
             <div style={{ background: 'linear-gradient(135deg, rgba(76,29,149,0.04), rgba(76,29,149,0.01))', border: '1px solid rgba(76,29,149,0.15)', borderRadius: 12, padding: '16px' }}>
@@ -102,7 +102,7 @@ const ReservationManagement = () => {
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={() => { setCancelRes(lookupResult); setShowCancelModal(true); }} style={{ flex: 1, background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 8, padding: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}>Cancel</button>
-                <button onClick={() => { setFulfillRes(lookupResult); setShowFulfillModal(true); }} style={{ flex: 2, background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: 8, padding: '8px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(16,185,129,0.25)' }}>✅ Fulfill (Issue)</button>
+                <button onClick={() => { setFulfillRes(lookupResult); setShowFulfillModal(true); }} style={{ flex: 2, background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: 8, padding: '8px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 12px rgba(16,185,129,0.25)' }}> Fulfill (Issue)</button>
               </div>
             </div>
           )}
@@ -111,8 +111,8 @@ const ReservationManagement = () => {
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {[
-            { label: 'Ready for Pickup', val: reservations.filter(r => r.status === 'NOTIFIED').length, icon: '🎉', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
-            { label: 'Pending in Queue', val: reservations.filter(r => r.status === 'PENDING').length, icon: '⏳', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+            { label: 'Ready for Pickup', val: reservations.filter(r => r.status === 'NOTIFIED').length, icon: '', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+            { label: 'Pending in Queue', val: reservations.filter(r => r.status === 'PENDING').length, icon: '', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
           ].map(s => (
             <div key={s.label} style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ width: 48, height: 48, borderRadius: 12, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', marginBottom: 16 }}>{s.icon}</div>
@@ -126,7 +126,7 @@ const ReservationManagement = () => {
       <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', background: '#fafbfc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1a1a2e', margin: 0 }}>Active Reservations Queue</h3>
-          <button onClick={fetchReservations} style={{ background: 'none', border: 'none', color: '#4c1d95', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>🔄 Refresh</button>
+          <button onClick={fetchReservations} style={{ background: 'none', border: 'none', color: '#4c1d95', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}> Refresh</button>
         </div>
         <div style={{ overflowX: 'auto' }}>
           {loading ? (

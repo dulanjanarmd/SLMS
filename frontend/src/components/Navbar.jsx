@@ -166,12 +166,12 @@ const AppNavbar = () => {
           <div className="navbar-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: '2px', flex: 1 }}>
             {[
               { to: '/', label: 'Home', icon: '⌂' },
-              { to: '/books', label: 'Catalog', icon: '📚' },
-              ...(user.role === 'LIBRARIAN' ? [{ to: '/dashboard', label: 'Dashboard', icon: '📊' }] : []),
-              ...(user.role === 'STUDENT' ? [{ to: '/student/dashboard', label: 'My Dashboard', icon: '🎓' }] : []),
-              ...(user.role === 'FACULTY' ? [{ to: '/faculty/dashboard', label: 'My Dashboard', icon: '🏫' }] : []),
+              { to: '/books', label: 'Catalog', icon: '' },
+              ...(user.role === 'LIBRARIAN' ? [{ to: '/dashboard', label: 'Dashboard', icon: '' }] : []),
+              ...(user.role === 'STUDENT' ? [{ to: '/student/dashboard', label: 'My Dashboard', icon: '' }] : []),
+              ...(user.role === 'FACULTY' ? [{ to: '/faculty/dashboard', label: 'My Dashboard', icon: '' }] : []),
               ...((user.role === 'STUDENT' || user.role === 'FACULTY') ? [{ to: '/membership', label: 'Membership', icon: '🪪' }] : []),
-              { to: '/ebooks', label: 'eBooks', icon: '📖' },
+              { to: '/ebooks', label: 'eBooks', icon: '' },
             ].map(({ to, label }) => (
               <Link key={to} to={to} style={{
                 textDecoration: 'none',
@@ -245,15 +245,15 @@ const AppNavbar = () => {
                   }}>
                     <div style={{ padding: '8px' }}>
                       {[
-                        { to: '/librarian/issue', label: 'Issue Book', icon: '📤' },
-                        { to: '/librarian/return', label: 'Return Book', icon: '📥' },
+                        { to: '/librarian/issue', label: 'Issue Book', icon: '' },
+                        { to: '/librarian/return', label: 'Return Book', icon: '' },
                         null,
-                        { to: '/librarian/inventory', label: 'Inventory', icon: '📦' },
-                        { to: '/librarian/reservations', label: 'Reservations', icon: '🔖' },
-                        { to: '/librarian/renewals', label: 'Renewal Requests', icon: '🔄' },
-                        { to: '/librarian/fines', label: 'Fines', icon: '💰' },
+                        { to: '/librarian/inventory', label: 'Inventory', icon: '' },
+                        { to: '/librarian/reservations', label: 'Reservations', icon: '' },
+                        { to: '/librarian/renewals', label: 'Renewal Requests', icon: '' },
+                        { to: '/librarian/fines', label: 'Fines', icon: '' },
                         null,
-                        { to: '/librarian/reports', label: 'Reports', icon: '📈' },
+                        { to: '/librarian/reports', label: 'Reports', icon: '' },
                       ].map((item, idx) => item === null ? (
                         <div key={`div-${idx}`} style={{ height: '1px', background: '#f3f4f6', margin: '4px 0' }} />
                       ) : (
@@ -375,7 +375,7 @@ const AppNavbar = () => {
                   <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                     {notifications.length === 0 ? (
                       <div style={{ padding: '30px 20px', textAlign: 'center', color: '#9ca3af', fontFamily: "'Poppins', sans-serif", fontSize: '0.85rem' }}>
-                        <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔔</div>
+                        <div style={{ fontSize: '2rem', marginBottom: '8px' }}></div>
                         No new notifications
                       </div>
                     ) : notifications.slice(0, 5).map((notif) => (
@@ -527,10 +527,10 @@ const AppNavbar = () => {
 
                   <div style={{ padding: '8px' }}>
                     {[
-                      { to: '/profile', label: 'My Profile', icon: '👤' },
-                      { to: '/my-books', label: 'My Books', icon: '📚' },
-                      { to: '/my-reservations', label: 'My Reservations', icon: '🔖' },
-                      { to: '/my-fines', label: 'My Fines', icon: '💳' },
+                      { to: '/profile', label: 'My Profile', icon: '' },
+                      { to: '/my-books', label: 'My Books', icon: '' },
+                      { to: '/my-reservations', label: 'My Reservations', icon: '' },
+                      { to: '/my-fines', label: 'My Fines', icon: '' },
                     ].map(item => (
                       <Link
                         key={item.to}
@@ -581,7 +581,7 @@ const AppNavbar = () => {
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.07)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <span>🚪</span>
+                      <span></span>
                       Logout
                     </button>
                   </div>

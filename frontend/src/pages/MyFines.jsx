@@ -58,23 +58,23 @@ const MyFines = () => {
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #4c1d1d 50%, #ef4444 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>💳 My Fines</h1>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}> My Fines</h1>
           <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem' }}>
-            {totalOutstanding > 0 ? `LKR ${totalOutstanding.toFixed(2)} outstanding` : 'No outstanding fines — great job! 🎉'}
+            {totalOutstanding > 0 ? `LKR ${totalOutstanding.toFixed(2)} outstanding` : 'No outstanding fines — great job! '}
           </p>
         </div>
       </div>
 
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}> {success}</div>}
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 14, marginBottom: 24 }}>
         {[
-          { icon: '💸', val: `LKR ${totalOutstanding.toFixed(2)}`, label: 'Outstanding', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-          { icon: '⚠️', val: fines.filter(f => f.status === 'UNPAID').length, label: 'Unpaid', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-          { icon: '🔄', val: fines.filter(f => f.status === 'PARTIALLY_PAID').length, label: 'Partial', color: '#6366f1', bg: 'rgba(99,102,241,0.1)' },
-          { icon: '✅', val: fines.filter(f => f.status === 'PAID').length, label: 'Paid', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+          { icon: '', val: `LKR ${totalOutstanding.toFixed(2)}`, label: 'Outstanding', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+          { icon: '️', val: fines.filter(f => f.status === 'UNPAID').length, label: 'Unpaid', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+          { icon: '', val: fines.filter(f => f.status === 'PARTIALLY_PAID').length, label: 'Partial', color: '#6366f1', bg: 'rgba(99,102,241,0.1)' },
+          { icon: '', val: fines.filter(f => f.status === 'PAID').length, label: 'Paid', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
         ].map(s => (
           <div key={s.label} style={{ background: 'white', borderRadius: 14, padding: '16px', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>{s.icon}</div>
@@ -97,7 +97,7 @@ const MyFines = () => {
             <tbody>
               {fines.length === 0 ? (
                 <tr><td colSpan={7} style={{ padding: '48px', textAlign: 'center', color: '#9ca3af' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>🎉</div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: 12 }}></div>
                   No fines — keep returning books on time!
                 </td></tr>
               ) : fines.map(fine => {
@@ -118,7 +118,7 @@ const MyFines = () => {
                         <button onClick={() => handlePayClick(fine)} style={{ background: 'rgba(16,185,129,0.08)', color: '#10b981', border: '1.5px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '7px 14px', fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', fontFamily: 'Poppins, sans-serif', transition: 'all 0.2s' }}
                           onMouseEnter={e => { e.currentTarget.style.background = '#10b981'; e.currentTarget.style.color = 'white'; }}
                           onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = '#10b981'; }}>
-                          💳 Pay
+                           Pay
                         </button>
                       )}
                     </td>
@@ -134,7 +134,7 @@ const MyFines = () => {
       {payModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'white', borderRadius: 20, padding: '32px', width: '100%', maxWidth: 440, boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
-            <h3 style={{ fontWeight: 800, fontSize: '1.2rem', color: '#1a1a2e', marginBottom: 20 }}>💳 Pay Fine</h3>
+            <h3 style={{ fontWeight: 800, fontSize: '1.2rem', color: '#1a1a2e', marginBottom: 20 }}> Pay Fine</h3>
             <div style={{ background: '#f8fafc', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
               <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: 6 }}>Book</div>
               <div style={{ fontWeight: 700, color: '#1a1a2e', marginBottom: 12 }}>{payModal.bookTitle}</div>
@@ -157,7 +157,7 @@ const MyFines = () => {
             <div style={{ display: 'flex', gap: 12 }}>
               <button onClick={() => setPayModal(null)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}>Cancel</button>
               <button onClick={handlePay} style={{ flex: 2, padding: '12px', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem', boxShadow: '0 8px 24px rgba(16,185,129,0.3)' }}>
-                💳 Pay Now
+                 Pay Now
               </button>
             </div>
           </div>

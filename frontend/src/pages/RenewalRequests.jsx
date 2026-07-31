@@ -45,19 +45,19 @@ const RenewalRequests = () => {
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #1a365d 50%, #0ea5e9 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>🔄 Renewal Requests</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}> Renewal Requests</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Approve or deny member requests to extend book loans</p>
       </div>
 
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}> {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
 
       <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', background: '#fafbfc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1a1a2e', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             Pending Requests <span style={{ background: 'rgba(14,165,233,0.1)', color: '#0ea5e9', padding: '2px 8px', borderRadius: 999, fontSize: '0.8rem' }}>{requests.length}</span>
           </h3>
-          <button onClick={fetchRequests} style={{ background: 'none', border: 'none', color: '#0ea5e9', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>🔄 Refresh</button>
+          <button onClick={fetchRequests} style={{ background: 'none', border: 'none', color: '#0ea5e9', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}> Refresh</button>
         </div>
         
         <div style={{ overflowX: 'auto' }}>
@@ -113,7 +113,7 @@ const RenewalRequests = () => {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'white', borderRadius: 20, padding: '32px', width: '100%', maxWidth: 440, boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
             <h3 style={{ fontWeight: 800, fontSize: '1.3rem', color: actionModal.type === 'approve' ? '#065f46' : '#991b1b', marginBottom: 20 }}>
-              {actionModal.type === 'approve' ? '✅ Approve Renewal' : '⚠️ Deny Renewal'}
+              {actionModal.type === 'approve' ? ' Approve Renewal' : '️ Deny Renewal'}
             </h3>
             
             <div style={{ background: actionModal.type === 'approve' ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)', borderRadius: 12, padding: '16px', marginBottom: 24, fontSize: '0.9rem', color: '#374151', lineHeight: 1.6, border: `1px solid ${actionModal.type === 'approve' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}` }}>

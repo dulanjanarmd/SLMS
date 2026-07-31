@@ -43,11 +43,11 @@ const StudentDashboard = () => {
   });
 
   const quickLinks = [
-    { to: '/my-books', icon: '📚', label: 'My Books', color: '#ef5a24' },
-    { to: '/my-reservations', icon: '🔖', label: 'Reservations', color: '#f59e0b' },
-    { to: '/my-fines', icon: '💳', label: 'My Fines', color: '#ef4444' },
-    { to: '/books', icon: '🔍', label: 'Browse Catalog', color: '#10b981' },
-    { to: '/ebooks', icon: '📱', label: 'eBooks', color: '#6366f1' },
+    { to: '/my-books', icon: '', label: 'My Books', color: '#ef5a24' },
+    { to: '/my-reservations', icon: '', label: 'Reservations', color: '#f59e0b' },
+    { to: '/my-fines', icon: '', label: 'My Fines', color: '#ef4444' },
+    { to: '/books', icon: '', label: 'Browse Catalog', color: '#10b981' },
+    { to: '/ebooks', icon: '', label: 'eBooks', color: '#6366f1' },
     ...(!user?.isMember ? [{ to: '/membership', icon: '🪪', label: 'Apply Membership', color: '#0ea5e9' }] : []),
   ];
 
@@ -60,7 +60,7 @@ const StudentDashboard = () => {
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ fontSize: '0.78rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.7, marginBottom: 8 }}>Student Portal</div>
           <h1 style={{ fontWeight: 800, fontSize: '1.7rem', margin: 0, marginBottom: 6 }}>
-            👋 Hello, {user?.fullName?.split(' ')[0] || 'Student'}!
+             Hello, {user?.fullName?.split(' ')[0] || 'Student'}!
           </h1>
           <p style={{ opacity: 0.75, margin: 0, fontSize: '0.88rem' }}>Here's your library activity summary</p>
         </div>
@@ -75,10 +75,10 @@ const StudentDashboard = () => {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 28 }}>
         {[
-          { icon: '📚', value: activeLoans.length, label: 'Active Loans', color: '#ef5a24', bg: 'rgba(239,90,36,0.1)', to: '/my-books' },
-          { icon: '⚠️', value: activeLoans.filter(l => new Date(l.dueDate) < today).length, label: 'Overdue', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', to: '/my-books' },
-          { icon: '🔖', value: pendingReservations.length, label: 'Reservations', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', to: '/my-reservations' },
-          { icon: '💳', value: `LKR ${totalFines.toFixed(0)}`, label: 'Fines Due', color: '#6366f1', bg: 'rgba(99,102,241,0.1)', to: '/my-fines' },
+          { icon: '', value: activeLoans.length, label: 'Active Loans', color: '#ef5a24', bg: 'rgba(239,90,36,0.1)', to: '/my-books' },
+          { icon: '️', value: activeLoans.filter(l => new Date(l.dueDate) < today).length, label: 'Overdue', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', to: '/my-books' },
+          { icon: '', value: pendingReservations.length, label: 'Reservations', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', to: '/my-reservations' },
+          { icon: '', value: `LKR ${totalFines.toFixed(0)}`, label: 'Fines Due', color: '#6366f1', bg: 'rgba(99,102,241,0.1)', to: '/my-fines' },
         ].map(s => (
           <Link key={s.to} to={s.to} style={{ textDecoration: 'none' }}>
             <div style={{ background: 'white', borderRadius: 16, padding: '22px 20px', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: 16, transition: 'all 0.22s' }}
@@ -115,7 +115,7 @@ const StudentDashboard = () => {
         {/* Active Loans */}
         <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}>📚 Active Loans</span>
+            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}> Active Loans</span>
             <span style={{ background: 'rgba(239,90,36,0.1)', color: '#ef5a24', borderRadius: 6, padding: '3px 10px', fontSize: '0.75rem', fontWeight: 700 }}>{activeLoans.length}</span>
           </div>
           <div style={{ overflowX: 'auto' }}>
@@ -145,7 +145,7 @@ const StudentDashboard = () => {
         {/* Pending Reservations */}
         <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}>🔖 Reservations</span>
+            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e' }}> Reservations</span>
             <span style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b', borderRadius: 6, padding: '3px 10px', fontSize: '0.75rem', fontWeight: 700 }}>{pendingReservations.length}</span>
           </div>
           <div style={{ overflowX: 'auto' }}>

@@ -47,7 +47,7 @@ const BookDetail = () => {
 
   if (error && !book) return (
     <div style={{ padding: '80px 24px', textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
-      <div style={{ fontSize: '4rem', marginBottom: 16 }}>🔍</div>
+      <div style={{ fontSize: '4rem', marginBottom: 16 }}></div>
       <h2 style={{ fontWeight: 800, color: '#1a1a2e', marginBottom: 12 }}>{error}</h2>
       <button onClick={() => navigate('/books')} style={{ background: '#1a1a2e', color: 'white', border: 'none', borderRadius: 999, padding: '12px 28px', fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>← Back to Catalog</button>
     </div>
@@ -63,10 +63,10 @@ const BookDetail = () => {
   return (
     <div style={{ padding: '32px 28px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
       {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#065f46', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: '1.4rem' }}>✅</span> {success}
+        <span style={{ fontSize: '1.4rem' }}></span> {success}
       </div>}
       {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: '1.4rem' }}>⚠️</span> {error}
+        <span style={{ fontSize: '1.4rem' }}>️</span> {error}
       </div>}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 340px) 1fr', gap: 32 }}>
@@ -74,7 +74,7 @@ const BookDetail = () => {
         <div>
           <div style={{ background: 'linear-gradient(135deg, #1a1a2e, #4c1d95)', borderRadius: 20, padding: 8, boxShadow: '0 24px 60px rgba(0,0,0,0.12)', marginBottom: 24 }}>
             <div style={{ background: 'white', borderRadius: 14, overflow: 'hidden', height: 460, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              {book.coverImageUrl ? <img src={book.coverImageUrl} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: '6rem' }}>📖</span>}
+              {book.coverImageUrl ? <img src={book.coverImageUrl} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: '6rem' }}></span>}
             </div>
           </div>
 
@@ -89,7 +89,7 @@ const BookDetail = () => {
             {user ? (
               isLibrarian ? (
                 <Link to="/librarian/issue" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a1a2e', color: 'white', textDecoration: 'none', padding: '14px', borderRadius: 12, fontWeight: 700, fontSize: '0.95rem', gap: 8, transition: 'transform 0.2s' }}>
-                  📤 Go to Issue Book
+                   Go to Issue Book
                 </Link>
               ) : !isMember ? (
                 <div style={{ background: 'rgba(245,158,11,0.1)', color: '#d97706', padding: '16px', borderRadius: 12, fontSize: '0.85rem', textAlign: 'center', border: '1px solid rgba(245,158,11,0.2)' }}>
@@ -98,7 +98,7 @@ const BookDetail = () => {
                 </div>
               ) : (
                 <button onClick={() => setShowReserveModal(true)} disabled={book.availableCopies === 0} style={{ width: '100%', padding: '14px', background: book.availableCopies > 0 ? 'linear-gradient(135deg, #ef5a24, #ff6b35)' : '#f1f5f9', color: book.availableCopies > 0 ? 'white' : '#9ca3af', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: '0.95rem', cursor: book.availableCopies > 0 ? 'pointer' : 'not-allowed', fontFamily: 'Poppins, sans-serif', boxShadow: book.availableCopies > 0 ? '0 8px 24px rgba(239,90,36,0.3)' : 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                  🔖 {book.availableCopies > 0 ? 'Reserve Book' : 'Currently Unavailable'}
+                   {book.availableCopies > 0 ? 'Reserve Book' : 'Currently Unavailable'}
                 </button>
               )
             ) : (

@@ -74,10 +74,10 @@ const MembershipApplication = () => {
       </div>
 
       {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#065f46', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: '1.4rem' }}>✅</span> {success}
+        <span style={{ fontSize: '1.4rem' }}></span> {success}
       </div>}
       {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: '1.4rem' }}>⚠️</span> {error}
+        <span style={{ fontSize: '1.4rem' }}>️</span> {error}
       </div>}
 
       {existing ? (
@@ -89,7 +89,7 @@ const MembershipApplication = () => {
               {existing.photoPath ? (
                 <img src={`${API_URL}/membership/photo/${existing.photoPath}`} alt="Member" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none'; }} />
               ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: '#cbd5e1' }}>👤</div>
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: '#cbd5e1' }}></div>
               )}
             </div>
             
@@ -104,7 +104,7 @@ const MembershipApplication = () => {
             {existing.status === 'APPROVED' && (
               <div style={{ width: '100%', background: 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.1))', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 16, padding: '24px', textAlign: 'left', marginBottom: 24 }}>
                 <h3 style={{ fontWeight: 800, color: '#065f46', fontSize: '1.1rem', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: '1.4rem' }}>🎉</span> Membership Active
+                  <span style={{ fontSize: '1.4rem' }}></span> Membership Active
                 </h3>
                 <p style={{ color: '#047857', fontSize: '0.9rem', margin: '0 0 20px', lineHeight: 1.6 }}>You have full access to library services including borrowing books and accessing digital content.</p>
                 <div style={{ display: 'flex', gap: 12 }}>
@@ -136,7 +136,7 @@ const MembershipApplication = () => {
                   <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <div style={{ textAlign: 'center', color: '#9ca3af' }}>
-                    <div style={{ fontSize: '1.5rem', marginBottom: 4 }}>📸</div>
+                    <div style={{ fontSize: '1.5rem', marginBottom: 4 }}></div>
                     <div style={{ fontSize: '0.7rem', fontWeight: 600 }}>Upload Photo</div>
                   </div>
                 )}

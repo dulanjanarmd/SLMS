@@ -65,23 +65,23 @@ const MyBooks = () => {
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>📚 My Books</h1>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}> My Books</h1>
           <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem' }}>
             {activeLoans.length} active loan{activeLoans.length !== 1 ? 's' : ''} · {borrowHistory.length} returned
           </p>
         </div>
       </div>
 
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 16, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}> {success}</div>}
 
       {/* Quick Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 14, marginBottom: 24 }}>
         {[
-          { icon: '📖', val: activeLoans.length, label: 'Active Loans', color: '#ef5a24', bg: 'rgba(239,90,36,0.1)' },
-          { icon: '⚠️', val: activeLoans.filter(l => isOverdue(l.dueDate)).length, label: 'Overdue', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-          { icon: '🔄', val: activeLoans.filter(l => l.status === 'RENEWAL_REQUESTED').length, label: 'Renewal Pending', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
-          { icon: '📦', val: borrowHistory.length, label: 'Total Returned', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+          { icon: '', val: activeLoans.length, label: 'Active Loans', color: '#ef5a24', bg: 'rgba(239,90,36,0.1)' },
+          { icon: '️', val: activeLoans.filter(l => isOverdue(l.dueDate)).length, label: 'Overdue', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+          { icon: '', val: activeLoans.filter(l => l.status === 'RENEWAL_REQUESTED').length, label: 'Renewal Pending', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' },
+          { icon: '', val: borrowHistory.length, label: 'Total Returned', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
         ].map(s => (
           <div key={s.label} style={{ background: 'white', borderRadius: 14, padding: '18px 16px', border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>{s.icon}</div>
@@ -111,7 +111,7 @@ const MyBooks = () => {
               <tbody>
                 {activeLoans.length === 0 ? (
                   <tr><td colSpan={7} style={{ padding: '48px', textAlign: 'center', color: '#9ca3af' }}>
-                    <div style={{ fontSize: '2.5rem', marginBottom: 12 }}>📚</div>
+                    <div style={{ fontSize: '2.5rem', marginBottom: 12 }}></div>
                     No active loans. <Link to="/books" style={{ color: '#ef5a24', fontWeight: 600 }}>Browse catalog →</Link>
                   </td></tr>
                 ) : activeLoans.map(loan => {
@@ -144,7 +144,7 @@ const MyBooks = () => {
                           onClick={() => handleRenew(loan.id)}
                           disabled={loan.renewalCount >= 2 || overdue || loan.status === 'RENEWAL_REQUESTED'}
                           style={{ background: (loan.renewalCount >= 2 || overdue || loan.status === 'RENEWAL_REQUESTED') ? '#f1f5f9' : 'rgba(239,90,36,0.08)', color: (loan.renewalCount >= 2 || overdue || loan.status === 'RENEWAL_REQUESTED') ? '#9ca3af' : '#ef5a24', border: `1.5px solid ${(loan.renewalCount >= 2 || overdue || loan.status === 'RENEWAL_REQUESTED') ? '#e8ecf0' : 'rgba(239,90,36,0.2)'}`, borderRadius: 8, padding: '7px 14px', fontSize: '0.78rem', fontWeight: 600, cursor: (loan.renewalCount >= 2 || overdue || loan.status === 'RENEWAL_REQUESTED') ? 'not-allowed' : 'pointer', fontFamily: 'Poppins, sans-serif', whiteSpace: 'nowrap', transition: 'all 0.2s' }}>
-                          {loan.status === 'RENEWAL_REQUESTED' ? '⏳ Pending...' : '🔄 Renew'}
+                          {loan.status === 'RENEWAL_REQUESTED' ? ' Pending...' : ' Renew'}
                         </button>
                       </td>
                     </tr>

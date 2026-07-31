@@ -64,18 +64,18 @@ const FineManagement = () => {
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #1a365d 50%, #059669 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>💸 Fine Management</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}> Fine Management</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Process payments and manage user fines</p>
       </div>
 
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}> {success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 24, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>️ {error}</div>}
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
         {[
-          { label: 'Total Outstanding', val: `LKR ${(stats.totalOutstanding || 0).toFixed(2)}`, icon: '⚠️', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
-          { label: 'Total Collected', val: `LKR ${(stats.totalCollected || 0).toFixed(2)}`, icon: '💰', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
+          { label: 'Total Outstanding', val: `LKR ${(stats.totalOutstanding || 0).toFixed(2)}`, icon: '️', color: '#ef4444', bg: 'rgba(239,68,68,0.1)' },
+          { label: 'Total Collected', val: `LKR ${(stats.totalCollected || 0).toFixed(2)}`, icon: '', color: '#10b981', bg: 'rgba(16,185,129,0.1)' },
         ].map(s => (
           <div key={s.label} style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', padding: '24px', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <div style={{ width: 50, height: 50, borderRadius: 12, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', flexShrink: 0 }}>{s.icon}</div>
@@ -98,7 +98,7 @@ const FineManagement = () => {
       <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #f1f5f9', background: '#fafbfc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1a1a2e', margin: 0 }}>Fine Records</h3>
-          <button onClick={fetchFines} style={{ background: 'none', border: 'none', color: '#059669', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>🔄 Refresh</button>
+          <button onClick={fetchFines} style={{ background: 'none', border: 'none', color: '#059669', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}> Refresh</button>
         </div>
         <div style={{ overflowX: 'auto' }}>
           {loading ? (
@@ -149,7 +149,7 @@ const FineManagement = () => {
       {showPayModal && selectedFine && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)' }}>
           <div style={{ background: 'white', borderRadius: 20, padding: '32px', width: '100%', maxWidth: 440, boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
-            <h3 style={{ fontWeight: 800, fontSize: '1.2rem', color: '#1a1a2e', marginBottom: 20 }}>💳 Process Cash Payment</h3>
+            <h3 style={{ fontWeight: 800, fontSize: '1.2rem', color: '#1a1a2e', marginBottom: 20 }}> Process Cash Payment</h3>
             <div style={{ background: '#f8fafc', borderRadius: 12, padding: '16px', marginBottom: 20 }}>
               <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: 6 }}>Member</div>
               <div style={{ fontWeight: 700, color: '#1a1a2e', marginBottom: 12 }}>{selectedFine.userName}</div>

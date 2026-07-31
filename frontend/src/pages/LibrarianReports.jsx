@@ -67,11 +67,11 @@ const LibrarianReports = () => {
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #1a365d 50%, #059669 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
-        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}>📊 Librarian Reports</h1>
+        <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4, position: 'relative', zIndex: 1 }}> Librarian Reports</h1>
         <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem', position: 'relative', zIndex: 1 }}>Daily operations and comprehensive library statistics</p>
       </div>
 
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '16px 20px', marginBottom: 24, color: '#b91c1c', fontSize: '0.9rem', fontWeight: 500 }}>️ {error}</div>}
 
       <div style={{ display: 'flex', gap: 8, borderBottom: '1px solid #e8ecf0', marginBottom: 24 }}>
         <button style={tabStyle(activeTab === 'overview')} onClick={() => setActiveTab('overview')}>Overview</button>
@@ -101,7 +101,7 @@ const LibrarianReports = () => {
           <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-                📤 Issued Today
+                 Issued Today
                 <span style={{ background: 'rgba(14,165,233,0.1)', color: '#0ea5e9', padding: '4px 10px', borderRadius: 999, fontSize: '0.8rem' }}>{todayLoans.length}</span>
               </h3>
               <button onClick={() => exportCSV(todayLoans, 'today_issues.csv')} style={{ background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Export CSV</button>
@@ -125,7 +125,7 @@ const LibrarianReports = () => {
           <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '24px', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-                📥 Returned Today
+                 Returned Today
                 <span style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '4px 10px', borderRadius: 999, fontSize: '0.8rem' }}>{todayReturns.length}</span>
               </h3>
               <button onClick={() => exportCSV(todayReturns, 'today_returns.csv')} style={{ background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Export CSV</button>
@@ -158,7 +158,7 @@ const LibrarianReports = () => {
                 { l: 'Total Collected Fines', v: `LKR ${(fineReport.totalCollected || 0).toFixed(2)}`, c: '#10b981', bg: 'rgba(16,185,129,0.1)' }
               ].map(f => (
                 <div key={f.l} style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', padding: '24px', display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 12, background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', color: f.c }}>💰</div>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: f.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', color: f.c }}></div>
                   <div>
                     <div style={{ fontSize: '1.8rem', fontWeight: 900, color: f.c, lineHeight: 1 }}>{f.v}</div>
                     <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600, marginTop: 4 }}>{f.l}</div>
