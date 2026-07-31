@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
 import { notificationAPI } from '../services/api';
 
@@ -121,30 +120,14 @@ const AppNavbar = () => {
           display: 'flex',
           alignItems: 'center',
           height: '64px',
-          gap: '8px',
+          gap: '16px',
         }}>
 
-          {/* Logo */}
+          {/* Brand Name — Left corner (no logo, text only) */}
           <Link to="/" style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
             textDecoration: 'none',
-            marginRight: '24px',
             flexShrink: 0,
           }}>
-            <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(239,90,36,0.25)',
-              overflow: 'hidden',
-            }}>
-              <img src={logo} alt="LibraryHub" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
             <span style={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 700,
@@ -155,8 +138,8 @@ const AppNavbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Nav Links */}
-          <div className="navbar-desktop-links" style={{ display: 'flex', alignItems: 'center', gap: '2px', flex: 1 }}>
+          {/* Desktop Nav Links — Center Middle */}
+          <div className="navbar-desktop-links" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', flex: 1 }}>
             {[
               { to: '/', label: 'Home', icon: '⌂' },
               { to: '/books', label: 'Catalog', icon: '' },
@@ -283,8 +266,8 @@ const AppNavbar = () => {
             )}
           </div>
 
-          {/* Right Side */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
+          {/* Right Side — Bell + Profile (corner) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
 
             {/* Notification Bell */}
             <div ref={notifRef} style={{ position: 'relative' }}>
@@ -294,7 +277,7 @@ const AppNavbar = () => {
                   position: 'relative',
                   width: '40px',
                   height: '40px',
-                  borderRadius: '10px',
+                  borderRadius: '50%',
                   border: '1.5px solid rgba(0,0,0,0.08)',
                   background: showNotifications ? 'rgba(239,90,36,0.07)' : 'rgba(248,249,250,0.8)',
                   cursor: 'pointer',
@@ -421,28 +404,29 @@ const AppNavbar = () => {
               )}
             </div>
 
-            {/* User Avatar Menu */}
+            {/* User Avatar Menu — Circle only */}
             <div ref={userRef} style={{ position: 'relative' }}>
               <button
                 onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); setShowLibrarianMenu(false); }}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '5px 10px 5px 5px',
-                  borderRadius: '12px',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
                   border: '1.5px solid rgba(0,0,0,0.08)',
                   background: showUserMenu ? 'rgba(239,90,36,0.05)' : 'rgba(248,249,250,0.8)',
                   cursor: 'pointer',
+                  padding: 0,
                   transition: 'all 0.2s',
+                  overflow: 'hidden',
+                  flexShrink: 0,
                 }}
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.05)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.2)'; }}
                 onMouseLeave={e => { if (!showUserMenu) { e.currentTarget.style.background = 'rgba(248,249,250,0.8)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; }}}
               >
                 <div style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
                   background: `linear-gradient(135deg, ${getRoleColor(user.role)}, ${getRoleColor(user.role)}99)`,
                   display: 'flex',
                   alignItems: 'center',
@@ -450,22 +434,10 @@ const AppNavbar = () => {
                   color: 'white',
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 700,
-                  fontSize: '0.8rem',
-                  flexShrink: 0,
+                  fontSize: '0.85rem',
                 }}>
                   {getInitials(user.fullName)}
                 </div>
-                <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
-                  <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: '0.82rem', color: '#000000', maxWidth: '110px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {user.fullName?.split(' ')[0]}
-                  </div>
-                  <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: '0.7rem', color: '#000000', fontWeight: 500 }}>
-                    {user.role}
-                  </div>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.5" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
               </button>
 
               {showUserMenu && (

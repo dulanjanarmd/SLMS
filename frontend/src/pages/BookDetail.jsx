@@ -128,19 +128,65 @@ const BookDetail = () => {
 
           <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', padding: '32px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', marginBottom: 24 }}>
             <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 16px' }}>About this Book</h3>
-            <p style={{ color: '#475569', lineHeight: 1.8, fontSize: '0.95rem', margin: '0 0 32px' }}>{book.description || 'No description available for this book.'}</p>
+            <p style={{ color: '#475569', lineHeight: 1.8, fontSize: '0.95rem', margin: '0 0 24px' }}>{book.description || 'No description available for this book.'}</p>
+
+            {book.subjectHeadings && (
+              <div style={{ marginBottom: 28 }}>
+                <h4 style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1a1a2e', margin: '0 0 10px' }}>Subject Headings</h4>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {String(book.subjectHeadings).split(',').filter(s => s.trim()).map((s, i) => (
+                    <span key={i} style={{
+                      background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08))',
+                      color: '#4f46e5',
+                      padding: '6px 14px',
+                      borderRadius: 999,
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      border: '1px solid rgba(99,102,241,0.15)',
+                    }}>
+                      {s.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
             
-            <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 16px' }}>Details</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 32px' }}>
+            <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 16px' }}>Book Details</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 24px' }}>
               {[
-                { l: 'ISBN', v: book.isbn },
+                { l: 'ISBN-10', v: book.isbn || '—' },
+                { l: 'ISBN-13', v: book.isbn13 || '—' },
+                { l: 'Author', v: book.author || 'Unknown' },
+                { l: 'Additional Authors', v: book.additionalAuthors || '—' },
                 { l: 'Publisher', v: book.publisher || 'Unknown' },
+                { l: 'Publication Year', v: book.publicationYear || '—' },
+                { l: 'Edition', v: book.edition || '—' },
                 { l: 'Language', v: book.language || 'English' },
-                { l: 'Added On', v: new Date(book.createdAt).toLocaleDateString() }
+                { l: 'Format', v: book.format || 'Physical' },
+                { l: 'Category', v: book.categoryName || '—' },
+                { l: 'Shelf Location', v: book.shelfLocation || '—' },
+                { l: 'DDC Number', v: book.ddcNumber || '—' },
+                { l: 'Accession No.', v: book.accessionNumber || '—' },
+                { l: 'Acquisition Date', v: book.acquisitionDate ? new Date(book.acquisitionDate).toLocaleDateString() : '—' },
+                { l: 'Replacement Cost', v: book.replacementCost != null && book.replacementCost !== '' ? `$${Number(book.replacementCost).toFixed(2)}` : '—' },
+                { l: 'Added On', v: book.createdAt ? new Date(book.createdAt).toLocaleDateString() : '—' },
               ].map(d => (
-                <div key={d.l} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>{d.l}</span>
-                  <span style={{ fontSize: '0.95rem', color: '#1e293b', fontWeight: 500 }}>{d.v}</span>
+                <div key={d.l} style={{ display: 'flex', flexDirection: 'column', padding: '10px 12px', background: '#f8fafc', borderRadius: 10 }}>
+                  <span style={{ fontSize: '0.72rem', color: '#9ca3af', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 3 }}>{d.l}</span>
+                  <span style={{ fontSize: '0.92rem', color: '#1e293b', fontWeight: 500, lineHeight: 1.4 }}>{d.v}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 14, background: 'linear-gradient(135deg, rgba(239,90,36,0.05), rgba(99,102,241,0.05))', border: '1px solid rgba(99,102,241,0.1)', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+              {[
+                { l: 'Total Copies', v: book.totalCopies ?? book.availableCopies ?? 0 },
+                { l: 'Available', v: book.availableCopies ?? 0 },
+                { l: 'Currently Out', v: (book.totalCopies ?? book.availableCopies ?? 0) - (book.availableCopies ?? 0) },
+              ].map(d => (
+                <div key={d.l} style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1a1a2e', marginBottom: 2 }}>{d.v}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>{d.l}</div>
                 </div>
               ))}
             </div>
