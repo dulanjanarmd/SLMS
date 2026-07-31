@@ -16,6 +16,7 @@ const Sidebar = () => {
 
   const navItems = [
     { path: '/dashboard',  icon: 'bi-speedometer2',  label: 'Dashboard' },
+    { path: '/events',     icon: 'bi-calendar-event', label: 'Events' },
     { path: '/users',      icon: 'bi-people',         label: 'User Management' },
     { path: '/books',      icon: 'bi-book',           label: 'Book Management' },
     { path: '/categories', icon: 'bi-tags',           label: 'Categories' },

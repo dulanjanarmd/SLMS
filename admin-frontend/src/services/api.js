@@ -99,4 +99,14 @@ export const ebookAPI = {
   delete: (id) => api.delete(`/librarian/ebooks/${id}`),
 };
 
+export const eventAPI = {
+  getAll: () => api.get('/librarian/events'),
+  getUpcoming: () => api.get('/librarian/events/upcoming'),
+  getById: (id) => api.get(`/events/${id}`),
+  create: (data) => api.post('/librarian/events', data),
+  update: (id, data) => api.put(`/librarian/events/${id}`, data),
+  toggleActive: (id) => api.patch(`/librarian/events/${id}/toggle`),
+  delete: (id) => api.delete(`/librarian/events/${id}`),
+};
+
 export default api;

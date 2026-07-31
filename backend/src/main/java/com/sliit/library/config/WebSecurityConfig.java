@@ -89,14 +89,15 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/past-papers/public/**").permitAll()
                         .requestMatchers("/api/uploads/**").permitAll()
                         .requestMatchers("/api/membership/photo/**").permitAll()
+                        .requestMatchers("/api/events/public/**").permitAll()
+                        .requestMatchers("/api/events/**").permitAll()
                         .requestMatchers("/api/config/**").permitAll()
                         .requestMatchers("/api/admin/dashboard/**").hasAnyRole("LIBRARIAN", "ADMIN")
                         .requestMatchers("/api/admin/reports/**").hasAnyRole("LIBRARIAN", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/librarian/**").hasAnyRole("LIBRARIAN", "ADMIN")
                         .requestMatchers("/api/faculty/**").hasAnyRole("FACULTY", "LIBRARIAN", "ADMIN")
-                        .anyRequest().authenticated()
-                );
+                        .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

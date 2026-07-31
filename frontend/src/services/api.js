@@ -196,6 +196,18 @@ export const membershipAPI = {
   review: (id, data) => api.post(`/librarian/memberships/${id}/review`, data),
 };
 
+export const eventAPI = {
+  getPublicUpcoming: () => api.get('/events/public'),
+  getAllPublic: () => api.get('/events/public/all'),
+  getById: (id) => api.get(`/events/${id}`),
+  getAll: () => api.get('/librarian/events'),
+  getUpcoming: () => api.get('/librarian/events/upcoming'),
+  create: (data) => api.post('/librarian/events', data),
+  update: (id, data) => api.put(`/librarian/events/${id}`, data),
+  toggleActive: (id) => api.patch(`/librarian/events/${id}/toggle`),
+  delete: (id) => api.delete(`/librarian/events/${id}`),
+};
+
 export const configAPI = {
   getFaculties: () => api.get('/config/faculties'),
   getMemberTypes: () => api.get('/config/member-types'),

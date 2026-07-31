@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
-import { bookAPI, ebookAPI } from '../services/api';
+import { bookAPI, ebookAPI, eventAPI } from '../services/api';
 import { Spinner } from 'react-bootstrap';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
@@ -17,15 +17,17 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
   const [announcementIdx, setAnnouncementIdx] = useState(0);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => { fetchData(); }, [user]);
 
   const fetchData = async () => {
     try {
-      const [popRes, newRes, ebookRes] = await Promise.allSettled([
+      const [popRes, newRes, ebookRes, eventsRes] = await Promise.allSettled([
         bookAPI.getPopular(6),
         bookAPI.getAll({ page: 0, size: 6, sort: 'createdDate,desc' }).catch(() => bookAPI.getAll({ page: 0, size: 12 })),
         ebookAPI.getAllPublic().catch(() => ({ data: [] })),
+        eventAPI.getPublicUpcoming().catch(() => ({ data: [] })),
       ]);
       if (popRes.status === 'fulfilled') setPopularBooks(popRes.value.data || []);
       if (newRes.status === 'fulfilled') {
@@ -36,6 +38,37 @@ const Home = () => {
       if (ebookRes.status === 'fulfilled') {
         const list = Array.isArray(ebookRes.value?.data?.content) ? ebookRes.value.data.content : (Array.isArray(ebookRes.value?.data) ? ebookRes.value.data : []);
         setEbooks(list.slice(0, 6));
+      }
+      if (eventsRes.status === 'fulfilled') {
+        const arr = Array.isArray(eventsRes.value?.data?.content) ? eventsRes.value.data.content : (Array.isArray(eventsRes.value?.data) ? eventsRes.value.data : []);
+        if (arr && arr.length > 0) {
+          const mapped = arr.slice(0, 8).map(ev => {
+            const dt = new Date(String(ev.eventDate) + 'T00:00:00');
+            const fmtTime = (t) => {
+              if (!t) return '';
+              const s = String(t).slice(0, 5);
+              const [h, m] = s.split(':');
+              const hr = parseInt(h, 10);
+              const ampm = hr >= 12 ? 'PM' : 'AM';
+              const h12 = ((hr + 11) % 12) + 1;
+              return `${h12}:${m} ${ampm}`;
+            };
+            let timeStr = fmtTime(ev.startTime);
+            if (ev.endTime) timeStr += ` - ${fmtTime(ev.endTime)}`;
+            return {
+              date: String(dt.getDate()).padStart(2, '0'),
+              month: dt.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
+              title: ev.title,
+              time: timeStr,
+              desc: ev.description || (ev.category ? ev.category : ''),
+              location: ev.location || '—',
+              color: ev.color || '#ef5a24',
+              banner: ev.banner,
+              maxAttendees: ev.maxAttendees,
+            };
+          });
+          setUpcomingEvents(mapped);
+        }
       }
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
@@ -76,12 +109,13 @@ const Home = () => {
     { tag: 'Reminder', color: '#f59e0b', text: 'Semester checkout limit increased to 8 books for undergraduates through the end of September.' },
   ];
 
-  const upcomingEvents = [
+  const defaultEvents = [
     { date: '02', month: 'Aug', title: 'Research Workshop', time: '2:00 PM - 4:00 PM', desc: 'How to write an effective literature review', location: 'Room 301', color: '#ef5a24' },
     { date: '05', month: 'Aug', title: 'Library Closed', time: 'All day', desc: 'Faculty training day', location: '—', color: '#ef4444' },
     { date: '07', month: 'Aug', title: 'Author Talk: Prof. Jane Doe', time: '3:00 PM - 5:00 PM', desc: 'AI Research: Trends & Ethics', location: 'Main Auditorium', color: '#8b5cf6' },
     { date: '12', month: 'Aug', title: 'Study Skills Camp', time: '10:00 AM - 12:00 PM', desc: 'Memory techniques & exam prep', location: 'Lab B', color: '#10b981' },
   ];
+  const displayEvents = upcomingEvents && upcomingEvents.length > 0 ? upcomingEvents : defaultEvents;
 
   const faqs = [
     { q: 'How many books can I borrow at a time?', a: 'Undergraduate members may borrow up to 6 books; Graduate and Faculty up to 12. Semester limits are occasionally extended during peak periods.' },
@@ -682,7 +716,7 @@ const Home = () => {
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {upcomingEvents.map((ev, idx) => (
+                {displayEvents.map((ev, idx) => (
                   <div key={idx} style={{
                     display: 'flex',
                     gap: 16,

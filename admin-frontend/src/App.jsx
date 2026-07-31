@@ -10,6 +10,7 @@ import Users from './pages/Users';
 import Books from './pages/Books';
 import Categories from './pages/Categories';
 import Reports from './pages/Reports';
+import Events from './pages/Events';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -57,6 +58,14 @@ function App() {
             element={
               <PrivateRoute>
                 <AdminLayout><Reports /></AdminLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/events"
+            element={
+              <PrivateRoute>
+                <AdminLayout><Events /></AdminLayout>
               </PrivateRoute>
             }
           />
