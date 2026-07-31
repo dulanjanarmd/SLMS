@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { membershipAPI, configAPI } from '../services/api';
@@ -28,8 +29,8 @@ const MembershipApplication = () => {
   useEffect(() => {
     Promise.all([
       membershipAPI.getMy().then(res => setExisting(res.data)).catch(() => setExisting(null)),
-      configAPI.getFaculties().then(res => setFaculties(res.data)).catch(() => {}),
-      configAPI.getMemberTypes().then(res => setMemberTypes(res.data)).catch(() => {}),
+      configAPI.getFaculties().then(res => setFaculties(res.data)).catch(() => { }),
+      configAPI.getMemberTypes().then(res => setMemberTypes(res.data)).catch(() => { }),
     ]).finally(() => setLoading(false));
   }, []);
 
@@ -51,7 +52,7 @@ const MembershipApplication = () => {
   };
 
   const getStatusColor = (status) => {
-    switch(status) {
+    switch (status) {
       case 'APPROVED': return { color: '#10b981', bg: 'rgba(16,185,129,0.1)' };
       case 'PENDING': return { color: '#f59e0b', bg: 'rgba(245,158,11,0.1)' };
       case 'REJECTED': return { color: '#ef4444', bg: 'rgba(239,68,68,0.1)' };
@@ -83,7 +84,7 @@ const MembershipApplication = () => {
       {existing ? (
         <div style={{ background: 'white', borderRadius: 24, border: '1px solid #e8ecf0', padding: '36px', boxShadow: '0 24px 60px rgba(0,0,0,0.05)', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(135deg, #1a1a2e, #4c1d95)', zIndex: 0 }} />
-          
+
           <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
             <div style={{ width: 120, height: 120, borderRadius: '50%', border: '4px solid white', background: '#f8fafc', overflow: 'hidden', marginBottom: 20, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
               {existing.photoPath ? (
@@ -92,10 +93,10 @@ const MembershipApplication = () => {
                 <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', color: '#cbd5e1' }}></div>
               )}
             </div>
-            
+
             <h2 style={{ fontWeight: 800, fontSize: '1.6rem', color: '#1a1a2e', margin: '0 0 8px' }}>{existing.nameWithInitials}</h2>
             <div style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: 20 }}>{existing.memberType} • {existing.faculty}</div>
-            
+
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: getStatusColor(existing.status).bg, color: getStatusColor(existing.status).color, padding: '8px 24px', borderRadius: 999, fontWeight: 800, fontSize: '0.9rem', letterSpacing: 1, marginBottom: 32 }}>
               <span style={{ width: 8, height: 8, borderRadius: '50%', background: getStatusColor(existing.status).color }}></span>
               {existing.status}
@@ -108,11 +109,11 @@ const MembershipApplication = () => {
                 </h3>
                 <p style={{ color: '#047857', fontSize: '0.9rem', margin: '0 0 20px', lineHeight: 1.6 }}>You have full access to library services including borrowing books and accessing digital content.</p>
                 <div style={{ display: 'flex', gap: 12 }}>
-                  <button onClick={() => window.location.href='/books'} style={{ background: '#059669', color: 'white', border: 'none', borderRadius: 10, padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>Browse Books</button>
+                  <button onClick={() => window.location.href = '/books'} style={{ background: '#059669', color: 'white', border: 'none', borderRadius: 10, padding: '10px 24px', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>Browse Books</button>
                 </div>
               </div>
             )}
-            
+
             {existing.status === 'REJECTED' && (
               <div style={{ width: '100%', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 16, padding: '24px', textAlign: 'left' }}>
                 <h3 style={{ fontWeight: 800, color: '#b91c1c', fontSize: '1.1rem', margin: '0 0 8px' }}>Application Rejected</h3>
@@ -128,7 +129,7 @@ const MembershipApplication = () => {
             <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: '0 0 8px' }}>Membership Application Form</h2>
             <p style={{ color: '#64748b', fontSize: '0.9rem', margin: 0 }}>Please fill out all required fields to apply for library membership.</p>
           </div>
-          
+
           <form onSubmit={handleSubmit}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32 }}>
               <div style={{ width: 120, height: 120, borderRadius: '50%', border: '2px dashed #cbd5e1', background: photoPreview ? 'transparent' : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 16, cursor: 'pointer', position: 'relative' }} onClick={() => fileInputRef.current.click()}>
