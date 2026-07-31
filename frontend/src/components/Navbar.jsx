@@ -3,6 +3,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { notificationAPI } from '../services/api';
 
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+
 const AppNavbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -428,21 +430,29 @@ const AppNavbar = () => {
                 onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.05)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.2)'; }}
                 onMouseLeave={e => { if (!showUserMenu) { e.currentTarget.style.background = 'rgba(248,249,250,0.8)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; }}}
               >
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '50%',
-                  background: `linear-gradient(135deg, ${getRoleColor(user.role)}, ${getRoleColor(user.role)}99)`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontFamily: "'Poppins', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '0.85rem',
-                }}>
-                  {getInitials(user.fullName)}
-                </div>
+                {user.profileImageUrl ? (
+                  <img 
+                    src={`${API}${user.profileImageUrl}`} 
+                    alt="Profile" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${getRoleColor(user.role)}, ${getRoleColor(user.role)}99)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontFamily: "'Poppins', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                  }}>
+                    {getInitials(user.fullName)}
+                  </div>
+                )}
               </button>
 
               {showUserMenu && (
@@ -469,7 +479,7 @@ const AppNavbar = () => {
                         width: '42px',
                         height: '42px',
                         borderRadius: '10px',
-                        background: `linear-gradient(135deg, ${getRoleColor(user.role)}, ${getRoleColor(user.role)}88)`,
+                        background: user.profileImageUrl ? 'white' : `linear-gradient(135deg, ${getRoleColor(user.role)}, ${getRoleColor(user.role)}88)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -477,8 +487,19 @@ const AppNavbar = () => {
                         fontFamily: "'Poppins', sans-serif",
                         fontWeight: 700,
                         fontSize: '1rem',
+                        overflow: 'hidden',
+                        border: '2px solid white',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                       }}>
-                        {getInitials(user.fullName)}
+                        {user.profileImageUrl ? (
+                          <img 
+                            src={`${API}${user.profileImageUrl}`} 
+                            alt="Profile" 
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        ) : (
+                          getInitials(user.fullName)
+                        )}
                       </div>
                       <div>
                         <div style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: '0.88rem', color: '#1a1a2e' }}>{user.fullName}</div>

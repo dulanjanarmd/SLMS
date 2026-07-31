@@ -111,6 +111,12 @@ public class MembershipService {
             membership.setMembershipId("MEM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
             membership.setExpiresAt(LocalDateTime.now().plusYears(1));
 
+            // Set profile picture from membership photo if user doesn't have one
+            if (membership.getPhotoPath() != null && membership.getUser().getProfileImageUrl() == null) {
+                membership.getUser().setProfileImageUrl(membership.getPhotoPath());
+                userRepository.save(membership.getUser());
+            }
+
             notificationService.sendNotification(
                     membership.getUser(),
                     NotificationType.ANNOUNCEMENT,
