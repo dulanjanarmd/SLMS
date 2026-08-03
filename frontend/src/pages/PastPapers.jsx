@@ -39,7 +39,6 @@ const PastPapers = () => {
   const [selectedSem, setSelectedSem] = useState('');
   const [selectedIntakeBatch, setSelectedIntakeBatch] = useState('');
   const [searchModule, setSearchModule] = useState('');
-  const [activeTab, setActiveTab] = useState('browse');
 
   const [showUpload, setShowUpload] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -145,10 +144,6 @@ const PastPapers = () => {
   }, [papers]);
 
   const inputStyle = { width: '100%', padding: '12px 16px', background: '#f8fafc', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' };
-  const tabs = [
-    { id: 'browse', label: 'Browse' },
-    ...(isLibrarian ? [{ id: 'upload', label: 'Upload' }] : []),
-  ];
 
   return (
     <div style={{ padding: '32px 28px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
@@ -158,29 +153,18 @@ const PastPapers = () => {
           <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>Past Papers Archive</h1>
           <p style={{ opacity: 0.8, margin: 0, fontSize: '0.86rem' }}>Past exam papers by year, semester, and course — read online or download</p>
         </div>
+        {isLibrarian && (
+          <button onClick={() => setShowUpload(true)} style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 10, padding: '10px 20px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', backdropFilter: 'blur(8px)' }}>
+            Upload Past Paper
+          </button>
+        )}
       </div>
 
       {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>{success}</div>}
       {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>{error}</div>}
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 24, background: '#f1f5f9', padding: 6, borderRadius: 14, width: 'fit-content' }}>
-        {tabs.map(t => (
-          <button key={t.id}
-            onClick={() => t.id === 'upload' ? setShowUpload(true) : setActiveTab(t.id)}
-            style={{ padding: '10px 20px', borderRadius: 10, border: 'none', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
-              background: activeTab === t.id ? 'white' : 'transparent',
-              color: activeTab === t.id ? '#7c2d12' : '#64748b',
-              boxShadow: activeTab === t.id ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
-            }}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === 'browse' && (
-        <>
-          <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '20px 24px', marginBottom: 24 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, alignItems: 'end' }}>
+      <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '20px 24px', marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, alignItems: 'end' }}>
               <div>
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Faculty</label>
                 <select value={selectedFaculty} onChange={e => setSelectedFaculty(e.target.value)} style={inputStyle}>
@@ -282,12 +266,12 @@ const PastPapers = () => {
                             </div>
                           )}
                           {p.description && <p style={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5, margin: '0 0 14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.description}</p>}
-                          {p.fileSize != null && <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 14 }}>📄 PDF • {(p.fileSize / 1024 / 1024).toFixed(2)} MB</div>}
+                          {p.fileSize != null && <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 14 }}>PDF • {(p.fileSize / 1024 / 1024).toFixed(2)} MB</div>}
 
                           <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
                             <button onClick={() => handleView(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.22)' }}>View</button>
                             <button onClick={() => handleDownload(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>PDF</button>
-                            {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}>🗑️</button>}
+                            {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}>Delete</button>}
                           </div>
                         </div>
                       ))}
@@ -297,15 +281,13 @@ const PastPapers = () => {
               })}
             </div>
           )}
-        </>
-      )}
 
       {showUpload && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)', padding: 20 }} onClick={e => { if (e.target === e.currentTarget) { setShowUpload(false); setError(''); setSuccess(''); } }}>
           <div style={{ background: 'white', borderRadius: 24, padding: '32px', width: '100%', maxWidth: 700, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-              <h3 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#7c2d12', margin: 0 }}>📤 Upload Past Paper</h3>
-              <button onClick={() => { setShowUpload(false); setError(''); setSuccess(''); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 38, height: 38, cursor: 'pointer', fontSize: '1.1rem', color: '#64748b' }}>✕</button>
+              <h3 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#7c2d12', margin: 0 }}>Upload Past Paper</h3>
+              <button onClick={() => { setShowUpload(false); setError(''); setSuccess(''); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 38, height: 38, cursor: 'pointer', fontSize: '1.1rem', color: '#64748b' }}>×</button>
             </div>
             <form onSubmit={handleUpload}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
@@ -380,7 +362,7 @@ const PastPapers = () => {
                 <div style={{ fontSize: '2rem', marginBottom: 8 }}></div>
                 <div style={{ fontWeight: 600, color: '#374151', marginBottom: 8 }}>Select PDF File *</div>
                 <input type="file" accept="application/pdf" required onChange={e => setPdfFile(e.target.files[0])} style={{ fontSize: '0.85rem' }} />
-                {pdfFile && <div style={{ marginTop: 10, fontSize: '0.78rem', color: '#10b981', fontWeight: 600 }}>📎 {pdfFile.name}</div>}
+                {pdfFile && <div style={{ marginTop: 10, fontSize: '0.78rem', color: '#10b981', fontWeight: 600 }}>{pdfFile.name}</div>}
               </div>
               <div style={{ display: 'flex', gap: 12 }}>
                 <button type="button" onClick={() => { setShowUpload(false); setError(''); setSuccess(''); }} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
@@ -397,7 +379,7 @@ const PastPapers = () => {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', flexDirection: 'column', zIndex: 10000, padding: 20 }} onClick={e => { if (e.target === e.currentTarget) closeViewer(); }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'white', marginBottom: 12, fontFamily: 'Poppins, sans-serif' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(239,90,36,0.2)', color: '#ef5a24', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>📋</div>
+              <div style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(239,90,36,0.2)', color: '#ef5a24', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}></div>
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontWeight: 700, fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 600 }}>{viewing.courseName || viewing.title}</div>
                 <div style={{ opacity: 0.7, fontSize: '0.82rem' }}>
@@ -407,8 +389,8 @@ const PastPapers = () => {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
-              <button onClick={() => handleDownload(viewing)} style={{ padding: '9px 18px', background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>⬇️ Download</button>
-              <button onClick={closeViewer} style={{ padding: '9px 18px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 10, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>✕ Close</button>
+              <button onClick={() => handleDownload(viewing)} style={{ padding: '9px 18px', background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>Download</button>
+              <button onClick={closeViewer} style={{ padding: '9px 18px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 10, fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>Close</button>
             </div>
           </div>
           <div style={{ flex: 1, background: '#f1f5f9', borderRadius: 14, overflow: 'hidden', minHeight: 0, position: 'relative' }}>
