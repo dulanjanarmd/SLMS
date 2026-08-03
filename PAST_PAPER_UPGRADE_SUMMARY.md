@@ -62,11 +62,11 @@ Enhanced the past paper system to include all required fields for better categor
 
 ### For Students (Search Side)
 Students can now filter past papers by:
-- **Faculty** (1st filter): School of Computing, School of Engineering, School of Business, School of Humanities
+- **Faculty** (1st filter): Faculty of Computing, Faculty of Business, Faculty of Engineering, Faculty of Humanities and Science, Faculty of Architecture, Faculty of Law
 - **Degree Level** (2nd filter): Undergraduate, Postgraduate
 - **Academic Year** (3rd filter): 1st Year, 2nd Year, 3rd Year, 4th Year
-- **Semester** (4th filter): 1, 2, 3, 4
-- **Intake Batch** (5th filter): 2024 January Intake, 2024 June Intake, etc.
+- **Semester** (4th filter): 1, 2 (only 2 semesters per year)
+- **Intake Batch** (5th filter): 2025 January, 2024 June, 2024 January, 2023 June, 2023 January, etc.
 - **Module Code/Name** (6th filter - search bar): Free text search for course code or name
 
 ### For Librarians (Upload Side)
@@ -121,7 +121,7 @@ The database will be automatically updated when the backend restarts due to:
 - The database update is automatic due to Hibernate DDL auto-update
 - Field ordering has been standardized across search and upload forms
 - Search bar allows free text search for module code/name when dropdown selections are not sufficient
-- Intake batches now focus on January and June intakes as requested
+- Intake batches now use simpler format (2024 June, 2025 January) instead of "2024 June Intake"
 - All fields are properly validated on both frontend and backend
 - The filtering system supports multiple criteria simultaneously
 

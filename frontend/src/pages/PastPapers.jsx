@@ -8,7 +8,7 @@ const emptyForm = {
   academicYear: '1st Year',
   academicSemester: '1',
   semester: '1',
-  intakeBatch: '2024 January Intake',
+  intakeBatch: '2024 January',
   faculty: '',
   degreeLevel: 'Undergraduate',
   courseCode: '',
@@ -20,9 +20,9 @@ const emptyForm = {
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const ACADEMIC_YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
-const ACADEMIC_SEMESTERS = ['1', '2', '3', '4'];
-const INTAKE_BATCHES = ['2024 January Intake', '2024 June Intake', '2023 January Intake', '2023 June Intake', '2022 January Intake', '2022 June Intake'];
-const FACULTIES = ['School of Computing', 'School of Engineering', 'School of Business', 'School of Humanities'];
+const ACADEMIC_SEMESTERS = ['1', '2'];
+const INTAKE_BATCHES = ['2025 January', '2024 June', '2024 January', '2023 June', '2023 January', '2022 June', '2022 January'];
+const FACULTIES = ['Faculty of Computing', 'Faculty of Business', 'Faculty of Engineering', 'Faculty of Humanities and Science', 'Faculty of Architecture', 'Faculty of Law'];
 const DEGREE_LEVELS = ['Undergraduate', 'Postgraduate'];
 const EXAM_TYPES = ['End Semester', 'Mid Semester', 'Quiz', 'Assignment', 'Mock Exam', 'Repeat'];
 
