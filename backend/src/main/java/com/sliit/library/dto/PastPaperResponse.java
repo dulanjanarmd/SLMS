@@ -15,6 +15,7 @@ public class PastPaperResponse {
     private String semester;
     private String intakeBatch;
     private String faculty;
+    private String degreeLevel;
     private String courseCode;
     private String courseName;
     private String department;

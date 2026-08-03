@@ -45,12 +45,21 @@ public class PastPaperService {
         Map<String, Object> filters = new LinkedHashMap<>();
         filters.put("years", paperRepository.findDistinctYears());
         filters.put("semesters", paperRepository.findDistinctSemesters());
+        filters.put("degreeLevels", paperRepository.findDistinctDegreeLevels());
+        filters.put("faculties", paperRepository.findDistinctFaculties());
+        filters.put("intakeBatches", paperRepository.findDistinctIntakeBatches());
         return filters;
     }
 
     @Transactional(readOnly = true)
-    public List<PastPaperResponse> filter(String year, String semester) {
-        return paperRepository.filter(year, semester).stream().map(this::map).collect(Collectors.toList());
+    public List<PastPaperResponse> filter(String year, String semester, String degreeLevel, String faculty, String intakeBatch) {
+        List<PastPaper> papers;
+        if (year != null || semester != null || degreeLevel != null || faculty != null || intakeBatch != null) {
+            papers = paperRepository.filter(year, semester, degreeLevel, faculty, intakeBatch);
+        } else {
+            papers = paperRepository.findByIsPublicTrueOrderByAcademicYearDescSemesterAscUploadedAtDesc();
+        }
+        return papers.stream().map(this::map).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +69,7 @@ public class PastPaperService {
 
     @Transactional
     public PastPaperResponse upload(String title, String academicYear, String academicSemester, String semester,
-            String intakeBatch, String faculty, String courseCode, String courseName, String department,
+            String intakeBatch, String faculty, String degreeLevel, String courseCode, String courseName, String department,
             String examType, String description, MultipartFile file) throws IOException {
         User user = getCurrentUser();
         String ext = resolveExt(file.getOriginalFilename());
@@ -73,7 +82,7 @@ public class PastPaperService {
 
         PastPaper paper = PastPaper.builder()
                 .title(title).academicYear(academicYear).academicSemester(academicSemester).semester(semester)
-                .intakeBatch(intakeBatch).faculty(faculty)
+                .intakeBatch(intakeBatch).faculty(faculty).degreeLevel(degreeLevel)
                 .courseCode(courseCode).courseName(courseName).department(department)
                 .examType(examType).description(description)
                 .fileFormat(ext.toUpperCase()).filePath(filePath.toString()).fileSize(file.getSize())
@@ -123,7 +132,7 @@ public class PastPaperService {
         return PastPaperResponse.builder()
                 .id(p.getId()).title(p.getTitle())
                 .academicYear(p.getAcademicYear()).academicSemester(p.getAcademicSemester()).semester(p.getSemester())
-                .intakeBatch(p.getIntakeBatch()).faculty(p.getFaculty())
+                .intakeBatch(p.getIntakeBatch()).faculty(p.getFaculty()).degreeLevel(p.getDegreeLevel())
                 .courseCode(p.getCourseCode()).courseName(p.getCourseName())
                 .department(p.getDepartment()).examType(p.getExamType())
                 .description(p.getDescription()).fileFormat(p.getFileFormat()).fileSize(p.getFileSize())

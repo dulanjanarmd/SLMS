@@ -36,8 +36,11 @@ public class PastPaperController {
     @GetMapping("/past-papers/public/filter")
     public ResponseEntity<List<PastPaperResponse>> filter(
             @RequestParam(required = false) String year,
-            @RequestParam(required = false) String semester) {
-        return ResponseEntity.ok(paperService.filter(year, semester));
+            @RequestParam(required = false) String semester,
+            @RequestParam(required = false) String degreeLevel,
+            @RequestParam(required = false) String faculty,
+            @RequestParam(required = false) String intakeBatch) {
+        return ResponseEntity.ok(paperService.filter(year, semester, degreeLevel, faculty, intakeBatch));
     }
 
     @GetMapping("/past-papers/public/{id}")
@@ -76,6 +79,7 @@ public class PastPaperController {
             @RequestParam("semester") String semester,
             @RequestParam(value = "intakeBatch", required = false) String intakeBatch,
             @RequestParam(value = "faculty", required = false) String faculty,
+            @RequestParam(value = "degreeLevel", required = false) String degreeLevel,
             @RequestParam(value = "courseCode", required = false) String courseCode,
             @RequestParam(value = "courseName", required = false) String courseName,
             @RequestParam(value = "department", required = false) String department,
@@ -83,7 +87,7 @@ public class PastPaperController {
             @RequestParam(value = "description", required = false) String description,
             @RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(paperService.upload(title, academicYear, academicSemester, semester, intakeBatch,
-                faculty, courseCode, courseName, department, examType, description, file));
+                faculty, degreeLevel, courseCode, courseName, department, examType, description, file));
     }
 
     @DeleteMapping("/librarian/past-papers/{id}")

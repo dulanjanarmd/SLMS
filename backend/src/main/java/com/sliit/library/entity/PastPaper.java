@@ -44,6 +44,9 @@ public class PastPaper {
     @Size(max = 100)
     private String faculty;
 
+    @Size(max = 50)
+    private String degreeLevel;
+
     @Size(max = 100)
     private String courseCode;
 

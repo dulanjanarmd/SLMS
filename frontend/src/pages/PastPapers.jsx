@@ -8,8 +8,9 @@ const emptyForm = {
   academicYear: '1st Year',
   academicSemester: '1',
   semester: '1',
-  intakeBatch: '2024 July Intake',
+  intakeBatch: '2024 January Intake',
   faculty: '',
+  degreeLevel: 'Undergraduate',
   courseCode: '',
   courseName: '',
   department: '',
@@ -20,20 +21,24 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const ACADEMIC_YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 const ACADEMIC_SEMESTERS = ['1', '2', '3', '4'];
-const INTAKE_BATCHES = ['2024 July Intake', '2024 January Intake', '2024 June Intake'];
+const INTAKE_BATCHES = ['2024 January Intake', '2024 June Intake', '2023 January Intake', '2023 June Intake', '2022 January Intake', '2022 June Intake'];
 const FACULTIES = ['School of Computing', 'School of Engineering', 'School of Business', 'School of Humanities'];
+const DEGREE_LEVELS = ['Undergraduate', 'Postgraduate'];
 const EXAM_TYPES = ['End Semester', 'Mid Semester', 'Quiz', 'Assignment', 'Mock Exam', 'Repeat'];
 
 const PastPapers = () => {
   const { user } = useAuth();
   const isLibrarian = user?.role === 'LIBRARIAN' || user?.role === 'ADMIN';
   const [papers, setPapers] = useState([]);
-  const [filters, setFilters] = useState({ years: [], semesters: [] });
+  const [filters, setFilters] = useState({ years: [], semesters: [], degreeLevels: [], faculties: [], intakeBatches: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedSem, setSelectedSem] = useState('');
+  const [selectedDegreeLevel, setSelectedDegreeLevel] = useState('');
+  const [selectedFaculty, setSelectedFaculty] = useState('');
+  const [selectedIntakeBatch, setSelectedIntakeBatch] = useState('');
   const [activeTab, setActiveTab] = useState('browse');
 
   const [showUpload, setShowUpload] = useState(false);
@@ -45,27 +50,35 @@ const PastPapers = () => {
   const [viewBlob, setViewBlob] = useState(null);
   const [viewLoading, setViewLoading] = useState(false);
 
-  useEffect(() => { load(); }, [selectedYear, selectedSem]);
+  useEffect(() => { load(); }, [selectedYear, selectedSem, selectedDegreeLevel, selectedFaculty, selectedIntakeBatch]);
 
   const load = async () => {
     try {
       setLoading(true);
       const [fRes, pRes] = await Promise.all([
-        pastPapersAPI.getFilters().catch(() => ({ data: { years: [], semesters: [] } })),
-        (selectedYear || selectedSem) ? pastPapersAPI.filter(selectedYear || null, selectedSem || null) : pastPapersAPI.getAllPublic(),
+        pastPapersAPI.getFilters().catch(() => ({ data: { years: [], semesters: [], degreeLevels: [], faculties: [], intakeBatches: [] } })),
+        (selectedYear || selectedSem || selectedDegreeLevel || selectedFaculty || selectedIntakeBatch) 
+          ? pastPapersAPI.filter(selectedYear || null, selectedSem || null, selectedDegreeLevel || null, selectedFaculty || null, selectedIntakeBatch || null) 
+          : pastPapersAPI.getAllPublic(),
       ]);
-      if (fRes?.data) setFilters({ years: fRes.data.years || [], semesters: fRes.data.semesters || [] });
+      if (fRes?.data) setFilters({ 
+        years: fRes.data.years || [], 
+        semesters: fRes.data.semesters || [],
+        degreeLevels: fRes.data.degreeLevels || [],
+        faculties: fRes.data.faculties || [],
+        intakeBatches: fRes.data.intakeBatches || []
+      });
       setPapers(Array.isArray(pRes.data) ? pRes.data : []);
     } catch { setError('Failed to load past papers'); } finally { setLoading(false); }
   };
 
-  const clearFilters = () => { setSelectedYear(''); setSelectedSem(''); };
+  const clearFilters = () => { setSelectedYear(''); setSelectedSem(''); setSelectedDegreeLevel(''); setSelectedFaculty(''); setSelectedIntakeBatch(''); };
 
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!pdfFile) { setError('Please select a PDF file'); return; }
-    if (!form.academicYear || !form.academicSemester || !form.semester || !form.intakeBatch || !form.faculty) {
-      setError('Academic year, academic semester, semester, intake batch, and faculty are required');
+    if (!form.academicYear || !form.academicSemester || !form.semester || !form.intakeBatch || !form.faculty || !form.degreeLevel) {
+      setError('Academic year, academic semester, semester, intake batch, faculty, and degree level are required');
       return;
     }
     setUploading(true); setError('');
@@ -77,7 +90,10 @@ const PastPapers = () => {
       setSuccess('Past paper uploaded successfully');
       setShowUpload(false); setForm(emptyForm); setPdfFile(null); load();
       setTimeout(() => setSuccess(''), 4000);
-    } catch (err) { setError(err.response?.data?.message || 'Upload failed'); } finally { setUploading(false); }
+    } catch (err) { 
+      console.error('Upload error:', err);
+      setError(err.response?.data?.message || 'Upload failed'); 
+    } finally { setUploading(false); }
   };
 
   const handleDelete = async (id) => {
@@ -180,6 +196,27 @@ const PastPapers = () => {
                   {(filters.semesters.length ? filters.semesters : ACADEMIC_SEMESTERS).map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
+              <div>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Degree Level</label>
+                <select value={selectedDegreeLevel} onChange={e => setSelectedDegreeLevel(e.target.value)} style={inputStyle}>
+                  <option value="">All Levels</option>
+                  {(filters.degreeLevels.length ? filters.degreeLevels : DEGREE_LEVELS).map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Faculty</label>
+                <select value={selectedFaculty} onChange={e => setSelectedFaculty(e.target.value)} style={inputStyle}>
+                  <option value="">All Faculties</option>
+                  {(filters.faculties.length ? filters.faculties : FACULTIES).map(f => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Intake Batch</label>
+                <select value={selectedIntakeBatch} onChange={e => setSelectedIntakeBatch(e.target.value)} style={inputStyle}>
+                  <option value="">All Batches</option>
+                  {(filters.intakeBatches.length ? filters.intakeBatches : INTAKE_BATCHES).map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+              </div>
               <button onClick={clearFilters} style={{ padding: '12px 20px', background: '#f1f5f9', color: '#64748b', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer' }}>Clear</button>
             </div>
           </div>
@@ -224,9 +261,10 @@ const PastPapers = () => {
                             {p.courseName || p.title}
                           </h3>
                           {!p.courseName && p.title && <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '0 0 10px' }}>{p.title}</p>}
-                          {(p.faculty || p.intakeBatch || p.department) && (
+                          {(p.faculty || p.intakeBatch || p.department || p.degreeLevel) && (
                             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
                               {p.faculty && <div style={{ display: 'inline-block', background: '#eff6ff', color: '#1d4ed8', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.faculty}</div>}
+                              {p.degreeLevel && <div style={{ display: 'inline-block', background: '#fef3c7', color: '#d97706', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.degreeLevel}</div>}
                               {p.intakeBatch && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.intakeBatch}</div>}
                               {p.department && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.department}</div>}
                             </div>
@@ -293,7 +331,15 @@ const PastPapers = () => {
                     {FACULTIES.map(f => <option key={f} value={f}>{f}</option>)}
                   </select>
                 </div>
-                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Department</label><input value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} placeholder="e.g. Computer Science" style={inputStyle} /></div>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Degree Level *</label>
+                  <select required value={form.degreeLevel} onChange={e => setForm({ ...form, degreeLevel: e.target.value })} style={inputStyle}>
+                    <option value="">Select...</option>
+                    {DEGREE_LEVELS.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Department</label><input value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} placeholder="e.g. Computer Science" style={inputStyle} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 16 }}>
                 <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Course Code</label><input value={form.courseCode} onChange={e => setForm({ ...form, courseCode: e.target.value })} placeholder="e.g. IT3010" style={inputStyle} /></div>
