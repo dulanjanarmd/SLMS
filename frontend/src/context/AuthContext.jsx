@@ -65,6 +65,28 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const syncUserProfile = (profileData) => {
+    setUser((current) => {
+      if (!current) return current;
+      const updated = { ...current, ...profileData };
+      localStorage.setItem('user', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const refreshUserProfile = async () => {
+    try {
+      const profileRes = await userAPI.getProfile();
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const freshUser = { ...storedUser, ...profileRes.data };
+      localStorage.setItem('user', JSON.stringify(freshUser));
+      setUser(freshUser);
+      return freshUser;
+    } catch {
+      return null;
+    }
+  };
+
   const hasRole = (role) => user?.role === role;
   const isLibrarian = () => user?.role === 'LIBRARIAN';
   const isFaculty = () => user?.role === 'FACULTY' || user?.role === 'LIBRARIAN';
@@ -79,6 +101,8 @@ export const AuthProvider = ({ children }) => {
     isLibrarian,
     isFaculty,
     isStudent,
+    syncUserProfile,
+    refreshUserProfile,
     loading,
   };
 

@@ -31,8 +31,18 @@ public class PastPaper {
     private String academicYear;
 
     @NotBlank
+    @Size(max = 50)
+    private String academicSemester;
+
+    @NotBlank
     @Size(max = 20)
     private String semester;
+
+    @Size(max = 100)
+    private String intakeBatch;
+
+    @Size(max = 100)
+    private String faculty;
 
     @Size(max = 100)
     private String courseCode;

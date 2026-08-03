@@ -28,11 +28,16 @@ public class Membership {
     private String whatsappNumber;
     private String memberEmail;
     private String memberType;
+    private String studentIdNumber;
     private String photoPath;
+    private String studentIdCardPdfPath;
+    private String nationalIdPdfPath;
 
     private String faculty;
+    private String department;
     private String programme;
     private String academicYear;
+    private String academicSemester;
 
     @Column(length = 500)
     private String reason;

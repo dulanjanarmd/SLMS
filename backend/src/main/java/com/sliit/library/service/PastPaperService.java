@@ -59,19 +59,21 @@ public class PastPaperService {
     }
 
     @Transactional
-    public PastPaperResponse upload(String title, String academicYear, String semester,
-            String courseCode, String courseName, String department, String examType,
-            String description, MultipartFile file) throws IOException {
+    public PastPaperResponse upload(String title, String academicYear, String academicSemester, String semester,
+            String intakeBatch, String faculty, String courseCode, String courseName, String department,
+            String examType, String description, MultipartFile file) throws IOException {
         User user = getCurrentUser();
         String ext = resolveExt(file.getOriginalFilename());
         String fileName = UUID.randomUUID() + "." + ext;
         Path dir = Paths.get(uploadDir);
-        if (!Files.exists(dir)) Files.createDirectories(dir);
+        if (!Files.exists(dir))
+            Files.createDirectories(dir);
         Path filePath = dir.resolve(fileName);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         PastPaper paper = PastPaper.builder()
-                .title(title).academicYear(academicYear).semester(semester)
+                .title(title).academicYear(academicYear).academicSemester(academicSemester).semester(semester)
+                .intakeBatch(intakeBatch).faculty(faculty)
                 .courseCode(courseCode).courseName(courseName).department(department)
                 .examType(examType).description(description)
                 .fileFormat(ext.toUpperCase()).filePath(filePath.toString()).fileSize(file.getSize())
@@ -84,7 +86,10 @@ public class PastPaperService {
     @Transactional
     public void delete(Long id) {
         PastPaper p = paperRepository.findById(id).orElseThrow(() -> new RuntimeException("Past paper not found"));
-        try { Files.deleteIfExists(Paths.get(p.getFilePath())); } catch (IOException ignored) { }
+        try {
+            Files.deleteIfExists(Paths.get(p.getFilePath()));
+        } catch (IOException ignored) {
+        }
         paperRepository.delete(p);
     }
 
@@ -117,7 +122,8 @@ public class PastPaperService {
     private PastPaperResponse map(PastPaper p) {
         return PastPaperResponse.builder()
                 .id(p.getId()).title(p.getTitle())
-                .academicYear(p.getAcademicYear()).semester(p.getSemester())
+                .academicYear(p.getAcademicYear()).academicSemester(p.getAcademicSemester()).semester(p.getSemester())
+                .intakeBatch(p.getIntakeBatch()).faculty(p.getFaculty())
                 .courseCode(p.getCourseCode()).courseName(p.getCourseName())
                 .department(p.getDepartment()).examType(p.getExamType())
                 .description(p.getDescription()).fileFormat(p.getFileFormat()).fileSize(p.getFileSize())

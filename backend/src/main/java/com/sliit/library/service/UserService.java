@@ -206,37 +206,37 @@ public class UserService {
 
     public UserProfileResponse uploadProfilePicture(MultipartFile file) {
         User user = getCurrentAuthenticatedUser();
-        
+
         if (file.isEmpty()) {
             throw new RuntimeException("File is empty");
         }
-        
+
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             throw new RuntimeException("Only image files are allowed");
         }
-        
+
         try {
             String uploadDir = "uploads/profile-pictures/";
             Path uploadPath = Paths.get(uploadDir);
-            
+
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-            
+
             String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename != null ? 
-                originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
+            String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
             String newFilename = UUID.randomUUID().toString() + extension;
-            
+
             Path filePath = uploadPath.resolve(newFilename);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            
+
             String fileUrl = "/uploads/profile-pictures/" + newFilename;
-            
+
             user.setProfileImageUrl(fileUrl);
             userRepository.save(user);
-            
+
             return mapToProfileResponse(user);
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload profile picture", e);
@@ -245,21 +245,26 @@ public class UserService {
 
     public MessageResponse deleteProfilePicture() {
         User user = getCurrentAuthenticatedUser();
-        
+
         if (user.getProfileImageUrl() != null) {
             try {
-                Path filePath = Paths.get(user.getProfileImageUrl());
+                String normalizedPath = user.getProfileImageUrl().replaceFirst("^/", "");
+                String filename = normalizedPath.substring(normalizedPath.lastIndexOf('/') + 1);
+                Path uploadFolder = normalizedPath.startsWith("uploads/profile-pictures/")
+                        ? Paths.get("uploads/profile-pictures")
+                        : Paths.get("uploads/membership-photos");
+                Path filePath = uploadFolder.resolve(filename);
                 if (Files.exists(filePath)) {
                     Files.delete(filePath);
                 }
             } catch (IOException e) {
                 // Continue even if file deletion fails
             }
-            
+
             user.setProfileImageUrl(null);
             userRepository.save(user);
         }
-        
+
         return new MessageResponse("Profile picture deleted successfully");
     }
 }

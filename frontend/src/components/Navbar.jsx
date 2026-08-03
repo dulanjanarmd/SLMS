@@ -278,27 +278,30 @@ const AppNavbar = () => {
                 onClick={() => { setShowNotifications(!showNotifications); if (!showNotifications) fetchNotifications(); setShowUserMenu(false); setShowLibrarianMenu(false); }}
                 style={{
                   position: 'relative',
-                  padding: '6px 14px',
-                  borderRadius: '8px',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
                   border: '1.5px solid rgba(0,0,0,0.08)',
-                  background: showNotifications ? 'rgba(239,90,36,0.07)' : 'rgba(248,249,250,0.8)',
+                  background: showNotifications ? 'rgba(239,90,36,0.08)' : 'rgba(248,249,250,0.9)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.2s',
-                  color: showNotifications ? '#ef5a24' : '#000000',
+                  color: showNotifications ? '#ef5a24' : '#1f2937',
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 500,
-                  fontSize: '0.875rem',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.07)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.25)'; }}
-                onMouseLeave={e => { if (!showNotifications) { e.currentTarget.style.background = 'rgba(248,249,250,0.8)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; }}}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.08)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.25)'; }}
+                onMouseLeave={e => { if (!showNotifications) { e.currentTarget.style.background = 'rgba(248,249,250,0.9)'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)'; }}}
               >
-                Notifications
+                <i className="bi bi-bell-fill" style={{ fontSize: '1rem', lineHeight: 1 }} />
                 {unreadCount > 0 && (
                   <span style={{
-                    marginLeft: '6px',
+                    position: 'absolute',
+                    top: '-2px',
+                    right: '-2px',
                     background: '#ef5a24',
                     color: 'white',
                     borderRadius: '999px',
@@ -311,6 +314,7 @@ const AppNavbar = () => {
                     fontWeight: 700,
                     padding: '0 6px',
                     fontFamily: 'Poppins, sans-serif',
+                    border: '2px solid white',
                   }}>
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>

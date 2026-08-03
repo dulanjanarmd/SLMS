@@ -6,7 +6,7 @@ import { Spinner } from 'react-bootstrap';
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { syncUserProfile, refreshUserProfile } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -68,6 +68,11 @@ const Profile = () => {
 
       const data = await res.json();
       setProfile(data);
+      syncUserProfile(data);
+      const freshUser = await refreshUserProfile();
+      if (freshUser) {
+        setProfile(freshUser);
+      }
       setSuccess('Profile picture updated successfully!');
       setTimeout(() => setSuccess(''), 4000);
     } catch (err) {
@@ -86,6 +91,11 @@ const Profile = () => {
       });
 
       setProfile({ ...profile, profileImageUrl: null });
+      syncUserProfile({ profileImageUrl: null });
+      const freshUser = await refreshUserProfile();
+      if (freshUser) {
+        setProfile(freshUser);
+      }
       setSuccess('Profile picture removed successfully!');
       setTimeout(() => setSuccess(''), 4000);
     } catch (err) {
@@ -143,7 +153,7 @@ const Profile = () => {
         <div>
           <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '32px 24px', textAlign: 'center', marginBottom: 20 }}>
             {/* Avatar */}
-            <div style={{ position: 'relative', display: 'inline-block', marginBottom: 16 }}>
+            <div style={{ display: 'inline-block', marginBottom: 16 }}>
               <div style={{ 
                 width: 90, height: 90, borderRadius: 22, 
                 background: profile?.profileImageUrl 
@@ -161,63 +171,63 @@ const Profile = () => {
                   getInitials(profile?.fullName)
                 )}
               </div>
-              <input
-                type="file"
-                id="profilePictureInput"
-                accept="image/*"
-                onChange={handleProfilePictureUpload}
-                style={{ display: 'none' }}
-              />
-              <button
-                onClick={() => document.getElementById('profilePictureInput').click()}
-                disabled={uploading}
-                style={{
-                  position: 'absolute',
-                  bottom: -8,
-                  right: -8,
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #ef5a24, #ff6b35)',
-                  border: '2px solid white',
-                  color: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: uploading ? 'not-allowed' : 'pointer',
-                  fontSize: '0.9rem',
-                  boxShadow: '0 4px 12px rgba(239,90,36,0.35)',
-                }}
-                title="Change profile picture"
-              >
-                {uploading ? <Spinner size="sm" /> : '📷'}
-              </button>
-              {profile?.profileImageUrl && (
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 14 }}>
+                <input
+                  type="file"
+                  id="profilePictureInput"
+                  accept="image/*"
+                  onChange={handleProfilePictureUpload}
+                  style={{ display: 'none' }}
+                />
                 <button
-                  onClick={handleDeleteProfilePicture}
+                  onClick={() => document.getElementById('profilePictureInput').click()}
                   disabled={uploading}
                   style={{
-                    position: 'absolute',
-                    bottom: -8,
-                    left: -8,
-                    width: 32,
-                    height: 32,
-                    borderRadius: '50%',
-                    background: '#ef4444',
-                    border: '2px solid white',
+                    minWidth: 78,
+                    borderRadius: 10,
+                    background: 'linear-gradient(135deg, #ef5a24, #ff6b35)',
+                    border: 'none',
                     color: 'white',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: uploading ? 'not-allowed' : 'pointer',
-                    fontSize: '0.9rem',
-                    boxShadow: '0 4px 12px rgba(239,68,68,0.35)',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    padding: '8px 12px',
+                    boxShadow: '0 4px 12px rgba(239,90,36,0.35)',
+                    fontFamily: 'Poppins, sans-serif',
                   }}
-                  title="Remove profile picture"
+                  title="Change profile picture"
                 >
-                  {uploading ? <Spinner size="sm" /> : '✕'}
+                  {uploading ? <Spinner size="sm" /> : 'Edit'}
                 </button>
-              )}
+                {profile?.profileImageUrl && (
+                  <button
+                    onClick={handleDeleteProfilePicture}
+                    disabled={uploading}
+                    style={{
+                      minWidth: 78,
+                      borderRadius: 10,
+                      background: '#ef4444',
+                      border: 'none',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: uploading ? 'not-allowed' : 'pointer',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      padding: '8px 12px',
+                      boxShadow: '0 4px 12px rgba(239,68,68,0.35)',
+                      fontFamily: 'Poppins, sans-serif',
+                    }}
+                    title="Remove profile picture"
+                  >
+                    {uploading ? <Spinner size="sm" /> : 'Delete'}
+                  </button>
+                )}
+              </div>
             </div>
             <h3 style={{ fontWeight: 700, fontSize: '1.1rem', color: '#1a1a2e', margin: '0 0 6px' }}>{profile?.fullName}</h3>
             <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0 0 14px' }}>{profile?.studentStaffId}</p>

@@ -184,10 +184,12 @@ export const pastPapersAPI = {
 };
 
 export const membershipAPI = {
-  apply: (data, photo) => {
+  apply: (data, photo, studentIdCardPdf, nationalIdPdf) => {
     const formData = new FormData();
     formData.append('data', JSON.stringify(data));
     if (photo) formData.append('photo', photo);
+    if (studentIdCardPdf) formData.append('studentIdCardPdf', studentIdCardPdf);
+    if (nationalIdPdf) formData.append('nationalIdPdf', nationalIdPdf);
     return api.post('/membership/apply', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
   },
   getMy: () => api.get('/membership/my'),

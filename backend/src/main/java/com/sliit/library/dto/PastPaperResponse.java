@@ -11,7 +11,10 @@ public class PastPaperResponse {
     private Long id;
     private String title;
     private String academicYear;
+    private String academicSemester;
     private String semester;
+    private String intakeBatch;
+    private String faculty;
     private String courseCode;
     private String courseName;
     private String department;

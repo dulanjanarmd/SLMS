@@ -59,7 +59,8 @@ public class PastPaperController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<Resource> view(@PathVariable Long id) throws MalformedURLException {
         Resource resource = paperService.view(id);
-        if (!resource.exists()) return ResponseEntity.notFound().build();
+        if (!resource.exists())
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"past-paper.pdf\"")
@@ -71,14 +72,18 @@ public class PastPaperController {
     public ResponseEntity<PastPaperResponse> upload(
             @RequestParam("title") String title,
             @RequestParam("academicYear") String academicYear,
+            @RequestParam(value = "academicSemester", required = false) String academicSemester,
             @RequestParam("semester") String semester,
+            @RequestParam(value = "intakeBatch", required = false) String intakeBatch,
+            @RequestParam(value = "faculty", required = false) String faculty,
             @RequestParam(value = "courseCode", required = false) String courseCode,
             @RequestParam(value = "courseName", required = false) String courseName,
             @RequestParam(value = "department", required = false) String department,
             @RequestParam(value = "examType", required = false) String examType,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam("file") MultipartFile file) throws IOException {
-        return ResponseEntity.ok(paperService.upload(title, academicYear, semester, courseCode, courseName, department, examType, description, file));
+        return ResponseEntity.ok(paperService.upload(title, academicYear, academicSemester, semester, intakeBatch,
+                faculty, courseCode, courseName, department, examType, description, file));
     }
 
     @DeleteMapping("/librarian/past-papers/{id}")

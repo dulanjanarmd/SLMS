@@ -105,8 +105,8 @@ const EBooks = () => {
   const inputStyle = { width: '100%', padding: '12px 16px', background: '#f8fafc', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontSize: '0.9rem', color: '#1e293b', outline: 'none', boxSizing: 'border-box' };
 
   const tabs = [
-    { id: 'browse', label: 'Browse', icon: '📚' },
-    ...(isLibrarian ? [{ id: 'upload', label: 'Upload', icon: '➕' }] : []),
+    { id: 'browse', label: 'Browse' },
+    ...(isLibrarian ? [{ id: 'upload', label: 'Upload' }] : []),
   ];
 
   return (
@@ -115,13 +115,13 @@ const EBooks = () => {
       <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #8b5cf6 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>📚 E-Books Digital Library</h1>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>E-Books Digital Library</h1>
           <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem' }}>Read and download digital books instantly anywhere</p>
         </div>
       </div>
 
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>{success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>{error}</div>}
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 24, background: '#f1f5f9', padding: 6, borderRadius: 14, width: 'fit-content' }}>
@@ -137,7 +137,7 @@ const EBooks = () => {
               transition: 'all 0.18s',
             }}
           >
-            <span style={{ marginRight: 6 }}>{tab.icon}</span>{tab.label}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -147,7 +147,7 @@ const EBooks = () => {
           <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px', marginBottom: 24 }}>
             <form onSubmit={handleSearch} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               <div style={{ flex: 1, position: 'relative' }}>
-                <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1rem' }}>🔎</span>
+                <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af', fontSize: '1rem' }}></span>
                 <input type="text" placeholder="Search digital library..." value={searchKeyword} onChange={e => setSearchKeyword(e.target.value)}
                   style={{ ...inputStyle, paddingLeft: 42, background: 'white' }}
                   onFocus={e => { e.target.style.borderColor = '#8b5cf6'; e.target.style.boxShadow = '0 0 0 3px rgba(139,92,246,0.12)'; }}
@@ -163,7 +163,7 @@ const EBooks = () => {
             <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#8b5cf6' }} /></div>
           ) : ebooks.length === 0 ? (
             <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '60px', textAlign: 'center', color: '#9ca3af' }}>
-              <div style={{ fontSize: '3rem', marginBottom: 12 }}>📚</div>
+              <div style={{ fontSize: '3rem', marginBottom: 12 }}></div>
               <div style={{ fontWeight: 600, marginBottom: 8 }}>No eBooks found</div>
               <div style={{ fontSize: '0.88rem' }}>Adjust your search terms to find digital content.</div>
             </div>
@@ -179,7 +179,7 @@ const EBooks = () => {
                     </div>
                   ) : (
                     <div style={{ height: 140, background: 'linear-gradient(135deg, rgba(139,92,246,0.1), rgba(109,40,217,0.1))', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 20, position: 'relative' }}>
-                      <div style={{ width: 56, height: 56, borderRadius: 14, background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(109,40,217,0.15))', color: '#6d28d9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem' }}>📚</div>
+                      <div style={{ width: 56, height: 56, borderRadius: 14, background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(109,40,217,0.15))', color: '#6d28d9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem' }}></div>
                       <span style={{ marginLeft: 'auto', background: 'rgba(16,185,129,0.1)', color: '#10b981', padding: '3px 10px', borderRadius: 6, fontSize: '0.7rem', fontWeight: 700 }}>E-BOOK</span>
                     </div>
                   )}
@@ -195,11 +195,11 @@ const EBooks = () => {
 
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       <button onClick={() => handleViewOnline(ebook)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.25)' }}>
-                        👁️ Read Online
+                        Read Online
                       </button>
-                      <DownloadBtn onClick={() => handleDownload(ebook.id, ebook.title)}>⬇️ Download</DownloadBtn>
+                      <DownloadBtn onClick={() => handleDownload(ebook.id, ebook.title)}>Download</DownloadBtn>
                       {isLibrarian && (
-                        <button onClick={() => handleDelete(ebook.id)} style={{ padding: '0 14px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>🗑️</button>
+                        <button onClick={() => handleDelete(ebook.id)} style={{ padding: '0 14px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}></button>
                       )}
                     </div>
                   </div>
@@ -215,7 +215,7 @@ const EBooks = () => {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)', padding: 20 }} onClick={e => { if (e.target === e.currentTarget) { setShowUpload(false); setError(''); setSuccess(''); } }}>
           <div style={{ background: 'white', borderRadius: 24, padding: '32px', width: '100%', maxWidth: 640, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-              <h3 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0 }}>📤 Upload E-Book</h3>
+              <h3 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0 }}>Upload E-Book</h3>
               <button onClick={() => { setShowUpload(false); setError(''); setSuccess(''); }} style={{ background: '#f1f5f9', border: 'none', borderRadius: 10, width: 38, height: 38, cursor: 'pointer', fontSize: '1.1rem', color: '#64748b' }}>✕</button>
             </div>
             <form onSubmit={handleUpload}>
@@ -249,7 +249,7 @@ const EBooks = () => {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
                 <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 12, border: '1.5px dashed #cbd5e1', textAlign: 'center' }}>
-                  <div style={{ fontSize: '2rem', marginBottom: 8 }}>📄</div>
+                  <div style={{ fontSize: '2rem', marginBottom: 8 }}></div>
                   <div style={{ fontWeight: 600, color: '#374151', marginBottom: 8 }}>Select PDF File *</div>
                   <input type="file" accept="application/pdf" required onChange={e => setPdfFile(e.target.files[0])} style={{ fontSize: '0.85rem' }} />
                   {pdfFile && <div style={{ marginTop: 10, fontSize: '0.78rem', color: '#10b981', fontWeight: 600 }}>📎 {pdfFile.name}</div>}

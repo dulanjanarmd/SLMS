@@ -38,30 +38,73 @@ public class MembershipController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY')")
     public ResponseEntity<MembershipResponse> apply(
             @RequestPart("data") String dataJson,
-            @RequestPart(value = "photo", required = false) MultipartFile photo) throws IOException {
+            @RequestPart(value = "photo", required = false) MultipartFile photo,
+            @RequestPart(value = "studentIdCardPdf", required = false) MultipartFile studentIdCardPdf,
+            @RequestPart(value = "nationalIdPdf", required = false) MultipartFile nationalIdPdf) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         MembershipRequest request = mapper.readValue(dataJson, MembershipRequest.class);
 
         String photoPath = null;
+        String studentIdCardPdfPath = null;
+        String nationalIdPdfPath = null;
+
         if (photo != null && !photo.isEmpty()) {
             Path uploadPath = Paths.get(uploadDir);
             Files.createDirectories(uploadPath);
             String filename = UUID.randomUUID() + "_" + photo.getOriginalFilename();
-            Files.copy(photo.getInputStream(), uploadPath.resolve(filename), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(photo.getInputStream(), uploadPath.resolve(filename),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             photoPath = filename;
         }
 
-        return ResponseEntity.ok(membershipService.applyForMembership(request, photoPath));
+        if (studentIdCardPdf != null && !studentIdCardPdf.isEmpty()) {
+            Path uploadPath = Paths.get(uploadDir);
+            Files.createDirectories(uploadPath);
+            String filename = UUID.randomUUID() + "_" + studentIdCardPdf.getOriginalFilename();
+            Files.copy(studentIdCardPdf.getInputStream(), uploadPath.resolve(filename),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            studentIdCardPdfPath = filename;
+        }
+
+        if (nationalIdPdf != null && !nationalIdPdf.isEmpty()) {
+            Path uploadPath = Paths.get(uploadDir);
+            Files.createDirectories(uploadPath);
+            String filename = UUID.randomUUID() + "_" + nationalIdPdf.getOriginalFilename();
+            Files.copy(nationalIdPdf.getInputStream(), uploadPath.resolve(filename),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            nationalIdPdfPath = filename;
+        }
+
+        return ResponseEntity
+                .ok(membershipService.applyForMembership(request, photoPath, studentIdCardPdfPath, nationalIdPdfPath));
     }
 
     @GetMapping("/membership/photo/{filename:.+}")
     public ResponseEntity<Resource> getPhoto(@PathVariable String filename) throws MalformedURLException {
         Path file = Paths.get(uploadDir).resolve(filename);
         Resource resource = new UrlResource(file.toUri());
-        if (!resource.exists()) return ResponseEntity.notFound().build();
+        if (!resource.exists())
+            return ResponseEntity.notFound().build();
         String contentType = "image/jpeg";
-        try { contentType = Files.probeContentType(file); } catch (IOException ignored) {}
+        try {
+            contentType = Files.probeContentType(file);
+        } catch (IOException ignored) {
+        }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
+    }
+
+    @GetMapping("/uploads/membership-photos/{filename:.+}")
+    public ResponseEntity<Resource> getMembershipUpload(@PathVariable String filename) throws MalformedURLException {
+        Path file = Paths.get(uploadDir).resolve(filename);
+        Resource resource = new UrlResource(file.toUri());
+        if (!resource.exists())
+            return ResponseEntity.notFound().build();
+        String contentType = "image/jpeg";
+        try {
+            contentType = Files.probeContentType(file);
+        } catch (IOException ignored) {
+        }
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
     }
 

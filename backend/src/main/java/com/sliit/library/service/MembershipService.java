@@ -31,7 +31,8 @@ public class MembershipService {
     private NotificationService notificationService;
 
     @Transactional
-    public MembershipResponse applyForMembership(MembershipRequest request, String photoPath) {
+    public MembershipResponse applyForMembership(MembershipRequest request, String photoPath,
+            String studentIdCardPdfPath, String nationalIdPdfPath) {
         User user = getCurrentUser();
 
         if (membershipRepository.existsByUserIdAndStatus(user.getId(), MembershipStatus.PENDING)) {
@@ -50,13 +51,23 @@ public class MembershipService {
                 .whatsappNumber(request.getWhatsappNumber())
                 .memberEmail(request.getMemberEmail())
                 .memberType(request.getMemberType())
+                .studentIdNumber(request.getStudentIdNumber())
                 .photoPath(photoPath)
+                .studentIdCardPdfPath(studentIdCardPdfPath)
+                .nationalIdPdfPath(nationalIdPdfPath)
                 .faculty(request.getFaculty())
+                .department(request.getDepartment())
                 .programme(request.getProgramme())
                 .academicYear(request.getAcademicYear())
+                .academicSemester(request.getAcademicSemester())
                 .reason(request.getReason())
                 .status(MembershipStatus.PENDING)
                 .build();
+
+        if (photoPath != null && (user.getProfileImageUrl() == null || user.getProfileImageUrl().isBlank())) {
+            user.setProfileImageUrl("/uploads/membership-photos/" + photoPath);
+            userRepository.save(user);
+        }
 
         membershipRepository.save(membership);
 
@@ -69,8 +80,7 @@ public class MembershipService {
                     "New Membership Application",
                     user.getFullName() + " (" + user.getStudentStaffId() + ") has applied for library membership.",
                     "MEMBERSHIP",
-                    membership.getId()
-            );
+                    membership.getId());
         }
 
         return mapToResponse(membership);
@@ -111,9 +121,11 @@ public class MembershipService {
             membership.setMembershipId("MEM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
             membership.setExpiresAt(LocalDateTime.now().plusYears(1));
 
-            // Set profile picture from membership photo if user doesn't have one
-            if (membership.getPhotoPath() != null && membership.getUser().getProfileImageUrl() == null) {
-                membership.getUser().setProfileImageUrl(membership.getPhotoPath());
+            // Keep the membership photo as the user's default profile image when the user
+            // has not replaced it yet.
+            if (membership.getPhotoPath() != null && (membership.getUser().getProfileImageUrl() == null
+                    || membership.getUser().getProfileImageUrl().isBlank())) {
+                membership.getUser().setProfileImageUrl("/uploads/membership-photos/" + membership.getPhotoPath());
                 userRepository.save(membership.getUser());
             }
 
@@ -122,10 +134,9 @@ public class MembershipService {
                     NotificationType.ANNOUNCEMENT,
                     "Membership Approved!",
                     "Your library membership has been approved. Your Member ID is: " + membership.getMembershipId() +
-                    ". You can now reserve books, add to wishlist, and download eBooks.",
+                            ". You can now reserve books, add to wishlist, and download eBooks.",
                     "MEMBERSHIP",
-                    membership.getId()
-            );
+                    membership.getId());
         } else {
             membership.setStatus(MembershipStatus.REJECTED);
             notificationService.sendNotification(
@@ -133,10 +144,9 @@ public class MembershipService {
                     NotificationType.ANNOUNCEMENT,
                     "Membership Application Update",
                     "Your library membership application was not approved. " +
-                    (request.getAdminComments() != null ? "Reason: " + request.getAdminComments() : ""),
+                            (request.getAdminComments() != null ? "Reason: " + request.getAdminComments() : ""),
                     "MEMBERSHIP",
-                    membership.getId()
-            );
+                    membership.getId());
         }
 
         membershipRepository.save(membership);
@@ -164,10 +174,15 @@ public class MembershipService {
                 .whatsappNumber(m.getWhatsappNumber())
                 .memberEmail(m.getMemberEmail())
                 .memberType(m.getMemberType())
+                .studentIdNumber(m.getStudentIdNumber())
                 .photoPath(m.getPhotoPath())
+                .studentIdCardPdfPath(m.getStudentIdCardPdfPath())
+                .nationalIdPdfPath(m.getNationalIdPdfPath())
                 .faculty(m.getFaculty())
+                .department(m.getDepartment())
                 .programme(m.getProgramme())
                 .academicYear(m.getAcademicYear())
+                .academicSemester(m.getAcademicSemester())
                 .reason(m.getReason())
                 .status(m.getStatus())
                 .membershipId(m.getMembershipId())

@@ -33,8 +33,16 @@ public class MembershipRequest {
     private String memberType;
 
     @NotBlank
+    @Size(max = 50)
+    private String studentIdNumber;
+
+    @NotBlank
     @Size(max = 100)
     private String faculty;
+
+    @NotBlank
+    @Size(max = 100)
+    private String department;
 
     @NotBlank
     @Size(max = 100)
@@ -43,6 +51,10 @@ public class MembershipRequest {
     @NotBlank
     @Size(max = 50)
     private String academicYear;
+
+    @NotBlank
+    @Size(max = 50)
+    private String academicSemester;
 
     @Size(max = 500)
     private String reason;

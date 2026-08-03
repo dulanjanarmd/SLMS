@@ -129,10 +129,12 @@ const Home = () => {
   };
 
   const services = [
-    { icon: '', title: 'Advanced Search', desc: 'Find books by title, author, ISBN, category and more with powerful filters.', color: '#ef5a24' },
-    { icon: '', title: 'Online Reservations', desc: 'Reserve books online and collect them at the library counter anytime.', color: '#10b981' },
-    { icon: '', title: 'Digital Library', desc: 'Access our growing collection of eBooks, journals and research papers.', color: '#6366f1' },
-    { icon: '', title: 'Smart Alerts', desc: 'Get notified for due dates, overdue reminders, and reservation status updates.', color: '#f59e0b' },
+    { icon: '⌕', title: 'Advanced Catalog Search', desc: 'Search by title, author, ISBN, year, category, and availability to quickly find the right resource.', color: '#ef5a24' },
+    { icon: '◫', title: 'Online Reservations', desc: 'Place holds on checked-out books and collect them from the library counter once they are ready.', color: '#10b981' },
+    { icon: '↻', title: 'Borrow & Renewal', desc: 'Manage active loans, renew eligible items, and track due dates through your personal account dashboard.', color: '#6366f1' },
+    { icon: '◌', title: 'Digital Library Access', desc: 'Read eBooks, journals, research papers, and past papers anytime from your LibraryHub account.', color: '#0ea5e9' },
+    { icon: '◈', title: 'Fine Management', desc: 'Review unpaid charges, see payment status, and keep your membership account in good standing.', color: '#f59e0b' },
+    { icon: '◉', title: 'Smart Notifications', desc: 'Receive alerts for due dates, overdue reminders, reservation readiness, and important account updates.', color: '#8b5cf6' },
   ];
 
 
@@ -910,8 +912,8 @@ const Home = () => {
               boxShadow: '0 12px 40px rgba(0,0,0,0.05)',
               padding: '22px 22px',
             }}>
-              <h3 style={{ fontWeight: 800, fontSize: '1.05rem', color: '#1a1a2e', margin: 0, marginBottom: 4 }}>Contact & Help</h3>
-              <p style={{ color: '#64748b', margin: 0, marginBottom: 16, fontSize: '0.82rem' }}>Need assistance? We're here to help.</p>
+              <h3 style={{ fontWeight: 800, fontSize: '1.05rem', color: '#1a1a2e', margin: 0, marginBottom: 4 }}>Quick Help Desk</h3>
+              <p style={{ color: '#64748b', margin: 0, marginBottom: 16, fontSize: '0.82rem' }}>Get support for membership, borrowing, fines, and digital access.</p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {contactInfo.length === 0 ? (
@@ -955,13 +957,13 @@ const Home = () => {
                     
                     const getIcon = (type) => {
                       const icons = {
-                        'EMAIL': '📧',
-                        'PHONE': '📞',
-                        'ADDRESS': '📍',
-                        'SOCIAL': '🌐',
-                        'OTHER': 'ℹ️',
+                        'EMAIL': '✉',
+                        'PHONE': '☎',
+                        'ADDRESS': '⌂',
+                        'SOCIAL': '◌',
+                        'OTHER': '◈',
                       };
-                      return icons[type] || 'ℹ️';
+                      return icons[type] || '◈';
                     };
                     
                     const href = contact.type === 'EMAIL' ? `mailto:${contact.value}` 
@@ -989,7 +991,7 @@ const Home = () => {
                           background: getGradient(contact.type), 
                           color: 'white', 
                           display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                          fontSize: '0.95rem', flexShrink: 0 
+                          fontSize: '0.88rem', flexShrink: 0, fontFamily: 'Segoe UI Symbol, Arial, sans-serif', fontWeight: 700 
                         }}>{getIcon(contact.type)}</div>
                         <div style={{ minWidth: 0 }}>
                           <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600, letterSpacing: 0.3 }}>
@@ -1045,7 +1047,7 @@ const Home = () => {
         <div style={{ marginBottom: 48 }}>
           <div style={{ textAlign: 'center', marginBottom: 28 }}>
             <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0, marginBottom: 6 }}>Quick Help Desk</h2>
-            <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Answers to our most frequently asked questions</p>
+            <p style={{ color: '#64748b', margin: 0, fontSize: '0.9rem' }}>Answers to the most common library questions</p>
           </div>
           <div style={{
             display: 'grid',
@@ -1243,13 +1245,13 @@ const Home = () => {
         <div style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #fdf1ec 100%)', borderRadius: 20, padding: '48px 40px', marginBottom: 40 }}>
           <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', textAlign: 'center', marginBottom: 8 }}>Library Services</h2>
           <p style={{ color: '#64748b', textAlign: 'center', marginBottom: 36, fontSize: '0.9rem' }}>Everything you need, all in one place</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 20 }}>
             {services.map(s => (
-              <div key={s.title} style={{ background: 'white', borderRadius: 16, padding: '28px 24px', textAlign: 'center', border: '1px solid #e8ecf0', transition: 'all 0.22s' }}
+              <div key={s.title} style={{ background: 'white', borderRadius: 16, padding: '28px 24px', textAlign: 'center', border: '1px solid #e8ecf0', transition: 'all 0.22s', minHeight: 230 }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = `0 12px 32px ${s.color}18`; e.currentTarget.style.borderColor = s.color + '50'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = ''; e.currentTarget.style.borderColor = '#e8ecf0'; }}
               >
-                <div style={{ width: 56, height: 56, borderRadius: 14, background: s.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.8rem', margin: '0 auto 16px' }}>{s.icon}</div>
+                <div style={{ width: 56, height: 56, borderRadius: 14, background: s.color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.45rem', margin: '0 auto 16px', color: s.color, fontFamily: 'Segoe UI Symbol, Arial, sans-serif', fontWeight: 700 }}>{s.icon}</div>
                 <h4 style={{ fontWeight: 700, fontSize: '1rem', color: '#1a1a2e', marginBottom: 10 }}>{s.title}</h4>
                 <p style={{ color: '#64748b', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
               </div>

@@ -6,6 +6,17 @@ import { Spinner } from 'react-bootstrap';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 const TITLES = ['Mr.', 'Ms.', 'Mrs.', 'Dr.', 'Prof.', 'Rev.'];
+const ACADEMIC_YEARS = [
+  { value: '1st Year', label: '1st Year' },
+  { value: '2nd Year', label: '2nd Year' },
+  { value: '3rd Year', label: '3rd Year' },
+  { value: '4th Year', label: '4th Year' },
+  { value: '5th Year', label: '5th Year' },
+];
+const SEMESTERS = [
+  { value: '1st Semester', label: '1st Semester' },
+  { value: '2nd Semester', label: '2nd Semester' },
+];
 
 const MembershipApplication = () => {
   const { user } = useAuth();
@@ -16,14 +27,18 @@ const MembershipApplication = () => {
   const [success, setSuccess] = useState('');
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [studentIdCardPdf, setStudentIdCardPdf] = useState(null);
+  const [nationalIdPdf, setNationalIdPdf] = useState(null);
   const [faculties, setFaculties] = useState([]);
   const [memberTypes, setMemberTypes] = useState([]);
   const fileInputRef = useRef();
+  const studentIdCardInputRef = useRef();
+  const nationalIdInputRef = useRef();
 
   const [formData, setFormData] = useState({
     title: '', nameWithInitials: '', address: '', contactNumber: '', whatsappNumber: '',
-    memberEmail: user?.email || '', memberType: '', faculty: user?.faculty || '',
-    programme: user?.programme || '', academicYear: '', reason: '',
+    memberEmail: user?.email || '', memberType: '', studentIdNumber: user?.studentStaffId || '', faculty: user?.faculty || '',
+    department: '', programme: user?.programme || '', academicYear: '', academicSemester: '', reason: '',
   });
 
   useEffect(() => {
@@ -44,10 +59,16 @@ const MembershipApplication = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); setSubmitting(true); setError('');
     try {
-      const res = await membershipAPI.apply(formData, photoFile);
+      if (!photoFile) {
+        throw new Error('Passport photo is required.');
+      }
+      if (!studentIdCardPdf || !nationalIdPdf) {
+        throw new Error('Both student/staff ID card PDF and national ID PDF are required.');
+      }
+      const res = await membershipAPI.apply(formData, photoFile, studentIdCardPdf, nationalIdPdf);
       setExisting(res.data);
       setSuccess('Application submitted! The librarian will review it shortly.');
-    } catch (err) { setError(err.response?.data?.message || 'Submission failed.'); }
+    } catch (err) { setError(err.response?.data?.message || err.message || 'Submission failed.'); }
     finally { setSubmitting(false); }
   };
 
@@ -188,8 +209,46 @@ const MembershipApplication = () => {
                 <label style={labelStyle}>Member Type</label>
                 <select name="memberType" value={formData.memberType} onChange={handleChange} required style={inputStyle}>
                   <option value="">Select...</option>
-                  {memberTypes.map(m => <option key={m} value={m}>{m}</option>)}
+                  {memberTypes.map(m => <option key={m.id} value={m.name}>{m.name}</option>)}
                 </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+              <div>
+                <label style={labelStyle}>Student/Staff ID Number</label>
+                <input name="studentIdNumber" value={formData.studentIdNumber} onChange={handleChange} required style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Academic Year</label>
+                <select name="academicYear" value={formData.academicYear} onChange={handleChange} style={inputStyle}>
+                  <option value="">Select...</option>
+                  {ACADEMIC_YEARS.map(y => <option key={y.value} value={y.value}>{y.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+              <div>
+                <label style={labelStyle}>Academic Semester</label>
+                <select name="academicSemester" value={formData.academicSemester} onChange={handleChange} style={inputStyle}>
+                  <option value="">Select...</option>
+                  {SEMESTERS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+              </div>
+              <div />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+              <div>
+                <label style={labelStyle}>Student / Staff ID Card PDF</label>
+                <input type="file" ref={studentIdCardInputRef} onChange={e => setStudentIdCardPdf(e.target.files[0])} accept="application/pdf" style={{ ...inputStyle, padding: '10px 12px' }} />
+                <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 6 }}>{studentIdCardPdf ? studentIdCardPdf.name : 'No file selected'}</div>
+              </div>
+              <div>
+                <label style={labelStyle}>National ID PDF</label>
+                <input type="file" ref={nationalIdInputRef} onChange={e => setNationalIdPdf(e.target.files[0])} accept="application/pdf" style={{ ...inputStyle, padding: '10px 12px' }} />
+                <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 6 }}>{nationalIdPdf ? nationalIdPdf.name : 'No file selected'}</div>
               </div>
             </div>
 
@@ -198,20 +257,16 @@ const MembershipApplication = () => {
                 <label style={labelStyle}>Faculty</label>
                 <select name="faculty" value={formData.faculty} onChange={handleChange} style={inputStyle}>
                   <option value="">Select...</option>
-                  {faculties.map(f => <option key={f} value={f}>{f}</option>)}
+                  {faculties.map(f => <option key={f.id} value={f.name}>{f.name}</option>)}
                 </select>
+              </div>
+              <div>
+                <label style={labelStyle}>Department</label>
+                <input name="department" value={formData.department} onChange={handleChange} placeholder="e.g. Computer Science" style={inputStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Programme</label>
                 <input name="programme" value={formData.programme} onChange={handleChange} style={inputStyle} />
-              </div>
-              <div>
-                <label style={labelStyle}>Academic Year</label>
-                <select name="academicYear" value={formData.academicYear} onChange={handleChange} style={inputStyle}>
-                  <option value="">Select...</option>
-                  <option value="Y1">Year 1</option><option value="Y2">Year 2</option>
-                  <option value="Y3">Year 3</option><option value="Y4">Year 4</option>
-                </select>
               </div>
             </div>
 

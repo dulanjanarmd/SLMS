@@ -5,12 +5,21 @@ import com.sliit.library.entity.Role;
 import com.sliit.library.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -102,5 +111,19 @@ public class UserController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> deleteProfilePicture() {
         return ResponseEntity.ok(userService.deleteProfilePicture());
+    }
+
+    @GetMapping("/uploads/profile-pictures/{filename:.+}")
+    public ResponseEntity<Resource> getProfilePicture(@PathVariable String filename) throws MalformedURLException {
+        Path file = Paths.get("uploads/profile-pictures").resolve(filename);
+        Resource resource = new UrlResource(file.toUri());
+        if (!resource.exists())
+            return ResponseEntity.notFound().build();
+        String contentType = "image/jpeg";
+        try {
+            contentType = Files.probeContentType(file);
+        } catch (IOException ignored) {
+        }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(resource);
     }
 }

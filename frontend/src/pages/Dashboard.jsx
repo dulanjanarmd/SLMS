@@ -10,6 +10,9 @@ import { Bar, Doughnut } from 'react-chartjs-2';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement);
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+const FILE_VIEW_BASE = API_BASE_URL.replace(/\/api$/, '');
+
 const S = {
   page: { padding: '32px 28px', maxWidth: '1400px', margin: '0 auto' },
   banner: {
@@ -251,16 +254,27 @@ const Dashboard = () => {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Poppins, sans-serif', fontSize: '0.85rem' }}>
             <thead><tr style={{ background: '#f8fafc' }}>
-              {['Name', 'ID', 'Faculty', 'Programme', 'Applied', 'Actions'].map(h => <th key={h} style={{ padding: '10px 20px', textAlign: 'left', fontWeight: 600, fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9', whiteSpace: 'nowrap' }}>{h}</th>)}
+              {['Applicant', 'Type', 'Student ID', 'Faculty', 'Department', 'Semester', 'Programme', 'Applied', 'Evidence', 'Actions'].map(h => <th key={h} style={{ padding: '10px 20px', textAlign: 'left', fontWeight: 600, fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #f1f5f9', whiteSpace: 'nowrap' }}>{h}</th>)}
             </tr></thead>
             <tbody>
-              {pendingMemberships.length === 0 ? <tr><td colSpan={6} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>No pending applications</td></tr>
+              {pendingMemberships.length === 0 ? <tr><td colSpan={10} style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}>No pending applications</td></tr>
                 : pendingMemberships.map(m => <tr key={m.id} style={{ borderBottom: '1px solid #f8fafc' }}>
-                  <td style={{ padding: '12px 20px', fontWeight: 600, color: '#1a1a2e' }}>{m.userFullName}</td>
-                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.userStudentStaffId}</td>
-                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.faculty}</td>
-                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.programme}</td>
+                  <td style={{ padding: '12px 20px', fontWeight: 600, color: '#1a1a2e' }}>{m.userFullName}<div style={{ fontSize: '0.72rem', color: '#9ca3af', fontWeight: 500, marginTop: 2 }}>{m.userEmail}</div></td>
+                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.memberType || '-'}</td>
+                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.studentIdNumber || m.userStudentStaffId || '-'}</td>
+                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.faculty || '-'}</td>
+                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.department || '-'}</td>
+                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.academicSemester || '-'}</td>
+                  <td style={{ padding: '12px 20px', color: '#374151' }}>{m.programme || '-'}</td>
                   <td style={{ padding: '12px 20px', fontSize: '0.82rem', color: '#374151' }}>{m.appliedAt ? new Date(m.appliedAt).toLocaleDateString() : '-'}</td>
+                  <td style={{ padding: '12px 20px', minWidth: 210 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {m.photoPath && <a href={`${FILE_VIEW_BASE}/uploads/membership-photos/${m.photoPath}`} target="_blank" rel="noreferrer" style={{ color: '#0ea5e9', textDecoration: 'none', fontWeight: 600 }}>View Photo</a>}
+                      {m.studentIdCardPdfPath && <a href={`${FILE_VIEW_BASE}/uploads/membership-photos/${m.studentIdCardPdfPath}`} target="_blank" rel="noreferrer" style={{ color: '#ef5a24', textDecoration: 'none', fontWeight: 600 }}>Open Student/Staff ID PDF</a>}
+                      {m.nationalIdPdfPath && <a href={`${FILE_VIEW_BASE}/uploads/membership-photos/${m.nationalIdPdfPath}`} target="_blank" rel="noreferrer" style={{ color: '#8b5cf6', textDecoration: 'none', fontWeight: 600 }}>Open National ID PDF</a>}
+                      {!m.photoPath && !m.studentIdCardPdfPath && !m.nationalIdPdfPath && <span style={{ color: '#9ca3af' }}>No evidence attached</span>}
+                    </div>
+                  </td>
                   <td style={{ padding: '12px 20px' }}>
                     <div style={{ display: 'flex', gap: 8 }}>
                       <button onClick={async () => { try { await membershipAPI.review(m.id, { approved: true, adminComments: '' }); setMembershipMsg(`Approved: ${m.userFullName}`); setTimeout(() => setMembershipMsg(''), 4000); setPendingMemberships(p => p.filter(x => x.id !== m.id)); } catch { setMembershipMsg('Action failed'); } }}

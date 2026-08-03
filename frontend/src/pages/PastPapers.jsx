@@ -3,10 +3,25 @@ import { useAuth } from '../context/AuthContext';
 import { pastPapersAPI } from '../services/api';
 import { Spinner } from 'react-bootstrap';
 
-const emptyForm = { title: '', academicYear: '', semester: 'Semester 1', courseCode: '', courseName: '', department: '', examType: 'End Semester', description: '' };
+const emptyForm = {
+  title: '',
+  academicYear: '1st Year',
+  academicSemester: '1',
+  semester: '1',
+  intakeBatch: '2024 July Intake',
+  faculty: '',
+  courseCode: '',
+  courseName: '',
+  department: '',
+  examType: 'End Semester',
+  description: ''
+};
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
-const SEMESTERS = ['Semester 1', 'Semester 2', 'Summer Semester'];
+const ACADEMIC_YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+const ACADEMIC_SEMESTERS = ['1', '2', '3', '4'];
+const INTAKE_BATCHES = ['2024 July Intake', '2024 January Intake', '2024 June Intake'];
+const FACULTIES = ['School of Computing', 'School of Engineering', 'School of Business', 'School of Humanities'];
 const EXAM_TYPES = ['End Semester', 'Mid Semester', 'Quiz', 'Assignment', 'Mock Exam', 'Repeat'];
 
 const PastPapers = () => {
@@ -49,7 +64,10 @@ const PastPapers = () => {
   const handleUpload = async (e) => {
     e.preventDefault();
     if (!pdfFile) { setError('Please select a PDF file'); return; }
-    if (!form.academicYear || !form.semester) { setError('Academic year and semester are required'); return; }
+    if (!form.academicYear || !form.academicSemester || !form.semester || !form.intakeBatch || !form.faculty) {
+      setError('Academic year, academic semester, semester, intake batch, and faculty are required');
+      return;
+    }
     setUploading(true); setError('');
     try {
       const fd = new FormData();
@@ -98,7 +116,7 @@ const PastPapers = () => {
   const grouped = useMemo(() => {
     const g = {};
     papers.forEach(p => {
-      const key = `${p.academicYear}__${p.semester}`;
+      const key = `${p.academicYear}__${p.academicSemester || p.semester}__${p.semester}`;
       if (!g[key]) g[key] = [];
       g[key].push(p);
     });
@@ -113,8 +131,8 @@ const PastPapers = () => {
 
   const inputStyle = { width: '100%', padding: '12px 16px', background: '#f8fafc', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontSize: '0.9rem', outline: 'none', boxSizing: 'border-box' };
   const tabs = [
-    { id: 'browse', label: 'Browse', icon: '📋' },
-    ...(isLibrarian ? [{ id: 'upload', label: 'Upload', icon: '➕' }] : []),
+    { id: 'browse', label: 'Browse' },
+    ...(isLibrarian ? [{ id: 'upload', label: 'Upload' }] : []),
   ];
 
   return (
@@ -122,13 +140,13 @@ const PastPapers = () => {
       <div style={{ background: 'linear-gradient(135deg, #7c2d12 0%, #c2410c 45%, #ef5a24 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>📋 Past Papers Archive</h1>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>Past Papers Archive</h1>
           <p style={{ opacity: 0.8, margin: 0, fontSize: '0.86rem' }}>Past exam papers by year, semester, and course — read online or download</p>
         </div>
       </div>
 
-      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>✅ {success}</div>}
-      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>⚠️ {error}</div>}
+      {success && <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#065f46', fontSize: '0.87rem', fontWeight: 500 }}>{success}</div>}
+      {error && <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '12px 18px', marginBottom: 20, color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>{error}</div>}
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 24, background: '#f1f5f9', padding: 6, borderRadius: 14, width: 'fit-content' }}>
         {tabs.map(t => (
@@ -139,7 +157,7 @@ const PastPapers = () => {
               color: activeTab === t.id ? '#7c2d12' : '#64748b',
               boxShadow: activeTab === t.id ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
             }}>
-            <span style={{ marginRight: 6 }}>{t.icon}</span>{t.label}
+            {t.label}
           </button>
         ))}
       </div>
@@ -149,20 +167,17 @@ const PastPapers = () => {
           <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '20px 24px', marginBottom: 24 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, alignItems: 'end' }}>
               <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>📅 Academic Year</label>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Academic Year</label>
                 <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} style={inputStyle}>
                   <option value="">All Years</option>
-                  {filters.years.map(y => <option key={y} value={y}>{y}</option>)}
-                  {!filters.years.includes('2024/2025') && <option value="2024/2025">2024/2025</option>}
-                  {!filters.years.includes('2023/2024') && <option value="2023/2024">2023/2024</option>}
-                  {!filters.years.includes('2022/2023') && <option value="2022/2023">2022/2023</option>}
+                  {(filters.years.length ? filters.years : ACADEMIC_YEARS).map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>🗂️ Semester</label>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Semester</label>
                 <select value={selectedSem} onChange={e => setSelectedSem(e.target.value)} style={inputStyle}>
                   <option value="">All Semesters</option>
-                  {(filters.semesters.length ? filters.semesters : SEMESTERS).map(s => <option key={s} value={s}>{s}</option>)}
+                  {(filters.semesters.length ? filters.semesters : ACADEMIC_SEMESTERS).map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <button onClick={clearFilters} style={{ padding: '12px 20px', background: '#f1f5f9', color: '#64748b', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer' }}>Clear</button>
@@ -171,21 +186,24 @@ const PastPapers = () => {
 
           {loading ? <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div> : papers.length === 0 ? (
             <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '60px', textAlign: 'center', color: '#9ca3af' }}>
-              <div style={{ fontSize: '3rem', marginBottom: 12 }}>📋</div>
+              <div style={{ fontSize: '3rem', marginBottom: 12 }}></div>
               <div style={{ fontWeight: 600, marginBottom: 8 }}>No past papers found</div>
               <div style={{ fontSize: '0.88rem' }}>Try clearing filters or check back later.</div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               {grouped.keys.map(key => {
-                const [y, s] = key.split('__');
+                const [y, aSem, s] = key.split('__');
                 return (
                   <div key={key}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
                       <div style={{ background: 'linear-gradient(135deg, #7c2d12, #ef5a24)', color: 'white', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span>📅</span>{y}
+                        <span>{y}</span>
                       </div>
                       <div style={{ background: 'rgba(239,90,36,0.1)', color: '#c2410c', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem' }}>
+                        Sem {aSem || s}
+                      </div>
+                      <div style={{ background: 'rgba(37,99,235,0.08)', color: '#1d4ed8', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem' }}>
                         {s}
                       </div>
                       <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>• {grouped.groups[key].length} paper{grouped.groups[key].length === 1 ? '' : 's'}</span>
@@ -196,7 +214,7 @@ const PastPapers = () => {
                           onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(194,65,12,0.12)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.35)'; }}
                           onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}>
                           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                            <div style={{ width: 44, height: 44, borderRadius: 10, background: 'rgba(239,90,36,0.1)', color: '#c2410c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}>📝</div>
+                            <div style={{ width: 44, height: 44, borderRadius: 10, background: 'rgba(239,90,36,0.1)', color: '#c2410c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}></div>
                             {p.examType && <span style={{ background: 'rgba(124,45,18,0.1)', color: '#7c2d12', borderRadius: 6, padding: '3px 10px', fontSize: '0.7rem', fontWeight: 700 }}>{p.examType}</span>}
                           </div>
                           {p.courseCode && (
@@ -206,14 +224,20 @@ const PastPapers = () => {
                             {p.courseName || p.title}
                           </h3>
                           {!p.courseName && p.title && <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '0 0 10px' }}>{p.title}</p>}
-                          {p.department && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem', marginBottom: 10 }}>🏛️ {p.department}</div>}
+                          {(p.faculty || p.intakeBatch || p.department) && (
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                              {p.faculty && <div style={{ display: 'inline-block', background: '#eff6ff', color: '#1d4ed8', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.faculty}</div>}
+                              {p.intakeBatch && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.intakeBatch}</div>}
+                              {p.department && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.department}</div>}
+                            </div>
+                          )}
                           {p.description && <p style={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5, margin: '0 0 14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.description}</p>}
                           {p.fileSize != null && <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 14 }}>📄 PDF • {(p.fileSize / 1024 / 1024).toFixed(2)} MB</div>}
 
                           <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
-                            <button onClick={() => handleView(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.22)' }}>👁️ View</button>
-                            <button onClick={() => handleDownload(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>⬇️ PDF</button>
-                            {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>🗑️</button>}
+                            <button onClick={() => handleView(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.22)' }}>View</button>
+                            <button onClick={() => handleDownload(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>PDF</button>
+                            {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}></button>}
                           </div>
                         </div>
                       ))}
@@ -238,19 +262,38 @@ const PastPapers = () => {
                 <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Academic Year *</label>
                   <select required value={form.academicYear} onChange={e => setForm({ ...form, academicYear: e.target.value })} style={inputStyle}>
                     <option value="">Select...</option>
-                    <option value="2024/2025">2024/2025</option>
-                    <option value="2023/2024">2023/2024</option>
-                    <option value="2022/2023">2022/2023</option>
-                    <option value="2021/2022">2021/2022</option>
-                    <option value="2020/2021">2020/2021</option>
-                    <option value="2019/2020">2019/2020</option>
+                    {ACADEMIC_YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Academic Semester *</label>
+                  <select required value={form.academicSemester} onChange={e => setForm({ ...form, academicSemester: e.target.value })} style={inputStyle}>
+                    <option value="">Select...</option>
+                    {ACADEMIC_SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Semester *</label>
                   <select required value={form.semester} onChange={e => setForm({ ...form, semester: e.target.value })} style={inputStyle}>
-                    {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
+                    <option value="">Select...</option>
+                    {ACADEMIC_SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Intake / Batch *</label>
+                  <select required value={form.intakeBatch} onChange={e => setForm({ ...form, intakeBatch: e.target.value })} style={inputStyle}>
+                    <option value="">Select...</option>
+                    {INTAKE_BATCHES.map(b => <option key={b} value={b}>{b}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Faculty *</label>
+                  <select required value={form.faculty} onChange={e => setForm({ ...form, faculty: e.target.value })} style={inputStyle}>
+                    <option value="">Select...</option>
+                    {FACULTIES.map(f => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Department</label><input value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} placeholder="e.g. Computer Science" style={inputStyle} /></div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 16 }}>
                 <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Course Code</label><input value={form.courseCode} onChange={e => setForm({ ...form, courseCode: e.target.value })} placeholder="e.g. IT3010" style={inputStyle} /></div>
@@ -261,19 +304,19 @@ const PastPapers = () => {
                 <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="e.g. 2024 End Semester - Data Structures" style={inputStyle} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Department</label><input value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} placeholder="e.g. Computer Science" style={inputStyle} /></div>
                 <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Exam Type</label>
                   <select value={form.examType} onChange={e => setForm({ ...form, examType: e.target.value })} style={inputStyle}>
                     {EXAM_TYPES.map(e => <option key={e} value={e}>{e}</option>)}
                   </select>
                 </div>
+                <div></div>
               </div>
               <div style={{ marginBottom: 20 }}>
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Description / Notes</label>
                 <textarea rows="2" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Additional info about the paper (optional)" />
               </div>
               <div style={{ background: '#f8fafc', padding: '20px', borderRadius: 12, border: '1.5px dashed #cbd5e1', textAlign: 'center', marginBottom: 24 }}>
-                <div style={{ fontSize: '2rem', marginBottom: 8 }}>📄</div>
+                <div style={{ fontSize: '2rem', marginBottom: 8 }}></div>
                 <div style={{ fontWeight: 600, color: '#374151', marginBottom: 8 }}>Select PDF File *</div>
                 <input type="file" accept="application/pdf" required onChange={e => setPdfFile(e.target.files[0])} style={{ fontSize: '0.85rem' }} />
                 {pdfFile && <div style={{ marginTop: 10, fontSize: '0.78rem', color: '#10b981', fontWeight: 600 }}>📎 {pdfFile.name}</div>}
@@ -298,7 +341,7 @@ const PastPapers = () => {
                 <div style={{ fontWeight: 700, fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 600 }}>{viewing.courseName || viewing.title}</div>
                 <div style={{ opacity: 0.7, fontSize: '0.82rem' }}>
                   {viewing.courseCode && <span>[{viewing.courseCode}] </span>}
-                  {viewing.academicYear} • {viewing.semester}
+                  {viewing.academicYear} • Sem {viewing.academicSemester || viewing.semester} • {viewing.intakeBatch || 'Batch not set'} • {viewing.faculty || ''}
                 </div>
               </div>
             </div>
