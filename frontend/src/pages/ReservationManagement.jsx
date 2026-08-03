@@ -46,7 +46,11 @@ const ReservationManagement = () => {
   const handleFulfill = async () => {
     setFulfilling(true);
     try {
-      await borrowAPI.issue({ userId: fulfillRes.userId, bookId: fulfillRes.bookId });
+      await borrowAPI.issue({
+        userId: fulfillRes.userId,
+        bookId: fulfillRes.bookId,
+        reservationId: fulfillRes.id,
+      });
       setSuccess(`Reservation #${fulfillRes.id} fulfilled. Book issued to ${fulfillRes.userName}.`);
       setShowFulfillModal(false); setFulfillRes(null); setLookupResult(null); setLookupInput(''); fetchReservations();
     } catch (err) { setError(err.response?.data?.message || 'Failed to fulfill reservation.'); setShowFulfillModal(false); }
