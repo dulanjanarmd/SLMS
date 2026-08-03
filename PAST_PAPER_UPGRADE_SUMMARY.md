@@ -19,15 +19,14 @@ Enhanced the past paper system to include all required fields for better categor
 - **Added**: New query methods for filter enhancement:
   - `findDistinctDegreeLevels()` - Get distinct degree levels
   - `findDistinctFaculties()` - Get distinct faculties  
-  - `findDistinctIntakeBatches()` - Get distinct intake batches
 - **Enhanced**: `filter()` method to accept new parameters (degreeLevel, faculty, intakeBatch, searchModule)
-- **Added**: Search functionality for module code and name using LIKE queries
+- **Added**: Search functionality for intake, module code and name using LIKE queries
 - **Location**: `backend/src/main/java/com/sliit/library/repository/PastPaperRepository.java`
 
 #### 4. Service (PastPaperService.java)
 - **Enhanced**: `upload()` method to accept and save `degreeLevel` parameter
-- **Enhanced**: `filter()` method to support multi-criteria filtering including module search
-- **Enhanced**: `getFilters()` method to return additional filter options
+- **Enhanced**: `filter()` method to support multi-criteria filtering including intake and module search
+- **Enhanced**: `getFilters()` method to return filter options (removed intakeBatches since it's now a text search)
 - **Enhanced**: `map()` method to include `degreeLevel` in response
 - **Location**: `backend/src/main/java/com/sliit/library/service/PastPaperService.java`
 
@@ -41,15 +40,15 @@ Enhanced the past paper system to include all required fields for better categor
 #### 1. Past Papers Page (PastPapers.jsx)
 - **Added**: New form field for Degree Level (Undergraduate/Postgraduate)
 - **Reorganized**: Search filters in correct order:
-  1. Faculty
-  2. Degree Level
-  3. Academic Year
-  4. Semester
-  5. Intake Batch
+  1. Faculty (dropdown)
+  2. Degree Level (dropdown)
+  3. Academic Year (dropdown)
+  4. Semester (dropdown)
+  5. Intake (search bar) - changed from dropdown
   6. Module Code/Name (search bar)
 - **Reorganized**: Upload form fields in the same order as search
-- **Added**: Search bar for module code/name when not selected from dropdown
-- **Updated**: Default intake batches to focus on January and June intakes
+- **Changed**: Intake field from dropdown to text input for flexible entry
+- **Removed**: INTAKE_BATCHES constant since intake is now free text
 - **Enhanced**: Validation to require degree level
 - **Enhanced**: Display to show degree level on paper cards
 - **Location**: `frontend/src/pages/PastPapers.jsx`
@@ -66,7 +65,7 @@ Students can now filter past papers by:
 - **Degree Level** (2nd filter): Undergraduate, Postgraduate
 - **Academic Year** (3rd filter): 1st Year, 2nd Year, 3rd Year, 4th Year
 - **Semester** (4th filter): 1, 2 (only 2 semesters per year)
-- **Intake Batch** (5th filter): 2025 January, 2024 June, 2024 January, 2023 June, 2023 January, etc.
+- **Intake** (5th filter - search bar): Free text search (e.g., "2024 June", "2025 January")
 - **Module Code/Name** (6th filter - search bar): Free text search for course code or name
 
 ### For Librarians (Upload Side)
@@ -76,7 +75,7 @@ Librarians can now upload past papers with fields in the same order:
 - **Academic Year** (required)
 - **Academic Semester** (required)
 - **Semester** (required)
-- **Intake Batch** (required)
+- **Intake** (required) - Text input for entering intake (e.g., "2024 June", "2025 January")
 - **Department** (optional)
 - **Module Code** (optional)
 - **Module Name** (optional)
@@ -121,7 +120,8 @@ The database will be automatically updated when the backend restarts due to:
 - The database update is automatic due to Hibernate DDL auto-update
 - Field ordering has been standardized across search and upload forms
 - Search bar allows free text search for module code/name when dropdown selections are not sufficient
-- Intake batches now use simpler format (2024 June, 2025 January) instead of "2024 June Intake"
+- Intake is now a search bar (text input) instead of dropdown for flexible entry
+- Backend uses LIKE query for intake search to support partial matches
 - All fields are properly validated on both frontend and backend
 - The filtering system supports multiple criteria simultaneously
 

@@ -47,7 +47,6 @@ public class PastPaperService {
         filters.put("semesters", paperRepository.findDistinctSemesters());
         filters.put("degreeLevels", paperRepository.findDistinctDegreeLevels());
         filters.put("faculties", paperRepository.findDistinctFaculties());
-        filters.put("intakeBatches", paperRepository.findDistinctIntakeBatches());
         return filters;
     }
 

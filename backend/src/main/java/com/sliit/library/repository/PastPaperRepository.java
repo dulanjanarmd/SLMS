@@ -21,7 +21,7 @@ public interface PastPaperRepository extends JpaRepository<PastPaper, Long> {
            "AND (:semester IS NULL OR p.semester = :semester) " +
            "AND (:degreeLevel IS NULL OR p.degreeLevel = :degreeLevel) " +
            "AND (:faculty IS NULL OR p.faculty = :faculty) " +
-           "AND (:intakeBatch IS NULL OR p.intakeBatch = :intakeBatch) " +
+           "AND (:intakeBatch IS NULL OR LOWER(p.intakeBatch) LIKE LOWER(CONCAT('%', :intakeBatch, '%'))) " +
            "AND (:searchModule IS NULL OR LOWER(p.courseCode) LIKE LOWER(CONCAT('%', :searchModule, '%')) OR LOWER(p.courseName) LIKE LOWER(CONCAT('%', :searchModule, '%')))")
     List<PastPaper> filter(@Param("year") String year, @Param("semester") String semester, 
                           @Param("degreeLevel") String degreeLevel, @Param("faculty") String faculty, 
@@ -38,7 +38,4 @@ public interface PastPaperRepository extends JpaRepository<PastPaper, Long> {
 
     @Query("SELECT DISTINCT p.faculty FROM PastPaper p WHERE p.isPublic = true ORDER BY p.faculty ASC")
     List<String> findDistinctFaculties();
-
-    @Query("SELECT DISTINCT p.intakeBatch FROM PastPaper p WHERE p.isPublic = true ORDER BY p.intakeBatch DESC")
-    List<String> findDistinctIntakeBatches();
 }

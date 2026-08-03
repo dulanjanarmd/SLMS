@@ -21,7 +21,6 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
 const ACADEMIC_YEARS = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 const ACADEMIC_SEMESTERS = ['1', '2'];
-const INTAKE_BATCHES = ['2025 January', '2024 June', '2024 January', '2023 June', '2023 January', '2022 June', '2022 January'];
 const FACULTIES = ['Faculty of Computing', 'Faculty of Business', 'Faculty of Engineering', 'Faculty of Humanities and Science', 'Faculty of Architecture', 'Faculty of Law'];
 const DEGREE_LEVELS = ['Undergraduate', 'Postgraduate'];
 const EXAM_TYPES = ['End Semester', 'Mid Semester', 'Quiz', 'Assignment', 'Mock Exam', 'Repeat'];
@@ -30,7 +29,7 @@ const PastPapers = () => {
   const { user } = useAuth();
   const isLibrarian = user?.role === 'LIBRARIAN' || user?.role === 'ADMIN';
   const [papers, setPapers] = useState([]);
-  const [filters, setFilters] = useState({ years: [], semesters: [], degreeLevels: [], faculties: [], intakeBatches: [] });
+  const [filters, setFilters] = useState({ years: [], semesters: [], degreeLevels: [], faculties: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -57,7 +56,7 @@ const PastPapers = () => {
     try {
       setLoading(true);
       const [fRes, pRes] = await Promise.all([
-        pastPapersAPI.getFilters().catch(() => ({ data: { years: [], semesters: [], degreeLevels: [], faculties: [], intakeBatches: [] } })),
+        pastPapersAPI.getFilters().catch(() => ({ data: { years: [], semesters: [], degreeLevels: [], faculties: [] } })),
         (selectedFaculty || selectedDegreeLevel || selectedYear || selectedSem || selectedIntakeBatch || searchModule) 
           ? pastPapersAPI.filter(selectedYear || null, selectedSem || null, selectedDegreeLevel || null, selectedFaculty || null, selectedIntakeBatch || null, searchModule || null) 
           : pastPapersAPI.getAllPublic(),
@@ -66,8 +65,7 @@ const PastPapers = () => {
         years: fRes.data.years || [], 
         semesters: fRes.data.semesters || [],
         degreeLevels: fRes.data.degreeLevels || [],
-        faculties: fRes.data.faculties || [],
-        intakeBatches: fRes.data.intakeBatches || []
+        faculties: fRes.data.faculties || []
       });
       setPapers(Array.isArray(pRes.data) ? pRes.data : []);
     } catch { setError('Failed to load past papers'); } finally { setLoading(false); }
@@ -79,7 +77,7 @@ const PastPapers = () => {
     e.preventDefault();
     if (!pdfFile) { setError('Please select a PDF file'); return; }
     if (!form.academicYear || !form.academicSemester || !form.semester || !form.intakeBatch || !form.faculty || !form.degreeLevel) {
-      setError('Academic year, academic semester, semester, intake batch, faculty, and degree level are required');
+      setError('Academic year, academic semester, semester, intake, faculty, and degree level are required');
       return;
     }
     setUploading(true); setError('');
@@ -212,11 +210,14 @@ const PastPapers = () => {
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Intake Batch</label>
-                <select value={selectedIntakeBatch} onChange={e => setSelectedIntakeBatch(e.target.value)} style={inputStyle}>
-                  <option value="">All Batches</option>
-                  {(filters.intakeBatches.length ? filters.intakeBatches : INTAKE_BATCHES).map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Intake</label>
+                <input 
+                  type="text" 
+                  value={selectedIntakeBatch} 
+                  onChange={e => setSelectedIntakeBatch(e.target.value)} 
+                  placeholder="e.g. 2024 June, 2025 January" 
+                  style={inputStyle} 
+                />
               </div>
               <div>
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Module Code/Name</label>
@@ -342,11 +343,14 @@ const PastPapers = () => {
                     {ACADEMIC_SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
-                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Intake / Batch *</label>
-                  <select required value={form.intakeBatch} onChange={e => setForm({ ...form, intakeBatch: e.target.value })} style={inputStyle}>
-                    <option value="">Select...</option>
-                    {INTAKE_BATCHES.map(b => <option key={b} value={b}>{b}</option>)}
-                  </select>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Intake *</label>
+                  <input 
+                    required 
+                    value={form.intakeBatch} 
+                    onChange={e => setForm({ ...form, intakeBatch: e.target.value })} 
+                    placeholder="e.g. 2024 June, 2025 January" 
+                    style={inputStyle} 
+                  />
                 </div>
               </div>
               <div style={{ marginBottom: 16 }}>
