@@ -39,8 +39,9 @@ public class PastPaperController {
             @RequestParam(required = false) String semester,
             @RequestParam(required = false) String degreeLevel,
             @RequestParam(required = false) String faculty,
-            @RequestParam(required = false) String intakeBatch) {
-        return ResponseEntity.ok(paperService.filter(year, semester, degreeLevel, faculty, intakeBatch));
+            @RequestParam(required = false) String intakeBatch,
+            @RequestParam(required = false) String searchModule) {
+        return ResponseEntity.ok(paperService.filter(year, semester, degreeLevel, faculty, intakeBatch, searchModule));
     }
 
     @GetMapping("/past-papers/public/{id}")

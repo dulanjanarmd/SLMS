@@ -52,10 +52,10 @@ public class PastPaperService {
     }
 
     @Transactional(readOnly = true)
-    public List<PastPaperResponse> filter(String year, String semester, String degreeLevel, String faculty, String intakeBatch) {
+    public List<PastPaperResponse> filter(String year, String semester, String degreeLevel, String faculty, String intakeBatch, String searchModule) {
         List<PastPaper> papers;
-        if (year != null || semester != null || degreeLevel != null || faculty != null || intakeBatch != null) {
-            papers = paperRepository.filter(year, semester, degreeLevel, faculty, intakeBatch);
+        if (year != null || semester != null || degreeLevel != null || faculty != null || intakeBatch != null || searchModule != null) {
+            papers = paperRepository.filter(year, semester, degreeLevel, faculty, intakeBatch, searchModule);
         } else {
             papers = paperRepository.findByIsPublicTrueOrderByAcademicYearDescSemesterAscUploadedAtDesc();
         }

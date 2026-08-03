@@ -1,7 +1,7 @@
 # Past Paper System Enhancement Summary
 
 ## Overview
-Enhanced the past paper system to include all required fields for better categorization and search functionality for students.
+Enhanced the past paper system to include all required fields for better categorization and search functionality for students. **Updated with proper field ordering and search functionality.**
 
 ## Changes Made
 
@@ -20,61 +20,66 @@ Enhanced the past paper system to include all required fields for better categor
   - `findDistinctDegreeLevels()` - Get distinct degree levels
   - `findDistinctFaculties()` - Get distinct faculties  
   - `findDistinctIntakeBatches()` - Get distinct intake batches
-- **Enhanced**: `filter()` method to accept new parameters (degreeLevel, faculty, intakeBatch)
+- **Enhanced**: `filter()` method to accept new parameters (degreeLevel, faculty, intakeBatch, searchModule)
+- **Added**: Search functionality for module code and name using LIKE queries
 - **Location**: `backend/src/main/java/com/sliit/library/repository/PastPaperRepository.java`
 
 #### 4. Service (PastPaperService.java)
 - **Enhanced**: `upload()` method to accept and save `degreeLevel` parameter
-- **Enhanced**: `filter()` method to support multi-criteria filtering
+- **Enhanced**: `filter()` method to support multi-criteria filtering including module search
 - **Enhanced**: `getFilters()` method to return additional filter options
 - **Enhanced**: `map()` method to include `degreeLevel` in response
 - **Location**: `backend/src/main/java/com/sliit/library/service/PastPaperService.java`
 
 #### 5. Controller (PastPaperController.java)
 - **Enhanced**: `upload()` endpoint to accept `degreeLevel` parameter
-- **Enhanced**: `filter()` endpoint to accept additional query parameters
+- **Enhanced**: `filter()` endpoint to accept additional query parameters including searchModule
 - **Location**: `backend/src/main/java/com/sliit/library/controller/PastPaperController.java`
 
 ### Frontend Changes
 
 #### 1. Past Papers Page (PastPapers.jsx)
 - **Added**: New form field for Degree Level (Undergraduate/Postgraduate)
-- **Enhanced**: Search filters to include:
-  - Degree Level dropdown
-  - Faculty dropdown  
-  - Intake Batch dropdown
+- **Reorganized**: Search filters in correct order:
+  1. Faculty
+  2. Degree Level
+  3. Academic Year
+  4. Semester
+  5. Intake Batch
+  6. Module Code/Name (search bar)
+- **Reorganized**: Upload form fields in the same order as search
+- **Added**: Search bar for module code/name when not selected from dropdown
 - **Updated**: Default intake batches to focus on January and June intakes
 - **Enhanced**: Validation to require degree level
 - **Enhanced**: Display to show degree level on paper cards
 - **Location**: `frontend/src/pages/PastPapers.jsx`
 
 #### 2. API Service (api.js)
-- **Enhanced**: `pastPapersAPI.filter()` to accept additional parameters
+- **Enhanced**: `pastPapersAPI.filter()` to accept additional parameters including searchModule
 - **Location**: `frontend/src/services/api.js`
 
 ## New Features
 
 ### For Students (Search Side)
 Students can now filter past papers by:
-- **Academic Year**: 1st Year, 2nd Year, 3rd Year, 4th Year
-- **Semester**: 1, 2, 3, 4
-- **Degree Level**: Undergraduate, Postgraduate
-- **Faculty**: School of Computing, School of Engineering, School of Business, School of Humanities
-- **Intake Batch**: 2024 January Intake, 2024 June Intake, etc.
-- **Module Code**: Search by course code
-- **Module Name**: Search by course name
+- **Faculty** (1st filter): School of Computing, School of Engineering, School of Business, School of Humanities
+- **Degree Level** (2nd filter): Undergraduate, Postgraduate
+- **Academic Year** (3rd filter): 1st Year, 2nd Year, 3rd Year, 4th Year
+- **Semester** (4th filter): 1, 2, 3, 4
+- **Intake Batch** (5th filter): 2024 January Intake, 2024 June Intake, etc.
+- **Module Code/Name** (6th filter - search bar): Free text search for course code or name
 
 ### For Librarians (Upload Side)
-Librarians can now upload past papers with:
+Librarians can now upload past papers with fields in the same order:
+- **Faculty** (required)
+- **Degree Level** (required)
 - **Academic Year** (required)
 - **Academic Semester** (required)
 - **Semester** (required)
 - **Intake Batch** (required)
-- **Faculty** (required)
-- **Degree Level** (required) - NEW
 - **Department** (optional)
-- **Course Code** (optional)
-- **Course Name** (optional)
+- **Module Code** (optional)
+- **Module Name** (optional)
 - **Exam Type** (optional)
 - **Description** (optional)
 
@@ -94,14 +99,16 @@ The database will be automatically updated when the backend restarts due to:
    - Login as librarian/admin
    - Navigate to Past Papers section
    - Click "Upload" tab
-   - Fill in all required fields including new Degree Level field
+   - Fill in all required fields in the correct order (Faculty → Degree Level → Academic Year → Semester → Intake)
+   - Add module code and/or name
    - Upload a PDF file
    - Verify successful upload
 
 3. **Test Search/Filter Functionality**:
    - Login as student
    - Navigate to Past Papers section
-   - Use new filters (Degree Level, Faculty, Intake Batch)
+   - Use filters in the correct order (Faculty → Degree Level → Academic Year → Semester → Intake)
+   - Use the search bar for module code/name
    - Verify filtering works correctly
    - View and download past papers
 
@@ -112,7 +119,8 @@ The database will be automatically updated when the backend restarts due to:
 ## Important Notes
 
 - The database update is automatic due to Hibernate DDL auto-update
-- Default values have been set for better UX (e.g., "Undergraduate" as default degree level)
+- Field ordering has been standardized across search and upload forms
+- Search bar allows free text search for module code/name when dropdown selections are not sufficient
 - Intake batches now focus on January and June intakes as requested
 - All fields are properly validated on both frontend and backend
 - The filtering system supports multiple criteria simultaneously
@@ -133,6 +141,6 @@ The database will be automatically updated when the backend restarts due to:
 ## Next Steps
 
 1. Restart the backend server to apply database changes
-2. Test the upload functionality with the new fields
-3. Test the search/filter functionality
+2. Test the upload functionality with the new field ordering
+3. Test the search/filter functionality with the new search bar
 4. Verify the display of all new fields on the frontend

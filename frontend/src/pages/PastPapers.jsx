@@ -34,11 +34,12 @@ const PastPapers = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [selectedFaculty, setSelectedFaculty] = useState('');
+  const [selectedDegreeLevel, setSelectedDegreeLevel] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedSem, setSelectedSem] = useState('');
-  const [selectedDegreeLevel, setSelectedDegreeLevel] = useState('');
-  const [selectedFaculty, setSelectedFaculty] = useState('');
   const [selectedIntakeBatch, setSelectedIntakeBatch] = useState('');
+  const [searchModule, setSearchModule] = useState('');
   const [activeTab, setActiveTab] = useState('browse');
 
   const [showUpload, setShowUpload] = useState(false);
@@ -50,15 +51,15 @@ const PastPapers = () => {
   const [viewBlob, setViewBlob] = useState(null);
   const [viewLoading, setViewLoading] = useState(false);
 
-  useEffect(() => { load(); }, [selectedYear, selectedSem, selectedDegreeLevel, selectedFaculty, selectedIntakeBatch]);
+  useEffect(() => { load(); }, [selectedFaculty, selectedDegreeLevel, selectedYear, selectedSem, selectedIntakeBatch, searchModule]);
 
   const load = async () => {
     try {
       setLoading(true);
       const [fRes, pRes] = await Promise.all([
         pastPapersAPI.getFilters().catch(() => ({ data: { years: [], semesters: [], degreeLevels: [], faculties: [], intakeBatches: [] } })),
-        (selectedYear || selectedSem || selectedDegreeLevel || selectedFaculty || selectedIntakeBatch) 
-          ? pastPapersAPI.filter(selectedYear || null, selectedSem || null, selectedDegreeLevel || null, selectedFaculty || null, selectedIntakeBatch || null) 
+        (selectedFaculty || selectedDegreeLevel || selectedYear || selectedSem || selectedIntakeBatch || searchModule) 
+          ? pastPapersAPI.filter(selectedYear || null, selectedSem || null, selectedDegreeLevel || null, selectedFaculty || null, selectedIntakeBatch || null, searchModule || null) 
           : pastPapersAPI.getAllPublic(),
       ]);
       if (fRes?.data) setFilters({ 
@@ -72,7 +73,7 @@ const PastPapers = () => {
     } catch { setError('Failed to load past papers'); } finally { setLoading(false); }
   };
 
-  const clearFilters = () => { setSelectedYear(''); setSelectedSem(''); setSelectedDegreeLevel(''); setSelectedFaculty(''); setSelectedIntakeBatch(''); };
+  const clearFilters = () => { setSelectedFaculty(''); setSelectedDegreeLevel(''); setSelectedYear(''); setSelectedSem(''); setSelectedIntakeBatch(''); setSearchModule(''); };
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -183,6 +184,20 @@ const PastPapers = () => {
           <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '20px 24px', marginBottom: 24 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, alignItems: 'end' }}>
               <div>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Faculty</label>
+                <select value={selectedFaculty} onChange={e => setSelectedFaculty(e.target.value)} style={inputStyle}>
+                  <option value="">All Faculties</option>
+                  {(filters.faculties.length ? filters.faculties : FACULTIES).map(f => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Degree Level</label>
+                <select value={selectedDegreeLevel} onChange={e => setSelectedDegreeLevel(e.target.value)} style={inputStyle}>
+                  <option value="">All Levels</option>
+                  {(filters.degreeLevels.length ? filters.degreeLevels : DEGREE_LEVELS).map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+              <div>
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Academic Year</label>
                 <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} style={inputStyle}>
                   <option value="">All Years</option>
@@ -197,25 +212,21 @@ const PastPapers = () => {
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Degree Level</label>
-                <select value={selectedDegreeLevel} onChange={e => setSelectedDegreeLevel(e.target.value)} style={inputStyle}>
-                  <option value="">All Levels</option>
-                  {(filters.degreeLevels.length ? filters.degreeLevels : DEGREE_LEVELS).map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Faculty</label>
-                <select value={selectedFaculty} onChange={e => setSelectedFaculty(e.target.value)} style={inputStyle}>
-                  <option value="">All Faculties</option>
-                  {(filters.faculties.length ? filters.faculties : FACULTIES).map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </div>
-              <div>
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Intake Batch</label>
                 <select value={selectedIntakeBatch} onChange={e => setSelectedIntakeBatch(e.target.value)} style={inputStyle}>
                   <option value="">All Batches</option>
                   {(filters.intakeBatches.length ? filters.intakeBatches : INTAKE_BATCHES).map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Module Code/Name</label>
+                <input 
+                  type="text" 
+                  value={searchModule} 
+                  onChange={e => setSearchModule(e.target.value)} 
+                  placeholder="Search by code or name..." 
+                  style={inputStyle} 
+                />
               </div>
               <button onClick={clearFilters} style={{ padding: '12px 20px', background: '#f1f5f9', color: '#64748b', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer' }}>Clear</button>
             </div>
@@ -297,6 +308,20 @@ const PastPapers = () => {
             </div>
             <form onSubmit={handleUpload}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Faculty *</label>
+                  <select required value={form.faculty} onChange={e => setForm({ ...form, faculty: e.target.value })} style={inputStyle}>
+                    <option value="">Select...</option>
+                    {FACULTIES.map(f => <option key={f} value={f}>{f}</option>)}
+                  </select>
+                </div>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Degree Level *</label>
+                  <select required value={form.degreeLevel} onChange={e => setForm({ ...form, degreeLevel: e.target.value })} style={inputStyle}>
+                    <option value="">Select...</option>
+                    {DEGREE_LEVELS.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Academic Year *</label>
                   <select required value={form.academicYear} onChange={e => setForm({ ...form, academicYear: e.target.value })} style={inputStyle}>
                     <option value="">Select...</option>
@@ -324,26 +349,12 @@ const PastPapers = () => {
                   </select>
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Faculty *</label>
-                  <select required value={form.faculty} onChange={e => setForm({ ...form, faculty: e.target.value })} style={inputStyle}>
-                    <option value="">Select...</option>
-                    {FACULTIES.map(f => <option key={f} value={f}>{f}</option>)}
-                  </select>
-                </div>
-                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Degree Level *</label>
-                  <select required value={form.degreeLevel} onChange={e => setForm({ ...form, degreeLevel: e.target.value })} style={inputStyle}>
-                    <option value="">Select...</option>
-                    {DEGREE_LEVELS.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                </div>
-              </div>
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Department</label><input value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} placeholder="e.g. Computer Science" style={inputStyle} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 16 }}>
-                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Course Code</label><input value={form.courseCode} onChange={e => setForm({ ...form, courseCode: e.target.value })} placeholder="e.g. IT3010" style={inputStyle} /></div>
-                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Course Name / Paper Title</label><input value={form.courseName} onChange={e => setForm({ ...form, courseName: e.target.value })} placeholder="e.g. Data Structures and Algorithms" style={inputStyle} /></div>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Module Code</label><input value={form.courseCode} onChange={e => setForm({ ...form, courseCode: e.target.value })} placeholder="e.g. IT3010" style={inputStyle} /></div>
+                <div><label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Module Name</label><input value={form.courseName} onChange={e => setForm({ ...form, courseName: e.target.value })} placeholder="e.g. Data Structures and Algorithms" style={inputStyle} /></div>
               </div>
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Alternative Title (optional)</label>
