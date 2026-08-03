@@ -175,61 +175,20 @@ const Inventory = () => {
   const filteredBooks = books;
 
   return (
-    <div style={{ fontFamily: 'Poppins, sans-serif' }}>
-      {/* Gradient Top Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 45%, #4c1d95 70%, #ef5a24 100%)',
-        padding: '48px 28px 60px',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        {[...Array(3)].map((_, i) => (
-          <div key={i} style={{
-            position: 'absolute',
-            width: 180 + i * 70,
-            height: 180 + i * 70,
-            borderRadius: '50%',
-            background: 'rgba(255,255,255,0.04)',
-            top: i === 0 ? -40 : i === 1 ? 'auto' : 20,
-            bottom: i === 1 ? -60 : 'auto',
-            right: i === 0 ? -40 : i === 1 ? 80 : 'auto',
-            left: i === 2 ? '40%' : 'auto',
-          }} />
-        ))}
-        <div style={{ maxWidth: 1400, margin: '0 auto', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
-          <div>
-            <h1 style={{ color: 'white', fontSize: '2.2rem', fontWeight: 800, lineHeight: 1.1, marginBottom: 8 }}>
-              Inventory Management
-            </h1>
-            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1rem', margin: 0, lineHeight: 1.5, maxWidth: 500 }}>
-              Manage your entire library collection — add new titles, edit details, track copies, and update statuses in real time.
-            </p>
-          </div>
-          <button onClick={openAdd} style={{
-            background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)',
-            color: 'white',
-            padding: '14px 30px',
-            borderRadius: 999,
-            fontWeight: 700,
-            fontSize: '0.95rem',
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 10px 28px rgba(239,90,36,0.4)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 10,
-            fontFamily: 'Poppins, sans-serif',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = ''; }}
-          >
-             Add New Book
-          </button>
+    <div style={{ padding: '32px 28px', maxWidth: 1300, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }} className="animate-fade-in">
+      {/* Header */}
+      <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)', borderRadius: 20, padding: '28px 36px', color: 'white', marginBottom: 28, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 150, height: 150, background: 'rgba(255,255,255,0.05)', borderRadius: '50%' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <h1 style={{ fontWeight: 800, fontSize: '1.6rem', margin: 0, marginBottom: 4 }}>Inventory Management</h1>
+          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.86rem' }}>Manage your entire library collection in real time</p>
         </div>
+        <button onClick={openAdd} style={{ position: 'relative', zIndex: 1, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 10, padding: '10px 20px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', backdropFilter: 'blur(8px)' }}>
+          Add New Book
+        </button>
       </div>
 
-      <div style={{ maxWidth: 1400, margin: '-30px auto 0', padding: '0 24px 48px', position: 'relative', zIndex: 2 }}>
+      <div style={{ position: 'relative', zIndex: 2 }}>
 
         {error && (
           <div onClick={() => setError('')} style={{

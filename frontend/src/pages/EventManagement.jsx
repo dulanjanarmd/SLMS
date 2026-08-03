@@ -61,6 +61,8 @@ const EventManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [bannerImage, setBannerImage] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState('');
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState(null);
   const [focusField, setFocusField] = useState(null);
@@ -90,6 +92,8 @@ const EventManagement = () => {
   const openCreate = () => {
     setForm(emptyForm);
     setEditingId(null);
+    setBannerImage(null);
+    setBannerPreview('');
     setShowModal(true);
   };
 
@@ -109,7 +113,16 @@ const EventManagement = () => {
       banner: e.banner || '',
       maxAttendees: e.maxAttendees ?? '',
     });
+    setBannerImage(null);
+    setBannerPreview(e.bannerImageUrl || '');
     setShowModal(true);
+  };
+
+  const handleBannerChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBannerImage(file);
+    setBannerPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async () => {
@@ -123,10 +136,10 @@ const EventManagement = () => {
         maxAttendees: form.maxAttendees === '' || form.maxAttendees == null ? null : Number(form.maxAttendees),
       };
       if (editingId) {
-        await eventAPI.update(editingId, payload);
+        await eventAPI.updateWithImage(editingId, payload, bannerImage);
         flash('Event updated successfully!');
       } else {
-        await eventAPI.create(payload);
+        await eventAPI.createWithImage(payload, bannerImage);
         flash('Event created successfully!');
       }
       setShowModal(false);
@@ -670,9 +683,55 @@ const EventManagement = () => {
                     style={{ ...inputStyle, ...(focusField === 'max' ? focusStyle : {}) }}
                   />
                 </div>
-                {/* Banner - span 3 */}
-                <div style={{ gridColumn: 'span 3' }}>
-                  <label style={labelStyle}>Banner Emoji</label>
+                {/* Banner Image - span 12 */}
+                <div style={{ gridColumn: 'span 12' }}>
+                  <label style={labelStyle}>Banner Image</label>
+                  <div style={{ marginTop: 6 }}>
+                    {bannerPreview ? (
+                      <div style={{ position: 'relative', width: '100%', height: 200, borderRadius: 12, overflow: 'hidden', border: '1.5px solid #e5e7eb' }}>
+                        <img src={bannerPreview} alt="Banner preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button
+                          type="button"
+                          onClick={() => { setBannerImage(null); setBannerPreview(''); }}
+                          style={{
+                            position: 'absolute', top: 8, right: 8,
+                            width: 32, height: 32, borderRadius: '50%',
+                            background: 'rgba(0,0,0,0.6)', color: 'white',
+                            border: 'none', cursor: 'pointer',
+                            fontSize: '1rem', fontWeight: 700,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }}
+                        >×</button>
+                      </div>
+                    ) : (
+                      <label style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: '100%', height: 120, borderRadius: 12,
+                        border: '2px dashed #cbd5e1', background: '#f8fafc',
+                        cursor: 'pointer', transition: 'all 0.18s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#f1f5f9'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#f8fafc'}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleBannerChange}
+                          style={{ display: 'none' }}
+                        />
+                        <div style={{ textAlign: 'center' }}>
+                          <div style={{ fontSize: '2rem', marginBottom: 4 }}>📷</div>
+                          <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 500 }}>Click to upload banner image</div>
+                          <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: 2 }}>PNG, JPG up to 5MB</div>
+                        </div>
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                {/* Banner Emoji - span 12 */}
+                <div style={{ gridColumn: 'span 12' }}>
+                  <label style={labelStyle}>Banner Emoji (optional)</label>
                   <input
                     placeholder="📚, 🎓, etc."
                     value={form.banner}

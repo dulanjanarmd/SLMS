@@ -205,7 +205,19 @@ export const eventAPI = {
   getAll: () => api.get('/librarian/events'),
   getUpcoming: () => api.get('/librarian/events/upcoming'),
   create: (data) => api.post('/librarian/events', data),
+  createWithImage: (data, bannerImage) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (bannerImage) formData.append('bannerImage', bannerImage);
+    return api.post('/librarian/events/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
   update: (id, data) => api.put(`/librarian/events/${id}`, data),
+  updateWithImage: (id, data, bannerImage) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (bannerImage) formData.append('bannerImage', bannerImage);
+    return api.put(`/librarian/events/${id}/upload`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
   toggleActive: (id) => api.patch(`/librarian/events/${id}/toggle`),
   delete: (id) => api.delete(`/librarian/events/${id}`),
 };

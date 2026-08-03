@@ -165,122 +165,122 @@ const PastPapers = () => {
 
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '20px 24px', marginBottom: 24 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, alignItems: 'end' }}>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Faculty</label>
-                <select value={selectedFaculty} onChange={e => setSelectedFaculty(e.target.value)} style={inputStyle}>
-                  <option value="">All Faculties</option>
-                  {(filters.faculties.length ? filters.faculties : FACULTIES).map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Degree Level</label>
-                <select value={selectedDegreeLevel} onChange={e => setSelectedDegreeLevel(e.target.value)} style={inputStyle}>
-                  <option value="">All Levels</option>
-                  {(filters.degreeLevels.length ? filters.degreeLevels : DEGREE_LEVELS).map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Academic Year</label>
-                <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} style={inputStyle}>
-                  <option value="">All Years</option>
-                  {(filters.years.length ? filters.years : ACADEMIC_YEARS).map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Semester</label>
-                <select value={selectedSem} onChange={e => setSelectedSem(e.target.value)} style={inputStyle}>
-                  <option value="">All Semesters</option>
-                  {(filters.semesters.length ? filters.semesters : ACADEMIC_SEMESTERS).map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Intake</label>
-                <input 
-                  type="text" 
-                  value={selectedIntakeBatch} 
-                  onChange={e => setSelectedIntakeBatch(e.target.value)} 
-                  placeholder="e.g. 2024 June, 2025 January" 
-                  style={inputStyle} 
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Module Code/Name</label>
-                <input 
-                  type="text" 
-                  value={searchModule} 
-                  onChange={e => setSearchModule(e.target.value)} 
-                  placeholder="Search by code or name..." 
-                  style={inputStyle} 
-                />
-              </div>
-              <button onClick={clearFilters} style={{ padding: '12px 20px', background: '#f1f5f9', color: '#64748b', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer' }}>Clear</button>
-            </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Faculty</label>
+            <select value={selectedFaculty} onChange={e => setSelectedFaculty(e.target.value)} style={inputStyle}>
+              <option value="">All Faculties</option>
+              {(filters.faculties.length ? filters.faculties : FACULTIES).map(f => <option key={f} value={f}>{f}</option>)}
+            </select>
           </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Degree Level</label>
+            <select value={selectedDegreeLevel} onChange={e => setSelectedDegreeLevel(e.target.value)} style={inputStyle}>
+              <option value="">All Levels</option>
+              {(filters.degreeLevels.length ? filters.degreeLevels : DEGREE_LEVELS).map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Academic Year</label>
+            <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} style={inputStyle}>
+              <option value="">All Years</option>
+              {(filters.years.length ? filters.years : ACADEMIC_YEARS).map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Semester</label>
+            <select value={selectedSem} onChange={e => setSelectedSem(e.target.value)} style={inputStyle}>
+              <option value="">All Semesters</option>
+              {(filters.semesters.length ? filters.semesters : ACADEMIC_SEMESTERS).map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Intake</label>
+            <input 
+              type="text" 
+              value={selectedIntakeBatch} 
+              onChange={e => setSelectedIntakeBatch(e.target.value)} 
+              placeholder="e.g. 2024 June, 2025 January" 
+              style={inputStyle} 
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: '0.78rem', color: '#374151', marginBottom: 6 }}>Module Code/Name</label>
+            <input 
+              type="text" 
+              value={searchModule} 
+              onChange={e => setSearchModule(e.target.value)} 
+              placeholder="Search by code or name..." 
+              style={inputStyle} 
+            />
+          </div>
+          <button onClick={clearFilters} style={{ padding: '12px 20px', background: '#f1f5f9', color: '#64748b', border: '1.5px solid #e8ecf0', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer' }}>Clear</button>
+        </div>
+      </div>
 
-          {loading ? <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div> : papers.length === 0 ? (
-            <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '60px', textAlign: 'center', color: '#9ca3af' }}>
-              <div style={{ fontSize: '3rem', marginBottom: 12 }}></div>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>No past papers found</div>
-              <div style={{ fontSize: '0.88rem' }}>Try clearing filters or check back later.</div>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              {grouped.keys.map(key => {
-                const [y, aSem, s] = key.split('__');
-                return (
-                  <div key={key}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
-                      <div style={{ background: 'linear-gradient(135deg, #7c2d12, #ef5a24)', color: 'white', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <span>{y}</span>
-                      </div>
-                      <div style={{ background: 'rgba(239,90,36,0.1)', color: '#c2410c', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem' }}>
-                        Sem {aSem || s}
-                      </div>
-                      <div style={{ background: 'rgba(37,99,235,0.08)', color: '#1d4ed8', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem' }}>
-                        {s}
-                      </div>
-                      <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>• {grouped.groups[key].length} paper{grouped.groups[key].length === 1 ? '' : 's'}</span>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
-                      {grouped.groups[key].map(p => (
-                        <div key={p.id} style={{ background: 'white', borderRadius: 14, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '18px 20px', display: 'flex', flexDirection: 'column', transition: 'all 0.2s' }}
-                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(194,65,12,0.12)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.35)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}>
-                          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
-                            <div style={{ width: 44, height: 44, borderRadius: 10, background: 'rgba(239,90,36,0.1)', color: '#c2410c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}></div>
-                            {p.examType && <span style={{ background: 'rgba(124,45,18,0.1)', color: '#7c2d12', borderRadius: 6, padding: '3px 10px', fontSize: '0.7rem', fontWeight: 700 }}>{p.examType}</span>}
-                          </div>
-                          {p.courseCode && (
-                            <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#c2410c', letterSpacing: '0.5px', marginBottom: 4 }}>{p.courseCode}</div>
-                          )}
-                          <h3 style={{ fontWeight: 800, fontSize: '0.98rem', color: '#1a1a2e', margin: '0 0 6px', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                            {p.courseName || p.title}
-                          </h3>
-                          {!p.courseName && p.title && <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '0 0 10px' }}>{p.title}</p>}
-                          {(p.faculty || p.intakeBatch || p.department || p.degreeLevel) && (
-                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
-                              {p.faculty && <div style={{ display: 'inline-block', background: '#eff6ff', color: '#1d4ed8', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.faculty}</div>}
-                              {p.degreeLevel && <div style={{ display: 'inline-block', background: '#fef3c7', color: '#d97706', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.degreeLevel}</div>}
-                              {p.intakeBatch && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.intakeBatch}</div>}
-                              {p.department && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.department}</div>}
-                            </div>
-                          )}
-                          {p.description && <p style={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5, margin: '0 0 14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.description}</p>}
-                          {p.fileSize != null && <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 14 }}>PDF • {(p.fileSize / 1024 / 1024).toFixed(2)} MB</div>}
-
-                          <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
-                            <button onClick={() => handleView(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.22)' }}>View</button>
-                            <button onClick={() => handleDownload(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>PDF</button>
-                            {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}>Delete</button>}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+      {loading ? <div style={{ textAlign: 'center', padding: '80px 0' }}><Spinner animation="border" style={{ color: '#ef5a24' }} /></div> : papers.length === 0 ? (
+        <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e8ecf0', padding: '60px', textAlign: 'center', color: '#9ca3af' }}>
+          <div style={{ fontSize: '3rem', marginBottom: 12 }}></div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>No past papers found</div>
+          <div style={{ fontSize: '0.88rem' }}>Try clearing filters or check back later.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {grouped.keys.map(key => {
+            const [y, aSem, s] = key.split('__');
+            return (
+              <div key={key}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, flexWrap: 'wrap' }}>
+                  <div style={{ background: 'linear-gradient(135deg, #7c2d12, #ef5a24)', color: 'white', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>{y}</span>
                   </div>
-                );
-              })}
-            </div>
-          )}
+                  <div style={{ background: 'rgba(239,90,36,0.1)', color: '#c2410c', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem' }}>
+                    Sem {aSem || s}
+                  </div>
+                  <div style={{ background: 'rgba(37,99,235,0.08)', color: '#1d4ed8', padding: '8px 16px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem' }}>
+                    {s}
+                  </div>
+                  <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>• {grouped.groups[key].length} paper{grouped.groups[key].length === 1 ? '' : 's'}</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+                  {grouped.groups[key].map(p => (
+                    <div key={p.id} style={{ background: 'white', borderRadius: 14, border: '1px solid #e8ecf0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', padding: '18px 20px', display: 'flex', flexDirection: 'column', transition: 'all 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(194,65,12,0.12)'; e.currentTarget.style.borderColor = 'rgba(239,90,36,0.35)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)'; e.currentTarget.style.borderColor = '#e8ecf0'; }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                        <div style={{ width: 44, height: 44, borderRadius: 10, background: 'rgba(239,90,36,0.1)', color: '#c2410c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}></div>
+                        {p.examType && <span style={{ background: 'rgba(124,45,18,0.1)', color: '#7c2d12', borderRadius: 6, padding: '3px 10px', fontSize: '0.7rem', fontWeight: 700 }}>{p.examType}</span>}
+                      </div>
+                      {p.courseCode && (
+                        <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#c2410c', letterSpacing: '0.5px', marginBottom: 4 }}>{p.courseCode}</div>
+                      )}
+                      <h3 style={{ fontWeight: 800, fontSize: '0.98rem', color: '#1a1a2e', margin: '0 0 6px', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {p.courseName || p.title}
+                      </h3>
+                      {!p.courseName && p.title && <p style={{ color: '#64748b', fontSize: '0.8rem', margin: '0 0 10px' }}>{p.title}</p>}
+                      {(p.faculty || p.intakeBatch || p.department || p.degreeLevel) && (
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                          {p.faculty && <div style={{ display: 'inline-block', background: '#eff6ff', color: '#1d4ed8', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.faculty}</div>}
+                          {p.degreeLevel && <div style={{ display: 'inline-block', background: '#fef3c7', color: '#d97706', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.degreeLevel}</div>}
+                          {p.intakeBatch && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.intakeBatch}</div>}
+                          {p.department && <div style={{ display: 'inline-block', background: '#f8fafc', color: '#475569', padding: '3px 10px', borderRadius: 6, fontSize: '0.75rem' }}>{p.department}</div>}
+                        </div>
+                      )}
+                      {p.description && <p style={{ color: '#64748b', fontSize: '0.8rem', lineHeight: 1.5, margin: '0 0 14px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.description}</p>}
+                      {p.fileSize != null && <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginBottom: 14 }}>PDF • {(p.fileSize / 1024 / 1024).toFixed(2)} MB</div>}
+
+                      <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
+                        <button onClick={() => handleView(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.22)' }}>View</button>
+                        <button onClick={() => handleDownload(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>PDF</button>
+                        {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}>Delete</button>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {showUpload && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)', padding: 20 }} onClick={e => { if (e.target === e.currentTarget) { setShowUpload(false); setError(''); setSuccess(''); } }}>
