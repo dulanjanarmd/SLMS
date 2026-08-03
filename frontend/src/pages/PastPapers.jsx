@@ -287,7 +287,7 @@ const PastPapers = () => {
                           <div style={{ marginTop: 'auto', display: 'flex', gap: 8 }}>
                             <button onClick={() => handleView(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.22)' }}>View</button>
                             <button onClick={() => handleDownload(p)} style={{ flex: 1, background: 'linear-gradient(135deg, #7c2d12, #c2410c)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>PDF</button>
-                            {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}></button>}
+                            {isLibrarian && <button onClick={() => handleDelete(p.id)} style={{ padding: '0 12px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}>🗑️</button>}
                           </div>
                         </div>
                       ))}
