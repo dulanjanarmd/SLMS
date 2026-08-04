@@ -10,10 +10,20 @@ const Announcements = () => {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [history, setHistory] = useState([
-    { id: 1, title: 'Library Hours Extended', message: 'Library will remain open until 10 PM during exam season.', role: 'ALL', sentAt: '2026-08-01 09:00', count: 142 },
-    { id: 2, title: 'New Research Papers Added', message: 'Check out the new IEEE & Springer publications in the portal.', role: 'FACULTY', sentAt: '2026-08-03 14:30', count: 28 },
-  ]);
+  const [history, setHistory] = useState([]);
+
+  React.useEffect(() => {
+    notificationAPI.getPublicAnnouncements().then(res => {
+      setHistory((res.data || []).map(n => ({
+        id: n.id,
+        title: n.title,
+        message: n.message,
+        role: 'ALL',
+        sentAt: n.sentAt ? new Date(n.sentAt).toLocaleString() : 'Recent',
+        count: '-',
+      })));
+    }).catch(err => console.error('Failed to load history', err));
+  }, []);
 
   const handleSendBroadcast = async (e) => {
     e.preventDefault();
