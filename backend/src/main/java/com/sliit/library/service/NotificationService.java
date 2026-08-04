@@ -91,10 +91,24 @@ public class NotificationService {
         return targetUsers.size();
     }
 
+    @Transactional
+    public void sendDirectNotification(Long userId, String title, String message) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        sendNotification(user, NotificationType.ANNOUNCEMENT, title, message);
+    }
+
     @Transactional(readOnly = true)
     public List<NotificationResponse> getRecentAnnouncements() {
-        return notificationRepository.findByTypeOrderByCreatedAtDesc(NotificationType.ANNOUNCEMENT)
-                .stream()
+        List<Notification> all = notificationRepository.findByTypeOrderByCreatedAtDesc(NotificationType.ANNOUNCEMENT);
+        java.util.Map<String, Notification> unique = new java.util.LinkedHashMap<>();
+        for (Notification n : all) {
+            String key = (n.getTitle() != null ? n.getTitle() : "") + "::" + (n.getMessage() != null ? n.getMessage() : "");
+            if (!unique.containsKey(key)) {
+                unique.put(key, n);
+            }
+        }
+        return unique.values().stream()
                 .limit(10)
                 .map(this::mapToNotificationResponse)
                 .toList();

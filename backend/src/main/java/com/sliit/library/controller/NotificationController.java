@@ -62,6 +62,16 @@ public class NotificationController {
         ));
     }
 
+    @PostMapping("/admin/notifications/send-user")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
+    public ResponseEntity<?> sendDirectToUser(
+            @RequestParam Long userId,
+            @RequestParam String title,
+            @RequestParam String message) {
+        notificationService.sendDirectNotification(userId, title, message);
+        return ResponseEntity.ok(java.util.Map.of("message", "Direct notification sent to user."));
+    }
+
     @GetMapping("/notifications/announcements/public")
     public ResponseEntity<List<NotificationResponse>> getPublicAnnouncements() {
         return ResponseEntity.ok(notificationService.getRecentAnnouncements());

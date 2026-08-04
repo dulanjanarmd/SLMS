@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { userAPI } from '../services/api';
+import { userAPI, notificationAPI } from '../services/api';
 
 const inputStyle = {
   borderRadius: 12,
@@ -55,6 +54,10 @@ const Users = () => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [msgTitle, setMsgTitle] = useState('');
+  const [msgContent, setMsgContent] = useState('');
+  const [sendingMsg, setSendingMsg] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -144,6 +147,29 @@ const Users = () => {
   const openDeleteModal = (user) => {
     setSelectedUser(user);
     setShowDeleteModal(true);
+  };
+
+  const openMessageModal = (user) => {
+    setSelectedUser(user);
+    setMsgTitle('');
+    setMsgContent('');
+    setShowMessageModal(true);
+  };
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!msgTitle.trim() || !msgContent.trim() || !selectedUser) return;
+    setSendingMsg(true); setError(''); setSuccess('');
+    try {
+      await notificationAPI.sendDirectToUser(selectedUser.id, msgTitle, msgContent);
+      setSuccess(`Direct message sent to ${selectedUser.fullName}. It will appear in their notification bell.`);
+      setShowMessageModal(false);
+      setMsgTitle(''); setMsgContent('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to send message.');
+    } finally {
+      setSendingMsg(false);
+    }
   };
 
   const handleDeleteUser = async () => {
@@ -349,12 +375,17 @@ const Users = () => {
                 }}>{u.isActive ? 'Active' : 'Inactive'}</span>
               </div>
               <div style={{ color: '#374151', fontSize: '0.82rem' }}>{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
                 <ActionBtn
                   onClick={() => openViewModal(u)}
                   bg="linear-gradient(135deg, #10b981, #059669)"
                   color="white"
                 >View</ActionBtn>
+                <ActionBtn
+                  onClick={() => openMessageModal(u)}
+                  bg="linear-gradient(135deg, #8b5cf6, #7c3aed)"
+                  color="white"
+                >Msg</ActionBtn>
                 <ActionBtn
                   onClick={() => openRoleModal(u)}
                   bg="linear-gradient(135deg, #3b82f6, #2563eb)"
@@ -701,6 +732,69 @@ const Users = () => {
                   border: 'none', color: 'white', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer',
                   fontFamily: 'Poppins, sans-serif',
                 }}>Create Account</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      {/* Direct Personal Message Modal */}
+      {showMessageModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(17,24,39,0.55)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '20px',
+        }} onClick={e => { if (e.target === e.currentTarget) setShowMessageModal(false); }}>
+          <div style={{
+            width: '100%', maxWidth: 500,
+            background: 'white', borderRadius: 20, overflow: 'hidden',
+            boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
+          }}>
+            <div style={{ padding: '24px 30px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#1a1a2e' }}>Send Personal Message</h3>
+                <div style={{ fontSize: '0.82rem', color: '#64748b', marginTop: 2 }}>Recipient: <strong>{selectedUser?.fullName}</strong> ({selectedUser?.email})</div>
+              </div>
+              <button onClick={() => setShowMessageModal(false)} style={{ border: 'none', background: 'none', fontSize: '1.4rem', cursor: 'pointer', color: '#64748b' }}>×</button>
+            </div>
+            <form onSubmit={handleSendMessage}>
+              <div style={{ padding: '24px 30px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 6, fontWeight: 600, fontSize: '0.85rem', color: '#374151' }}>Message Title *</label>
+                  <input
+                    placeholder="e.g. Reserved Book Ready for Pickup"
+                    value={msgTitle}
+                    onChange={(e) => setMsgTitle(e.target.value)}
+                    required
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: 6, fontWeight: 600, fontSize: '0.85rem', color: '#374151' }}>Message Body *</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Type personal message for user..."
+                    value={msgContent}
+                    onChange={(e) => setMsgContent(e.target.value)}
+                    required
+                    style={{ ...inputStyle, resize: 'vertical' }}
+                  />
+                </div>
+              </div>
+              <div style={{ padding: '16px 30px', borderTop: '1px solid #f1f5f9', display: 'flex', gap: 12, justifyContent: 'flex-end', background: '#f8fafc' }}>
+                <button type="button" onClick={() => setShowMessageModal(false)} style={{
+                  padding: '10px 20px', borderRadius: 999,
+                  background: 'white', border: '1px solid #e8ecf0',
+                  color: '#374151', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer',
+                  fontFamily: 'Poppins, sans-serif',
+                }}>Cancel</button>
+                <button type="submit" disabled={sendingMsg} style={{
+                  padding: '10px 24px', borderRadius: 999,
+                  background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                  border: 'none', color: 'white', fontWeight: 600, fontSize: '0.85rem', cursor: sendingMsg ? 'not-allowed' : 'pointer',
+                  fontFamily: 'Poppins, sans-serif',
+                }}>
+                  {sendingMsg ? 'Sending...' : 'Send Message'}
+                </button>
               </div>
             </form>
           </div>
