@@ -71,7 +71,7 @@ public class EBookService {
                 : "pdf";
         String fileName = UUID.randomUUID() + "." + extension;
 
-        Path uploadDir = Paths.get(uploadPath);
+        Path uploadDir = Paths.get(uploadPath).toAbsolutePath();
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
         }
@@ -148,7 +148,7 @@ public class EBookService {
     }
 
     public Resource getEBookCover(String filename) throws MalformedURLException {
-        Path file = Paths.get(coverUploadDir).resolve(filename);
+        Path file = Paths.get(coverUploadDir).toAbsolutePath().resolve(filename);
         return new UrlResource(file.toUri());
     }
 
@@ -159,7 +159,7 @@ public class EBookService {
             ext = original.substring(original.lastIndexOf("."));
         }
         String fileName = UUID.randomUUID() + ext;
-        Path dir = Paths.get(coverUploadDir);
+        Path dir = Paths.get(coverUploadDir).toAbsolutePath();
         if (!Files.exists(dir)) Files.createDirectories(dir);
         Files.copy(file.getInputStream(), dir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
         return "/api/uploads/ebook-covers/" + fileName;

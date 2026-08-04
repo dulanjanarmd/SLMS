@@ -94,7 +94,7 @@ export const ebookAPI = {
   getAllPublic: () => api.get('/ebooks/public/all'),
   upload: (formData) =>
     api.post('/librarian/ebooks/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined },
     }),
   delete: (id) => api.delete(`/librarian/ebooks/${id}`),
 };

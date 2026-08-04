@@ -52,19 +52,29 @@ const EBooks = () => {
   };
 
   const handleUpload = async (e) => {
-    e.preventDefault(); if (!pdfFile) { setError('Please select a PDF file.'); return; }
+    e.preventDefault();
+    if (!pdfFile) { setError('Please select a PDF file.'); return; }
+    if (pdfFile.type !== 'application/pdf' && !pdfFile.name.toLowerCase().endsWith('.pdf')) {
+      setError('Only PDF files are allowed.'); return;
+    }
     setUploading(true); setError('');
     try {
       const fd = new FormData();
-      Object.keys(ebookForm).forEach(k => { if (ebookForm[k]) fd.append(k, ebookForm[k]); });
+      Object.keys(ebookForm).forEach(k => {
+        if (ebookForm[k] !== '' && ebookForm[k] !== null && ebookForm[k] !== undefined) {
+          fd.append(k, ebookForm[k]);
+        }
+      });
       fd.append('file', pdfFile);
       if (coverFile) fd.append('coverImage', coverFile);
       await ebookAPI.upload(fd);
       setSuccess('eBook uploaded successfully.');
       setShowUpload(false); setEbookForm(emptyEbookForm); setPdfFile(null); setCoverFile(null); fetchEBooks();
       setTimeout(() => setSuccess(''), 4000);
-    } catch (err) { setError(err.response?.data?.message || 'Upload failed.'); }
-    finally { setUploading(false); }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data || err.message || 'Upload failed. Please check your connection and try again.';
+      setError(typeof msg === 'string' ? msg : 'Upload failed.');
+    } finally { setUploading(false); }
   };
 
   const handleDelete = async (id) => {
@@ -209,14 +219,18 @@ const EBooks = () => {
                 <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Description</label>
                 <textarea rows="3" value={ebookForm.description} onChange={e => setEbookForm({ ...ebookForm, description: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
                 <div>
                   <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>ISBN</label>
                   <input value={ebookForm.isbn} onChange={e => setEbookForm({ ...ebookForm, isbn: e.target.value })} style={inputStyle} />
                 </div>
                 <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Publisher</label>
+                  <input value={ebookForm.publisher} onChange={e => setEbookForm({ ...ebookForm, publisher: e.target.value })} style={inputStyle} />
+                </div>
+                <div>
                   <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Year</label>
-                  <input type="number" value={ebookForm.publicationYear} onChange={e => setEbookForm({ ...ebookForm, publicationYear: e.target.value })} style={inputStyle} />
+                  <input type="number" value={ebookForm.publicationYear} onChange={e => setEbookForm({ ...ebookForm, publicationYear: e.target.value })} style={inputStyle} min="1000" max={new Date().getFullYear()} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6 }}>Language</label>
