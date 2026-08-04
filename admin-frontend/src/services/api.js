@@ -140,24 +140,38 @@ export const pastPapersAPI = {
 export const eventAPI = {
   getAllPublic: () => api.get('/events/public/all'),
   getAllAdmin: () => api.get('/admin/events/all'),
-  getById: (id) => api.get(/events/),
+  getById: (id) => api.get(`/events/${id}`),
   getAll: () => api.get('/librarian/events'),
   getUpcoming: () => api.get('/librarian/events/upcoming'),
   create: (data) => api.post('/librarian/events', data),
-  update: (id, data) => api.put(/librarian/events/, data),
-  toggleActive: (id) => api.patch(/librarian/events//toggle),
-  delete: (id) => api.delete(/librarian/events/),
+  createWithImage: (data, bannerImage) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (bannerImage) formData.append('bannerImage', bannerImage);
+    return api.post('/librarian/events/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
+  update: (id, data) => api.put(`/librarian/events/${id}`, data),
+  updateWithImage: (id, data, bannerImage) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (bannerImage) formData.append('bannerImage', bannerImage);
+    return api.put(`/librarian/events/${id}/upload`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  },
+  toggleActive: (id) => api.patch(`/librarian/events/${id}/toggle`),
+  delete: (id) => api.delete(`/librarian/events/${id}`),
 };
 
 export const notificationAPI = {
-  getUserNotifications: (userId) => api.get(/notifications/user/),
-  getUnread: (userId) => api.get(/notifications/user//unread),
-  getUnreadCount: (userId) => api.get(/notifications/user//unread-count),
-  markAsRead: (id) => api.put(/notifications//read),
-  markAllAsRead: (userId) => api.put(/notifications/user//read-all),
+  getUserNotifications: (userId) => api.get(`/notifications/user/${userId}`),
+  getUnread: (userId) => api.get(`/notifications/user/${userId}/unread`),
+  getUnreadCount: (userId) => api.get(`/notifications/user/${userId}/unread-count`),
+  markAsRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllAsRead: (userId) => api.put(`/notifications/user/${userId}/read-all`),
   getPublicAnnouncements: () => api.get('/notifications/announcements/public'),
-  sendBroadcast: (title, message, targetRole) => api.post('/admin/notifications/broadcast', null, { params: { title, message, targetRole } }),
-  sendUserMessage: (userId, title, message) => api.post('/admin/notifications/send-user', null, { params: { userId, title, message } }),
+  sendBroadcast: (title, message, targetRole) =>
+    api.post('/admin/notifications/broadcast', null, { params: { title, message, targetRole } }),
+  sendUserMessage: (userId, title, message) =>
+    api.post('/admin/notifications/send-user', null, { params: { userId, title, message } }),
 };
 
 export const configAPI = {
@@ -167,18 +181,18 @@ export const configAPI = {
 
 export const libraryHoursAPI = {
   getAll: () => api.get('/library-hours'),
-  getById: (id) => api.get(/library-hours/),
-  getByDay: (day) => api.get(/library-hours/day/),
+  getById: (id) => api.get(`/library-hours/${id}`),
+  getByDay: (day) => api.get(`/library-hours/day/${day}`),
   create: (data) => api.post('/librarian/library-hours', data),
-  update: (id, data) => api.put(/librarian/library-hours/, data),
-  delete: (id) => api.delete(/librarian/library-hours/),
+  update: (id, data) => api.put(`/librarian/library-hours/${id}`, data),
+  delete: (id) => api.delete(`/librarian/library-hours/${id}`),
 };
 
 export const contactInfoAPI = {
   getAll: () => api.get('/contact-info'),
   getActive: () => api.get('/contact-info/active'),
-  getById: (id) => api.get(/contact-info/),
+  getById: (id) => api.get(`/contact-info/${id}`),
   create: (data) => api.post('/librarian/contact-info', data),
-  update: (id, data) => api.put(/librarian/contact-info/, data),
-  delete: (id) => api.delete(/librarian/contact-info/),
+  update: (id, data) => api.put(`/librarian/contact-info/${id}`, data),
+  delete: (id) => api.delete(`/librarian/contact-info/${id}`),
 };

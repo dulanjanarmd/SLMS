@@ -736,6 +736,8 @@ const Users = () => {
             </form>
           </div>
         </div>
+      )}
+
       {/* Direct Personal Message Modal */}
       {showMessageModal && (
         <div style={{
