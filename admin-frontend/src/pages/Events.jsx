@@ -208,7 +208,7 @@ const Events = () => {
   const totalPublic = events.filter(e => e.isPublic && e.isActive).length;
 
   return (
-    <div style={{ padding: '0 20px 24px 20px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
+    <div style={{ padding: '100px 20px 24px 20px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
 
       {/* Banner */}
       <div style={{

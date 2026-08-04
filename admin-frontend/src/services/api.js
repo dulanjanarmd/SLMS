@@ -41,6 +41,7 @@ export const userAPI = {
   activateUser: (id) => api.put(`/admin/users/${id}/activate`),
   changeRole: (id, role) => api.put(`/admin/users/${id}/role`, null, { params: { role } }),
   createLibrarian: (data) => api.post('/admin/users/create-librarian', data),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
 };
 
 export const bookAPI = {

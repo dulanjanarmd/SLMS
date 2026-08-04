@@ -16,6 +16,33 @@ const inputStyle = {
 
 const focusStyle = { borderColor: '#ef5a24', boxShadow: '0 0 0 3px rgba(239,90,36,0.12)', background: '#fff' };
 
+const ActionBtn = ({ onClick, color, bg, border, children, disabled }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    style={{
+      flex: 1,
+      minWidth: 0,
+      padding: '7px 8px',
+      background: bg,
+      color: color,
+      border: border || 'none',
+      borderRadius: 6,
+      fontSize: '0.72rem',
+      fontWeight: 700,
+      fontFamily: 'Poppins, sans-serif',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      opacity: disabled ? 0.6 : 1,
+      transition: 'transform 0.15s, opacity 0.15s',
+      whiteSpace: 'nowrap',
+    }}
+    onMouseEnter={e => !disabled && (e.currentTarget.style.transform = 'translateY(-1px)')}
+    onMouseLeave={e => !disabled && (e.currentTarget.style.transform = '')}
+  >
+    {children}
+  </button>
+);
+
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +53,8 @@ const Users = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [roleFilter, setRoleFilter] = useState('');
   const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [newRole, setNewRole] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -104,6 +133,29 @@ const Users = () => {
       fetchUsers();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create librarian');
+    }
+  };
+
+  const openViewModal = (user) => {
+    setSelectedUser(user);
+    setShowViewModal(true);
+  };
+
+  const openDeleteModal = (user) => {
+    setSelectedUser(user);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      setError(''); setSuccess('');
+      await userAPI.deleteUser(selectedUser.id);
+      setSuccess(`User ${selectedUser.fullName} deleted successfully.`);
+      setShowDeleteModal(false);
+      fetchUsers();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete user.');
+      setShowDeleteModal(false);
     }
   };
 
@@ -244,7 +296,7 @@ const Users = () => {
         <div style={{
           padding: '18px 26px',
           background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.03))',
-          display: 'grid', gridTemplateColumns: '80px 2fr 140px 2fr 100px 120px 100px 120px 180px',
+          display: 'grid', gridTemplateColumns: '80px 2fr 140px 2fr 100px 120px 100px 120px 280px',
           gap: 14, alignItems: 'center',
           fontWeight: 700, fontSize: '0.78rem', color: '#4c1d95',
           textTransform: 'uppercase', letterSpacing: 0.6, borderBottom: '1px solid #eef2ff',
@@ -273,7 +325,7 @@ const Users = () => {
         ) : (
           users.map((u) => (
             <div key={u.id} style={{
-              display: 'grid', gridTemplateColumns: '80px 2fr 140px 2fr 100px 120px 100px 120px 180px',
+              display: 'grid', gridTemplateColumns: '80px 2fr 140px 2fr 100px 120px 100px 120px 280px',
               gap: 14, alignItems: 'center',
               padding: '16px 26px',
               borderBottom: '1px solid #f1f5f9',
@@ -297,36 +349,27 @@ const Users = () => {
                 }}>{u.isActive ? 'Active' : 'Inactive'}</span>
               </div>
               <div style={{ color: '#374151', fontSize: '0.82rem' }}>{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}</div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                <button
-                  onClick={() => handleToggleActive(u.id, u.isActive)}
-                  style={{
-                    padding: '7px 11px', borderRadius: 999, cursor: 'pointer',
-                    background: u.isActive ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)',
-                    color: u.isActive ? '#d97706' : '#059669',
-                    border: `1px solid ${u.isActive ? '#f59e0b40' : '#10b98140'}`,
-                    fontSize: '0.72rem', fontWeight: 700, fontFamily: 'Poppins, sans-serif',
-                    transition: 'transform 0.15s',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = ''}
-                >
-                  {u.isActive ? 'Deactivate' : 'Activate'}
-                </button>
-                <button
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                <ActionBtn
+                  onClick={() => openViewModal(u)}
+                  bg="linear-gradient(135deg, #10b981, #059669)"
+                  color="white"
+                >View</ActionBtn>
+                <ActionBtn
                   onClick={() => openRoleModal(u)}
-                  style={{
-                    padding: '7px 14px', borderRadius: 999, cursor: 'pointer',
-                    background: 'linear-gradient(135deg, #1a1a2e, #2d1b69)',
-                    color: 'white', border: 'none',
-                    fontSize: '0.74rem', fontWeight: 700, fontFamily: 'Poppins, sans-serif',
-                    transition: 'transform 0.15s',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
-                  onMouseLeave={e => e.currentTarget.style.transform = ''}
-                >
-                  Edit Role
-                </button>
+                  bg="linear-gradient(135deg, #3b82f6, #2563eb)"
+                  color="white"
+                >Role</ActionBtn>
+                <ActionBtn
+                  onClick={() => handleToggleActive(u.id, u.isActive)}
+                  bg={u.isActive ? "linear-gradient(135deg, #f59e0b, #d97706)" : "linear-gradient(135deg, #64748b, #475569)"}
+                  color="white"
+                >{u.isActive ? 'Disable' : 'Enable'}</ActionBtn>
+                <ActionBtn
+                  onClick={() => openDeleteModal(u)}
+                  bg="linear-gradient(135deg, #ef4444, #dc2626)"
+                  color="white"
+                >Delete</ActionBtn>
               </div>
             </div>
           ))
@@ -433,6 +476,136 @@ const Users = () => {
                 border: 'none', color: 'white', fontWeight: 600, fontSize: '0.85rem', cursor: newRole === selectedUser?.role ? 'not-allowed' : 'pointer',
                 fontFamily: 'Poppins, sans-serif',
               }}>Update Role</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(17,24,39,0.55)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '20px',
+        }} onClick={e => { if (e.target === e.currentTarget) setShowDeleteModal(false); }}>
+          <div style={{
+            width: '100%', maxWidth: 450,
+            background: 'white', borderRadius: 20, overflow: 'hidden',
+            boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
+          }}>
+            <div style={{ padding: '30px', textAlign: 'center' }}>
+              <div style={{ width: 60, height: 60, background: 'rgba(239,68,68,0.1)', color: '#ef4444', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: '2rem', fontWeight: 'bold' }}>!</div>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#1a1a2e', marginBottom: 8 }}>Delete User</h2>
+              <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                Are you sure you want to delete <strong style={{ color: '#1a1a2e' }}>{selectedUser?.fullName}</strong>? This action is permanent. They cannot have active loans or unpaid fines.
+              </p>
+            </div>
+            <div style={{ padding: '16px 30px', borderTop: '1px solid #f1f5f9', display: 'flex', gap: 12, justifyContent: 'center', background: '#f8fafc' }}>
+              <button onClick={() => setShowDeleteModal(false)} style={{
+                padding: '10px 24px', borderRadius: 999,
+                background: 'white', border: '1px solid #e8ecf0',
+                color: '#374151', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer',
+                fontFamily: 'Poppins, sans-serif',
+              }}>Cancel</button>
+              <button onClick={handleDeleteUser} style={{
+                padding: '10px 24px', borderRadius: 999,
+                background: '#ef4444',
+                border: 'none', color: 'white', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer',
+                fontFamily: 'Poppins, sans-serif',
+              }}>Delete User</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Modal */}
+      {showViewModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          background: 'rgba(17,24,39,0.55)', backdropFilter: 'blur(4px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '20px',
+        }} onClick={e => { if (e.target === e.currentTarget) setShowViewModal(false); }}>
+          <div style={{
+            width: '100%', maxWidth: 500,
+            background: 'white', borderRadius: 20, overflow: 'hidden',
+            boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
+          }}>
+            <div style={{
+              padding: '24px 30px',
+              background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 45%, #ef5a24 100%)',
+              color: 'white',
+              position: 'relative'
+            }}>
+              <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>User Details</h2>
+              <p style={{ margin: '4px 0 0', opacity: 0.78, fontSize: '0.85rem' }}>Detailed profile information</p>
+              <button onClick={() => setShowViewModal(false)} style={{
+                position: 'absolute', top: 20, right: 20,
+                background: 'rgba(255,255,255,0.2)', border: 'none',
+                width: 30, height: 30, borderRadius: '50%', color: 'white',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 'bold'
+              }}>✕</button>
+            </div>
+            <div style={{ padding: '30px' }}>
+              <div style={{ display: 'grid', gap: 16 }}>
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Full Name</div>
+                  <div style={{ fontSize: '0.95rem', color: '#1a1a2e', fontWeight: 600 }}>{selectedUser?.fullName}</div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Email</div>
+                    <div style={{ fontSize: '0.9rem', color: '#374151' }}>{selectedUser?.email}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Phone</div>
+                    <div style={{ fontSize: '0.9rem', color: '#374151' }}>{selectedUser?.phoneNumber || 'N/A'}</div>
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Role</div>
+                    <div style={{ marginTop: 2 }}>{getRoleBadge(selectedUser?.role)}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Status</div>
+                    <div style={{ marginTop: 2 }}>
+                      <span style={{
+                        background: selectedUser?.isActive ? 'rgba(16,185,129,0.1)' : 'rgba(100,116,139,0.1)',
+                        color: selectedUser?.isActive ? '#059669' : '#475569',
+                        borderRadius: 6, padding: '3px 10px',
+                        fontSize: '0.75rem', fontWeight: 700,
+                      }}>{selectedUser?.isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                  </div>
+                </div>
+                {(selectedUser?.faculty || selectedUser?.programme) && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Faculty</div>
+                      <div style={{ fontSize: '0.9rem', color: '#374151' }}>{selectedUser?.faculty || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Programme</div>
+                      <div style={{ fontSize: '0.9rem', color: '#374151' }}>{selectedUser?.programme || 'N/A'}</div>
+                    </div>
+                  </div>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Current Borrows</div>
+                    <div style={{ fontSize: '0.9rem', color: '#374151', fontWeight: 600 }}>{selectedUser?.currentBorrowCount || 0}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>Fines</div>
+                    <div style={{ fontSize: '0.9rem', color: (selectedUser?.outstandingFine > 0) ? '#ef4444' : '#10b981', fontWeight: 600 }}>
+                      Rs. {(selectedUser?.outstandingFine || 0).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

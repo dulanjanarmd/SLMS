@@ -87,6 +87,12 @@ public class UserController {
         return ResponseEntity.ok(userService.changeUserRole(id, role));
     }
 
+    @DeleteMapping("/admin/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<MessageResponse> deleteUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.deleteUser(id));
+    }
+
     @PostMapping("/user/change-password")
     @PreAuthorize("hasRole('STUDENT') or hasRole('FACULTY') or hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> changePassword(

@@ -144,7 +144,7 @@ const Books = () => {
   );
 
   return (
-    <div style={{ padding: '0 20px 24px 20px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
+    <div style={{ padding: '100px 20px 24px 20px', maxWidth: 1400, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
       <div style={{
         background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #ef5a24 100%)',
         borderRadius: 20, padding: '32px 40px', color: 'white',

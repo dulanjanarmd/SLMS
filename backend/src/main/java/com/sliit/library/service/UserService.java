@@ -75,6 +75,28 @@ public class UserService {
         return userRepository.findAll(pageable).map(this::mapToProfileResponse);
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    public MessageResponse deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean hasActiveLoans = user.getBorrowRecords().stream()
+                .anyMatch(b -> b.getStatus() == com.sliit.library.entity.BorrowStatus.ACTIVE ||
+                               b.getStatus() == com.sliit.library.entity.BorrowStatus.OVERDUE);
+        if (hasActiveLoans) {
+            throw new RuntimeException("Cannot delete user with active or overdue borrowed books.");
+        }
+
+        boolean hasUnpaidFines = user.getFines().stream()
+                .anyMatch(f -> f.getStatus() == com.sliit.library.entity.FineStatus.UNPAID);
+        if (hasUnpaidFines) {
+            throw new RuntimeException("Cannot delete user with unpaid fines.");
+        }
+
+        userRepository.delete(user);
+        return new MessageResponse("User deleted successfully");
+    }
+
     public List<UserProfileResponse> getUsersByRole(Role role) {
         return userRepository.findByRole(role).stream()
                 .map(this::mapToProfileResponse)

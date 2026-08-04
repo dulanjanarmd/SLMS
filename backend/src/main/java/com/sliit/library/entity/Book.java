@@ -1,5 +1,6 @@
 package com.sliit.library.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -97,14 +98,17 @@ public class Book {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<BorrowRecord> borrowRecords = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Reservation> reservations = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<EBook> eBooks = new ArrayList<>();

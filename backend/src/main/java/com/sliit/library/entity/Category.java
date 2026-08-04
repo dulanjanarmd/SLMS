@@ -1,5 +1,6 @@
 package com.sliit.library.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -34,6 +35,7 @@ public class Category {
     @Size(max = 20)
     private String ddcClass;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Book> books = new ArrayList<>();
