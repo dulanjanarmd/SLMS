@@ -22,6 +22,7 @@ C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\enti
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\SignupRequest.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\ReservationStatus.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\OverdueItemDTO.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\SchemaFixer.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\AuthService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\MembershipController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\security\JwtUtils.java

@@ -71,6 +71,7 @@ com\sliit\library\entity\User.class
 com\sliit\library\security\AuthEntryPointJwt.class
 com\sliit\library\entity\BookRequest$BookRequestBuilder.class
 com\sliit\library\service\NotificationService.class
+com\sliit\library\SchemaFixer.class
 com\sliit\library\entity\Category.class
 com\sliit\library\repository\ContactInfoRepository.class
 com\sliit\library\controller\ResearchPaperController.class

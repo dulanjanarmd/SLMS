@@ -174,8 +174,8 @@ const Dashboard = () => {
           <div style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.7, marginBottom: 8, fontFamily: 'Poppins, sans-serif' }}>
             Admin Portal
           </div>
-          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8, fontFamily: 'Poppins, sans-serif' }}>Dashboard</h1>
-          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem', fontFamily: 'Poppins, sans-serif' }}>
+          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8, fontFamily: 'Poppins, sans-serif', color: 'white' }}>Dashboard</h1>
+          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem', fontFamily: 'Poppins, sans-serif', color: 'white' }}>
             Real-time overview of library operations
           </p>
         </div>

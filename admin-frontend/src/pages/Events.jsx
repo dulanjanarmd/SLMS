@@ -231,8 +231,8 @@ const Events = () => {
           }} />
         ))}
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0, marginBottom: 6 }}>Event Management</h1>
-          <p style={{ margin: 0, opacity: 0.78, fontSize: '0.92rem', maxWidth: 480 }}>
+          <h1 style={{ fontSize: '1.7rem', fontWeight: 800, margin: 0, marginBottom: 6, color: 'white' }}>Event Management</h1>
+          <p style={{ margin: 0, opacity: 0.78, fontSize: '0.92rem', maxWidth: 480, color: 'white' }}>
             Create, schedule and manage library events — workshops, author talks, closures, study sessions and more.
           </p>
         </div>

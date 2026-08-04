@@ -165,8 +165,8 @@ const Categories = () => {
           <div style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', opacity: 0.7, marginBottom: 8 }}>
             Admin Portal
           </div>
-          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8 }}>Category Management</h1>
-          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem' }}>
+          <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8, color: 'white' }}>Category Management</h1>
+          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem', color: 'white' }}>
             Manage book categories and organize your library catalog
           </p>
         </div>

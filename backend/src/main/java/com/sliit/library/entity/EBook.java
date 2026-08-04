@@ -23,7 +23,8 @@ public class EBook {
     private Long id;
 
     @NotBlank
-    @Size(max = 200)
+    @Size(max = 500)
+    @Column(length = 500)
     private String title;
 
     @NotBlank
@@ -33,7 +34,8 @@ public class EBook {
     @Size(max = 20)
     private String isbn;
 
-    @Size(max = 500)
+    @Size(max = 2000)
+    @Column(length = 2000)
     private String description;
 
     @Size(max = 100)
@@ -53,7 +55,8 @@ public class EBook {
 
     private Long fileSize;
 
-    @Size(max = 500)
+    @Size(max = 1000)
+    @Column(length = 1000)
     private String coverImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
