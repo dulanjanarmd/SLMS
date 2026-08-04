@@ -233,6 +233,92 @@ const Home = () => {
       </div>
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 28px' }}>
+        {/* Announcements & Notice Board Section */}
+        <div style={{ marginBottom: 48 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+            <div>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0, marginBottom: 4 }}>System Announcements & Notices</h2>
+              <p style={{ color: '#64748b', margin: 0, fontSize: '0.88rem' }}>Official updates from university librarians & administration</p>
+            </div>
+            {(user?.role === 'LIBRARIAN' || user?.role === 'ADMIN') && (
+              <button
+                onClick={() => setShowCreateModal(true)}
+                style={{
+                  background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white',
+                  border: 'none', borderRadius: 999, padding: '10px 22px', fontSize: '0.85rem',
+                  fontWeight: 700, cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
+                  boxShadow: '0 4px 14px rgba(239,90,36,0.35)'
+                }}
+              >
+                Post Announcement
+              </button>
+            )}
+          </div>
+
+          {announcements.length === 0 ? (
+            <div style={{ background: 'white', borderRadius: 16, padding: '30px', textAlign: 'center', color: '#9ca3af', border: '1px solid #e8ecf0', fontSize: '0.9rem' }}>
+              No active announcements at the moment.
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+              {announcements.map((ann, idx) => (
+                <div key={ann.id || idx} style={{ background: 'white', borderRadius: 16, padding: '20px 24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontWeight: 800, fontSize: '0.96rem', color: '#1a1a2e' }}>{ann.title}</span>
+                    <span style={{ background: 'rgba(239,90,36,0.1)', color: '#ef5a24', padding: '2px 8px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 700 }}>
+                      NOTICE
+                    </span>
+                  </div>
+                  <p style={{ color: '#475569', fontSize: '0.85rem', lineHeight: 1.5, margin: 0, marginBottom: 12 }}>{ann.message}</p>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                    Posted: {ann.sentAt ? new Date(ann.sentAt).toLocaleDateString() : 'Recent'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Create Announcement Modal for Librarians */}
+        {showCreateModal && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+            <div style={{ background: 'white', borderRadius: 20, maxWidth: 500, width: '100%', padding: 28, fontFamily: 'Poppins, sans-serif' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#1a1a2e' }}>Post New Announcement</h3>
+                <button onClick={() => setShowCreateModal(false)} style={{ border: 'none', background: 'none', fontSize: '1.4rem', cursor: 'pointer', color: '#64748b' }}>×</button>
+              </div>
+
+              {createMsg && <div style={{ background: createMsg.includes('successfully') ? '#dcfce7' : '#fee2e2', color: createMsg.includes('successfully') ? '#166534' : '#991b1b', padding: '10px 14px', borderRadius: 10, marginBottom: 16, fontSize: '0.85rem', fontWeight: 600 }}>{createMsg}</div>}
+
+              <form onSubmit={handleCreateAnnouncement} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Title *</label>
+                  <input placeholder="Announcement Title" value={newTitle} onChange={e => setNewTitle(e.target.value)} required style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid #e2e8f0', fontSize: '0.88rem' }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Target Audience</label>
+                  <select value={targetRole} onChange={e => setTargetRole(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid #e2e8f0', fontSize: '0.88rem' }}>
+                    <option value="">All Users</option>
+                    <option value="STUDENT">Students Only</option>
+                    <option value="FACULTY">Faculty Only</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Message *</label>
+                  <textarea rows={3} placeholder="Write notice details..." value={newMessage} onChange={e => setNewMessage(e.target.value)} required style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid #e2e8f0', fontSize: '0.88rem', resize: 'vertical' }} />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+                  <button type="button" onClick={() => setShowCreateModal(false)} style={{ padding: '10px 20px', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Cancel</button>
+                  <button type="submit" disabled={creating} style={{ padding: '10px 22px', borderRadius: 10, border: 'none', background: '#ef5a24', color: 'white', fontWeight: 700, fontSize: '0.85rem', cursor: creating ? 'not-allowed' : 'pointer' }}>
+                    {creating ? 'Posting...' : 'Post Notice'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Popular Books */}
         <div style={{ marginBottom: 48 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
