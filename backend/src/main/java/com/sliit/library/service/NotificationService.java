@@ -119,6 +119,37 @@ public class NotificationService {
         notificationRepository.deleteByType(NotificationType.ANNOUNCEMENT);
     }
 
+    @Transactional
+    public void deleteAnnouncement(Long id) {
+        Notification ref = notificationRepository.findById(id).orElse(null);
+        if (ref != null && ref.getType() == NotificationType.ANNOUNCEMENT) {
+            List<Notification> matches = notificationRepository.findByTypeOrderByCreatedAtDesc(NotificationType.ANNOUNCEMENT);
+            List<Notification> toDelete = matches.stream()
+                    .filter(n -> java.util.Objects.equals(n.getTitle(), ref.getTitle()) && java.util.Objects.equals(n.getMessage(), ref.getMessage()))
+                    .toList();
+            notificationRepository.deleteAll(toDelete);
+        } else if (ref != null) {
+            notificationRepository.delete(ref);
+        }
+    }
+
+    @Transactional
+    public void updateAnnouncement(Long id, String newTitle, String newMessage) {
+        Notification ref = notificationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Announcement not found"));
+        String oldTitle = ref.getTitle();
+        String oldMessage = ref.getMessage();
+
+        List<Notification> matches = notificationRepository.findByTypeOrderByCreatedAtDesc(NotificationType.ANNOUNCEMENT);
+        for (Notification n : matches) {
+            if (java.util.Objects.equals(n.getTitle(), oldTitle) && java.util.Objects.equals(n.getMessage(), oldMessage)) {
+                n.setTitle(newTitle);
+                n.setMessage(newMessage);
+                notificationRepository.save(n);
+            }
+        }
+    }
+
     private NotificationResponse mapToNotificationResponse(Notification notification) {
         return NotificationResponse.builder()
                 .id(notification.getId())

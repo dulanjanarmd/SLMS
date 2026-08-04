@@ -133,6 +133,8 @@ export const notificationAPI = {
   sendBroadcast: (title, message, targetRole) =>
     api.post('/admin/notifications/broadcast', null, { params: { title, message, targetRole } }),
   clearAnnouncements: () => api.delete('/admin/notifications/clear-announcements'),
+  deleteAnnouncement: (id) => api.delete(`/admin/notifications/announcements/${id}`),
+  updateAnnouncement: (id, title, message) => api.put(`/admin/notifications/announcements/${id}`, null, { params: { title, message } }),
 };
 
 export const reportAPI = {

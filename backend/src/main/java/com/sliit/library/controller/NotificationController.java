@@ -83,4 +83,21 @@ public class NotificationController {
         notificationService.clearAllAnnouncements();
         return ResponseEntity.ok(java.util.Map.of("message", "All announcements cleared."));
     }
+
+    @DeleteMapping("/admin/notifications/announcements/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
+    public ResponseEntity<?> deleteAnnouncement(@PathVariable Long id) {
+        notificationService.deleteAnnouncement(id);
+        return ResponseEntity.ok(java.util.Map.of("message", "Announcement deleted."));
+    }
+
+    @PutMapping("/admin/notifications/announcements/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
+    public ResponseEntity<?> updateAnnouncement(
+            @PathVariable Long id,
+            @RequestParam String title,
+            @RequestParam String message) {
+        notificationService.updateAnnouncement(id, title, message);
+        return ResponseEntity.ok(java.util.Map.of("message", "Announcement updated."));
+    }
 }

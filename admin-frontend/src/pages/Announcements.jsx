@@ -75,6 +75,17 @@ const Announcements = () => {
     fontSize: '0.88rem', fontFamily: 'Poppins, sans-serif', outline: 'none', background: '#f8fafc',
   };
 
+  const handleClearAll = async () => {
+    if (!window.confirm('Are you sure you want to clear all announcements?')) return;
+    try {
+      await notificationAPI.clearAnnouncements();
+      setHistory([]);
+      setSuccessMsg('All announcements cleared.');
+    } catch {
+      setErrorMsg('Failed to clear announcements.');
+    }
+  };
+
   return (
     <div style={{ padding: '100px 20px 24px 20px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
       {/* Banner */}
@@ -144,7 +155,14 @@ const Announcements = () => {
 
         {/* Broadcast History */}
         <div style={{ background: 'white', borderRadius: 18, padding: 26, border: '1px solid #e2e8f0' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a2e', marginBottom: 18 }}>Broadcast History</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a2e', margin: 0 }}>Broadcast History</h3>
+            {history.length > 0 && (
+              <button onClick={handleClearAll} style={{ background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}>
+                Clear All
+              </button>
+            )}
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxHeight: 420, overflowY: 'auto' }}>
             {history.map(item => (
               <div key={item.id} style={{ padding: 16, borderRadius: 12, background: '#f8fafc', border: '1px solid #f1f5f9' }}>

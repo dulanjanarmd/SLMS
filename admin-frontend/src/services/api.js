@@ -173,6 +173,8 @@ export const notificationAPI = {
   sendUserMessage: (userId, title, message) =>
     api.post('/admin/notifications/send-user', null, { params: { userId, title, message } }),
   clearAnnouncements: () => api.delete('/admin/notifications/clear-announcements'),
+  deleteAnnouncement: (id) => api.delete(`/admin/notifications/announcements/${id}`),
+  updateAnnouncement: (id, title, message) => api.put(`/admin/notifications/announcements/${id}`, null, { params: { title, message } }),
 };
 
 export const configAPI = {
