@@ -237,16 +237,11 @@ const Events = () => {
           </p>
         </div>
         <button onClick={openCreate} style={{
-          background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)',
-          color: 'white', border: 'none',
-          padding: '13px 24px', borderRadius: 999,
-          fontWeight: 700, fontSize: '0.9rem',
-          boxShadow: '0 10px 28px rgba(239,90,36,0.45)',
-          cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
-          transition: 'transform 0.18s', position: 'relative', zIndex: 1,
+          background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)',
+          color: 'white', borderRadius: 10, padding: '10px 20px', cursor: 'pointer',
+          fontWeight: 600, fontSize: '0.85rem', fontFamily: 'Poppins, sans-serif',
+          position: 'relative', zIndex: 1, backdropFilter: 'blur(8px)',
         }}
-        onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-        onMouseLeave={e => e.currentTarget.style.transform = ''}
         >
           Create New Event
         </button>

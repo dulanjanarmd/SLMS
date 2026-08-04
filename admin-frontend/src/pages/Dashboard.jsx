@@ -159,12 +159,13 @@ const Dashboard = () => {
             onClick={() => fetchData(true)}
             disabled={refreshing}
             style={{
-              padding: '10px 22px', borderRadius: 10,
-              background: refreshing ? 'rgba(255,255,255,0.1)' : 'white',
-              color: refreshing ? 'white' : '#1a1a2e',
-              border: 'none', fontWeight: 700, fontSize: '0.85rem',
+              background: refreshing ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.15)',
+              border: '1px solid rgba(255,255,255,0.25)',
+              color: 'white', borderRadius: 10, padding: '10px 20px',
               cursor: refreshing ? 'not-allowed' : 'pointer',
-              fontFamily: 'Poppins, sans-serif', transition: 'all 0.15s'
+              fontWeight: 600, fontSize: '0.85rem', fontFamily: 'Poppins, sans-serif',
+              position: 'relative', zIndex: 1, backdropFilter: 'blur(8px)',
+              opacity: refreshing ? 0.75 : 1, transition: 'all 0.15s',
             }}
           >
             {refreshing ? 'Refreshing...' : 'Live Sync'}

@@ -180,16 +180,13 @@ const PastPapers = () => {
         <button
           onClick={() => setShowUpload(true)}
           style={{
-            padding: '12px 24px', borderRadius: 999,
-            background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)',
-            color: 'white', border: 'none', fontWeight: 700, fontSize: '0.88rem',
-            cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
-            boxShadow: '0 8px 20px rgba(239,90,36,0.3)', transition: 'transform 0.15s'
+            background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)',
+            color: 'white', borderRadius: 10, padding: '10px 20px', cursor: 'pointer',
+            fontWeight: 600, fontSize: '0.85rem', fontFamily: 'Poppins, sans-serif',
+            position: 'relative', zIndex: 1, backdropFilter: 'blur(8px)',
           }}
-          onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-          onMouseLeave={e => e.currentTarget.style.transform = ''}
         >
-          + Upload Past Paper
+          Upload Past Paper
         </button>
       </div>
 
