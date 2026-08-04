@@ -4,6 +4,7 @@ import com.sliit.library.dto.EventResponse;
 import com.sliit.library.entity.Event;
 import com.sliit.library.security.UserDetailsImpl;
 import com.sliit.library.service.EventService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,27 +69,27 @@ public class EventController {
 
     @PostMapping("/librarian/events")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
-    public ResponseEntity<EventResponse> createEvent(@RequestBody Event event, Authentication auth) {
+    public ResponseEntity<EventResponse> createEvent(@Valid @RequestBody Event event, Authentication auth) {
         Long uid = extractUserId(auth);
         return ResponseEntity.ok(eventService.create(event, uid));
     }
 
     @PostMapping("/admin/events")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EventResponse> createEventAdmin(@RequestBody Event event, Authentication auth) {
+    public ResponseEntity<EventResponse> createEventAdmin(@Valid @RequestBody Event event, Authentication auth) {
         Long uid = extractUserId(auth);
         return ResponseEntity.ok(eventService.create(event, uid));
     }
 
     @PutMapping("/librarian/events/{id}")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
-    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @RequestBody Event event) {
+    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @Valid @RequestBody Event event) {
         return ResponseEntity.ok(eventService.update(id, event));
     }
 
     @PutMapping("/admin/events/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EventResponse> updateEventAdmin(@PathVariable Long id, @RequestBody Event event) {
+    public ResponseEntity<EventResponse> updateEventAdmin(@PathVariable Long id, @Valid @RequestBody Event event) {
         return ResponseEntity.ok(eventService.update(id, event));
     }
 

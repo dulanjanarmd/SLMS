@@ -124,7 +124,20 @@ const Events = () => {
     } catch (err) {
       console.error('Event creation error:', err);
       console.error('Error response:', err.response);
-      const msgText = err?.response?.data?.message || err?.message || 'Save failed.';
+      const data = err?.response?.data;
+      let msgText = data?.message || err?.message || 'Save failed.';
+      if (data?.errors && typeof data.errors === 'object') {
+        const fieldMsgs = Object.entries(data.errors)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join('; ');
+        if (fieldMsgs) msgText = data.message ? `${data.message} (${fieldMsgs})` : fieldMsgs;
+      } else if (typeof data === 'object' && data !== null && !data.message) {
+        const fieldMsgs = Object.entries(data)
+          .filter(([, v]) => typeof v === 'string')
+          .map(([k, v]) => `${k}: ${v}`)
+          .join('; ');
+        if (fieldMsgs) msgText = 'Validation errors: ' + fieldMsgs;
+      }
       flash(msgText, false);
     } finally {
       setSaving(false);
