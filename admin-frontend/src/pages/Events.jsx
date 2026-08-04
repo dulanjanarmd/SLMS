@@ -553,7 +553,7 @@ const Events = () => {
             }}>
               <div>
                 <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800 }}>
-                  {editingId ? '✏️ Edit Event' : '➕ Create New Event'}
+                  {editingId ? 'Edit Event' : 'Create New Event'}
                 </h2>
                 <p style={{ margin: '4px 0 0', opacity: 0.78, fontSize: '0.8rem' }}>
                   {editingId ? 'Update the event details below.' : 'Fill in the details to schedule a new library event.'}
@@ -642,7 +642,7 @@ const Events = () => {
 
                 {/* Location - span 6 */}
                 <div style={{ gridColumn: 'span 6' }}>
-                  <label style={labelStyle}>📍 Location</label>
+                  <label style={labelStyle}>Location</label>
                   <input
                     placeholder="e.g. Room 301, Main Auditorium, Library Lobby..."
                     value={form.location}
@@ -654,7 +654,7 @@ const Events = () => {
                 </div>
                 {/* Max Attendees - span 3 */}
                 <div style={{ gridColumn: 'span 3' }}>
-                  <label style={labelStyle}>👥 Max Attendees</label>
+                  <label style={labelStyle}>Max Attendees</label>
                   <input
                     type="number" min="0" placeholder="Optional"
                     value={form.maxAttendees}
@@ -666,9 +666,9 @@ const Events = () => {
                 </div>
                 {/* Banner - span 3 */}
                 <div style={{ gridColumn: 'span 3' }}>
-                  <label style={labelStyle}>🎨 Banner Emoji</label>
+                  <label style={labelStyle}>Banner Symbol</label>
                   <input
-                    placeholder="📚, 🎓, etc."
+                    placeholder="e.g. LBR"
                     value={form.banner}
                     onChange={e => setForm({ ...form, banner: e.target.value })}
                     onFocus={() => setFocusField('bn')}
@@ -679,7 +679,7 @@ const Events = () => {
 
                 {/* Color picker - span 6 */}
                 <div style={{ gridColumn: 'span 6' }}>
-                  <label style={labelStyle}>🎨 Event Color</label>
+                  <label style={labelStyle}>Event Color</label>
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
                     {eventColors.map(c => (
                       <button
@@ -790,7 +790,7 @@ const Events = () => {
                 onMouseLeave={e => e.currentTarget.style.transform = ''}
                 >
                   {saving ? <Spinner animation="border" size="sm" /> : null}
-                  {editingId ? '💾 Save Changes' : '✨ Create Event'}
+                  {editingId ? 'Save Changes' : 'Create Event'}
                 </button>
               </div>
             </div>

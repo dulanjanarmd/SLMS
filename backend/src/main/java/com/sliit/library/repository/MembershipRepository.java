@@ -15,5 +15,7 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 
     List<Membership> findByStatus(MembershipStatus status);
 
+    long countByStatus(MembershipStatus status);
+
     boolean existsByUserIdAndStatus(Long userId, MembershipStatus status);
 }

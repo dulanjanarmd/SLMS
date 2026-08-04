@@ -60,4 +60,10 @@ public class ReportController {
     public ResponseEntity<Map<String, Object>> getFineCollectionReport() {
         return ResponseEntity.ok(reportService.getFineCollectionReport());
     }
+
+    @GetMapping({"/admin/reports/advanced-analytics", "/librarian/reports/advanced-analytics"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
+    public ResponseEntity<Map<String, Object>> getAdvancedAnalytics() {
+        return ResponseEntity.ok(reportService.getAdvancedAnalytics());
+    }
 }

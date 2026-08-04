@@ -89,6 +89,7 @@ export const reportAPI = {
   getUserActivity: () => api.get('/admin/reports/user-activity'),
   getInventory: () => api.get('/admin/reports/inventory'),
   getFineCollection: () => api.get('/admin/reports/fine-collection'),
+  getAdvancedAnalytics: () => api.get('/admin/reports/advanced-analytics'),
 };
 
 export const ebookAPI = {
