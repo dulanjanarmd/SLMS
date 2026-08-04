@@ -18,12 +18,7 @@ const Home = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newTitle, setNewTitle] = useState('');
-  const [newMessage, setNewMessage] = useState('');
-  const [targetRole, setTargetRole] = useState('');
-  const [creating, setCreating] = useState(false);
-  const [createMsg, setCreateMsg] = useState('');
+  // Removed create announcement state (now handled in Admin portal)
   const [libraryHours, setLibraryHours] = useState([]);
   const [contactInfo, setContactInfo] = useState([]);
   const [userStats, setUserStats] = useState({
@@ -116,22 +111,7 @@ const Home = () => {
     finally { setLoading(false); }
   };
 
-  const handleCreateAnnouncement = async (e) => {
-    e.preventDefault();
-    if (!newTitle.trim() || !newMessage.trim()) return;
-    setCreating(true); setCreateMsg('');
-    try {
-      await notificationAPI.sendBroadcast(newTitle, newMessage, targetRole || null);
-      setCreateMsg('Announcement posted successfully!');
-      setNewTitle(''); setNewMessage(''); setTargetRole('');
-      setTimeout(() => { setShowCreateModal(false); setCreateMsg(''); }, 1500);
-      fetchData();
-    } catch {
-      setCreateMsg('Failed to post announcement.');
-    } finally {
-      setCreating(false);
-    }
-  };
+
 
   const handleReadOnline = async (ebook) => {
     try {
@@ -233,91 +213,7 @@ const Home = () => {
       </div>
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 28px' }}>
-        {/* Announcements & Notice Board Section */}
-        <div style={{ marginBottom: 48 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <div>
-              <h2 style={{ fontWeight: 800, fontSize: '1.4rem', color: '#1a1a2e', margin: 0, marginBottom: 4 }}>System Announcements & Notices</h2>
-              <p style={{ color: '#64748b', margin: 0, fontSize: '0.88rem' }}>Official updates from university librarians & administration</p>
-            </div>
-            {(user?.role === 'LIBRARIAN' || user?.role === 'ADMIN') && (
-              <button
-                onClick={() => setShowCreateModal(true)}
-                style={{
-                  background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white',
-                  border: 'none', borderRadius: 999, padding: '10px 22px', fontSize: '0.85rem',
-                  fontWeight: 700, cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
-                  boxShadow: '0 4px 14px rgba(239,90,36,0.35)'
-                }}
-              >
-                Post Announcement
-              </button>
-            )}
-          </div>
 
-          {announcements.length === 0 ? (
-            <div style={{ background: 'white', borderRadius: 16, padding: '30px', textAlign: 'center', color: '#9ca3af', border: '1px solid #e8ecf0', fontSize: '0.9rem' }}>
-              No active announcements at the moment.
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
-              {announcements.map((ann, idx) => (
-                <div key={ann.id || idx} style={{ background: 'white', borderRadius: 16, padding: '20px 24px', border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ fontWeight: 800, fontSize: '0.96rem', color: '#1a1a2e' }}>{ann.title}</span>
-                    <span style={{ background: 'rgba(239,90,36,0.1)', color: '#ef5a24', padding: '2px 8px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 700 }}>
-                      NOTICE
-                    </span>
-                  </div>
-                  <p style={{ color: '#475569', fontSize: '0.85rem', lineHeight: 1.5, margin: 0, marginBottom: 12 }}>{ann.message}</p>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                    Posted: {ann.sentAt ? new Date(ann.sentAt).toLocaleDateString() : 'Recent'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Create Announcement Modal for Librarians */}
-        {showCreateModal && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-            <div style={{ background: 'white', borderRadius: 20, maxWidth: 500, width: '100%', padding: 28, fontFamily: 'Poppins, sans-serif' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#1a1a2e' }}>Post New Announcement</h3>
-                <button onClick={() => setShowCreateModal(false)} style={{ border: 'none', background: 'none', fontSize: '1.4rem', cursor: 'pointer', color: '#64748b' }}>×</button>
-              </div>
-
-              {createMsg && <div style={{ background: createMsg.includes('successfully') ? '#dcfce7' : '#fee2e2', color: createMsg.includes('successfully') ? '#166534' : '#991b1b', padding: '10px 14px', borderRadius: 10, marginBottom: 16, fontSize: '0.85rem', fontWeight: 600 }}>{createMsg}</div>}
-
-              <form onSubmit={handleCreateAnnouncement} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Title *</label>
-                  <input placeholder="Announcement Title" value={newTitle} onChange={e => setNewTitle(e.target.value)} required style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid #e2e8f0', fontSize: '0.88rem' }} />
-                </div>
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Target Audience</label>
-                  <select value={targetRole} onChange={e => setTargetRole(e.target.value)} style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid #e2e8f0', fontSize: '0.88rem' }}>
-                    <option value="">All Users</option>
-                    <option value="STUDENT">Students Only</option>
-                    <option value="FACULTY">Faculty Only</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Message *</label>
-                  <textarea rows={3} placeholder="Write notice details..." value={newMessage} onChange={e => setNewMessage(e.target.value)} required style={{ width: '100%', padding: '10px 14px', borderRadius: 10, border: '1.5px solid #e2e8f0', fontSize: '0.88rem', resize: 'vertical' }} />
-                </div>
-
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                  <button type="button" onClick={() => setShowCreateModal(false)} style={{ padding: '10px 20px', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Cancel</button>
-                  <button type="submit" disabled={creating} style={{ padding: '10px 22px', borderRadius: 10, border: 'none', background: '#ef5a24', color: 'white', fontWeight: 700, fontSize: '0.85rem', cursor: creating ? 'not-allowed' : 'pointer' }}>
-                    {creating ? 'Posting...' : 'Post Notice'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
 
         {/* Popular Books */}
         <div style={{ marginBottom: 48 }}>
@@ -815,6 +711,63 @@ const Home = () => {
                       </Link>
                     );
                   })
+                )}
+              </div>
+            </div>
+
+            {/* Announcements Box */}
+            <div style={{
+              background: 'white',
+              borderRadius: 20,
+              border: '1px solid #e8ecf0',
+              boxShadow: '0 12px 40px rgba(0,0,0,0.05)',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                padding: '22px 26px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 14,
+                borderBottom: '1px solid #f1f5f9',
+              }}>
+                <div>
+                  <h3 style={{ fontWeight: 800, fontSize: '1.15rem', color: '#1a1a2e', margin: 0, marginBottom: 3 }}>Announcements</h3>
+                  <p style={{ color: '#64748b', margin: 0, fontSize: '0.85rem' }}>System notices & updates</p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {announcements.length === 0 ? (
+                  <div style={{ padding: '40px 26px', textAlign: 'center', color: '#64748b', fontSize: '0.9rem' }}>
+                    No active announcements
+                  </div>
+                ) : (
+                  announcements.map((ann, idx) => (
+                    <div key={ann.id || idx} style={{
+                      display: 'flex', gap: 16, padding: '16px 26px',
+                      borderBottom: '1px solid #f1f5f9', alignItems: 'flex-start',
+                      transition: 'background 0.15s', cursor: 'default'
+                    }} onMouseEnter={e => e.currentTarget.style.background = '#fafbfd'} onMouseLeave={e => e.currentTarget.style.background = ''}>
+                      <div style={{
+                        width: 48, height: 48, borderRadius: 12,
+                        background: 'rgba(239,90,36,0.1)', color: '#ef5a24',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '1.4rem', flexShrink: 0, fontWeight: 800
+                      }}>!</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                          <h4 style={{ fontWeight: 700, fontSize: '0.96rem', color: '#1a1a2e', margin: 0 }}>{ann.title}</h4>
+                          <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                            {ann.sentAt ? new Date(ann.sentAt).toLocaleDateString() : 'Recent'}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.5 }}>
+                          {ann.message}
+                        </div>
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
             </div>

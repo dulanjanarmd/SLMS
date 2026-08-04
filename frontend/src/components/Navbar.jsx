@@ -236,8 +236,33 @@ const AppNavbar = () => {
                         { to: '/librarian/contact-info', label: 'Contact & Help' },
                         null,
                         { to: '/librarian/reports', label: 'Reports' },
+                        { to: 'http://localhost:5174/announcements', label: 'Announcements (Admin)', external: true },
+                        { to: 'http://localhost:5174', label: 'Full Admin Portal', external: true },
                       ].map((item, idx) => item === null ? (
                         <div key={`div-${idx}`} style={{ height: '1px', background: '#f3f4f6', margin: '4px 0' }} />
+                      ) : item.external ? (
+                        <a
+                          key={item.to}
+                          href={item.to}
+                          onClick={() => setShowLibrarianMenu(false)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            padding: '9px 12px',
+                            borderRadius: '8px',
+                            textDecoration: 'none',
+                            color: '#374151',
+                            fontFamily: "'Poppins', sans-serif",
+                            fontSize: '0.875rem',
+                            fontWeight: 500,
+                            transition: 'all 0.15s',
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,90,36,0.07)'; e.currentTarget.style.color = '#ef5a24'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#374151'; }}
+                        >
+                          {item.label}
+                        </a>
                       ) : (
                         <Link
                           key={item.to}
