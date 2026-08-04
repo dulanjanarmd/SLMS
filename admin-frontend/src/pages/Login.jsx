@@ -270,9 +270,20 @@ const Login = () => {
 
           <p style={{ textAlign: 'center', marginTop: 20, color: '#64748b', fontSize: '0.95rem' }}>
             Not an admin?{' '}
-            <a href="http://localhost:5173/login" style={{ color: '#ef5a24', fontWeight: 700, textDecoration: 'none' }}>
+            <button
+              type="button"
+              onClick={() => {
+                const targetUrl = `${window.location.protocol}//${window.location.hostname}:5173/login`;
+                window.location.href = targetUrl;
+              }}
+              style={{
+                color: '#ef5a24', fontWeight: 700, textDecoration: 'none',
+                border: 'none', background: 'none', cursor: 'pointer', padding: 0,
+                fontSize: '0.95rem', fontFamily: 'Poppins, sans-serif'
+              }}
+            >
               Go to Library Portal
-            </a>
+            </button>
           </p>
         </div>
       </div>

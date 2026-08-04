@@ -14,6 +14,9 @@ import Events from './pages/Events';
 import EBooks from './pages/EBooks';
 import PastPapers from './pages/PastPapers';
 import ResearchPapers from './pages/ResearchPapers';
+import Announcements from './pages/Announcements';
+import Settings from './pages/Settings';
+import AuditLogs from './pages/AuditLogs';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -119,6 +122,39 @@ function App() {
                 <AdminNavbar />
                 <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
                   <ResearchPapers />
+                </div>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/announcements"
+            element={
+              <PrivateRoute>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Announcements />
+                </div>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/audit-logs"
+            element={
+              <PrivateRoute>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <AuditLogs />
+                </div>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <Settings />
                 </div>
               </PrivateRoute>
             }

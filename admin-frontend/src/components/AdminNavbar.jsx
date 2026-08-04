@@ -37,6 +37,9 @@ const AdminNavbar = () => {
     { to: '/research-papers', label: 'Research Papers' },
     { to: '/categories', label: 'Categories' },
     { to: '/reports', label: 'Reports' },
+    { to: '/announcements', label: 'Announcements' },
+    { to: '/audit-logs', label: 'Audit Logs' },
+    { to: '/settings', label: 'Settings' },
   ];
 
   return (

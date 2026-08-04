@@ -138,13 +138,17 @@ export const pastPapersAPI = {
 };
 
 export const eventAPI = {
-  getAll: () => api.get('/admin/events'),
-  getUpcoming: () => api.get('/admin/events/upcoming'),
-  getById: (id) => api.get(`/events/${id}`),
-  create: (data) => api.post('/admin/events', data),
+  getAllPublic: () => api.get('/events/public/all'),
+  getAllAdmin: () => api.get('/admin/events/all'),
+  getById: (id) => api.get(`/events/public/${id}`),
+  create: (data) => api.post('/admin/events/create', data),
   update: (id, data) => api.put(`/admin/events/${id}`, data),
-  toggleActive: (id) => api.patch(`/admin/events/${id}/toggle`),
   delete: (id) => api.delete(`/admin/events/${id}`),
+};
+
+export const notificationAPI = {
+  sendBroadcast: (title, message, targetRole) =>
+    api.post('/admin/notifications/broadcast', null, { params: { title, message, targetRole } }),
 };
 
 export default api;
