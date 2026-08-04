@@ -14,6 +14,9 @@ public class DashboardStats {
     private Long totalFaculty;
     private Long totalBooks;
     private Long totalEBooks;
+    private Long totalPastPapers;
+    private Long totalResearchPapers;
+    private Long totalCategories;
     private Long activeLoans;
     private Long overdueLoans;
     private Long todayLoans;

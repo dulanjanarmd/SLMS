@@ -11,6 +11,9 @@ import Books from './pages/Books';
 import Categories from './pages/Categories';
 import Reports from './pages/Reports';
 import Events from './pages/Events';
+import EBooks from './pages/EBooks';
+import PastPapers from './pages/PastPapers';
+import ResearchPapers from './pages/ResearchPapers';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -83,6 +86,39 @@ function App() {
                 <AdminNavbar />
                 <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
                   <Events />
+                </div>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/ebooks"
+            element={
+              <PrivateRoute>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <EBooks />
+                </div>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/past-papers"
+            element={
+              <PrivateRoute>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <PastPapers />
+                </div>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/research-papers"
+            element={
+              <PrivateRoute>
+                <AdminNavbar />
+                <div className="pt-3" style={{ padding: '24px 32px', minHeight: '100vh', background: '#f8fafc' }}>
+                  <ResearchPapers />
                 </div>
               </PrivateRoute>
             }

@@ -93,11 +93,47 @@ export const reportAPI = {
 
 export const ebookAPI = {
   getAllPublic: () => api.get('/ebooks/public/all'),
+  search: (keyword, params) => api.get('/ebooks/public/search', { params: { keyword, ...params } }),
+  getById: (id) => api.get(`/ebooks/public/${id}`),
+  download: (id) => api.get(`/ebooks/download/${id}`, { responseType: 'blob' }),
+  viewUrl: (id) => {
+    const token = localStorage.getItem('admin_token');
+    return `${API_URL}/ebooks/view/${id}${token ? `?auth=${token}` : ''}`;
+  },
   upload: (formData) =>
     api.post('/librarian/ebooks/upload', formData, {
       headers: { 'Content-Type': undefined },
     }),
+  update: (id, data) => api.put(`/librarian/ebooks/${id}`, data),
   delete: (id) => api.delete(`/librarian/ebooks/${id}`),
+};
+
+export const researchPapersAPI = {
+  getAllPublic: () => api.get('/research-papers/public/all'),
+  search: (keyword, params) => api.get('/research-papers/public/search', { params: { keyword, ...params } }),
+  getById: (id) => api.get(`/research-papers/public/${id}`),
+  download: (id) => api.get(`/research-papers/download/${id}`, { responseType: 'blob' }),
+  viewUrl: (id) => `${API_URL}/research-papers/view/${id}`,
+  upload: (formData) =>
+    api.post('/librarian/research-papers/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  delete: (id) => api.delete(`/librarian/research-papers/${id}`),
+};
+
+export const pastPapersAPI = {
+  getAllPublic: () => api.get('/past-papers/public/all'),
+  getFilters: () => api.get('/past-papers/public/filters'),
+  filter: (year, semester, degreeLevel, faculty, intakeBatch, searchModule) =>
+    api.get('/past-papers/public/filter', { params: { year, semester, degreeLevel, faculty, intakeBatch, searchModule } }),
+  getById: (id) => api.get(`/past-papers/public/${id}`),
+  download: (id) => api.get(`/past-papers/download/${id}`, { responseType: 'blob' }),
+  viewUrl: (id) => `${API_URL}/past-papers/view/${id}`,
+  upload: (formData) =>
+    api.post('/librarian/past-papers/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+  delete: (id) => api.delete(`/librarian/past-papers/${id}`),
 };
 
 export const eventAPI = {

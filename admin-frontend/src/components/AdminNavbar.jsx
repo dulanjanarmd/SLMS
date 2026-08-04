@@ -30,8 +30,11 @@ const AdminNavbar = () => {
   const navItems = [
     { to: '/dashboard', label: 'Dashboard' },
     { to: '/events', label: 'Events' },
-    { to: '/users', label: 'User Management' },
-    { to: '/books', label: 'Book Management' },
+    { to: '/users', label: 'Users' },
+    { to: '/books', label: 'Books' },
+    { to: '/ebooks', label: 'eBooks' },
+    { to: '/past-papers', label: 'Past Papers' },
+    { to: '/research-papers', label: 'Research Papers' },
     { to: '/categories', label: 'Categories' },
     { to: '/reports', label: 'Reports' },
   ];
