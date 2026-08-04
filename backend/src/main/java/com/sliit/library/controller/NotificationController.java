@@ -50,7 +50,7 @@ public class NotificationController {
     }
 
     @PostMapping("/admin/notifications/broadcast")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
     public ResponseEntity<?> sendBroadcast(
             @RequestParam String title,
             @RequestParam String message,
@@ -60,5 +60,10 @@ public class NotificationController {
                 "message", "Broadcast announcement sent successfully.",
                 "recipientCount", count
         ));
+    }
+
+    @GetMapping("/notifications/announcements/public")
+    public ResponseEntity<List<NotificationResponse>> getPublicAnnouncements() {
+        return ResponseEntity.ok(notificationService.getRecentAnnouncements());
     }
 }

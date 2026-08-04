@@ -129,6 +129,9 @@ export const notificationAPI = {
   getUnreadCount: (userId) => api.get(`/notifications/user/${userId}/unread-count`),
   markAsRead: (id) => api.put(`/notifications/${id}/read`),
   markAllAsRead: (userId) => api.put(`/notifications/user/${userId}/read-all`),
+  getPublicAnnouncements: () => api.get('/notifications/announcements/public'),
+  sendBroadcast: (title, message, targetRole) =>
+    api.post('/admin/notifications/broadcast', null, { params: { title, message, targetRole } }),
 };
 
 export const reportAPI = {

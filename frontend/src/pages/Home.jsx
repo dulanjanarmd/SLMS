@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.jpeg';
 import { useAuth } from '../context/AuthContext';
-import { bookAPI, ebookAPI, eventAPI, libraryHoursAPI, contactInfoAPI } from '../services/api';
+import { bookAPI, ebookAPI, eventAPI, libraryHoursAPI, contactInfoAPI, notificationAPI } from '../services/api';
 import { Spinner } from 'react-bootstrap';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
@@ -17,6 +17,13 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newMessage, setNewMessage] = useState('');
+  const [targetRole, setTargetRole] = useState('');
+  const [creating, setCreating] = useState(false);
+  const [createMsg, setCreateMsg] = useState('');
   const [libraryHours, setLibraryHours] = useState([]);
   const [contactInfo, setContactInfo] = useState([]);
   const [userStats, setUserStats] = useState({
@@ -32,17 +39,19 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const [popRes, newRes, ebookRes, eventsRes, hoursRes, contactRes, statsRes] = await Promise.allSettled([
+      const [popRes, newRes, ebookRes, eventsRes, hoursRes, contactRes, annRes, statsRes] = await Promise.allSettled([
         bookAPI.getPopular(6),
         bookAPI.getAll({ page: 0, size: 6, sort: 'createdDate,desc' }).catch(() => bookAPI.getAll({ page: 0, size: 12 })),
         ebookAPI.getAllPublic().catch(() => ({ data: [] })),
         eventAPI.getPublicUpcoming().catch(() => ({ data: [] })),
         libraryHoursAPI.getAll().catch(() => ({ data: [] })),
         contactInfoAPI.getActive().catch(() => ({ data: [] })),
+        notificationAPI.getPublicAnnouncements().catch(() => ({ data: [] })),
         user ? fetch(`${API}/user/stats`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }).catch(() => ({ json: () => Promise.resolve({}) })) : Promise.resolve({ json: () => Promise.resolve({}) }),
       ]);
+      if (annRes.status === 'fulfilled') setAnnouncements(annRes.value.data || []);
       if (popRes.status === 'fulfilled') setPopularBooks(popRes.value.data || []);
       if (newRes.status === 'fulfilled') {
         const all = Array.isArray(newRes.value?.data?.content) ? newRes.value.data.content : (Array.isArray(newRes.value?.data) ? newRes.value.data : []);

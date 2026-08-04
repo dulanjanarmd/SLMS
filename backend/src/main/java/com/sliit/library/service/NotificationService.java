@@ -91,6 +91,15 @@ public class NotificationService {
         return targetUsers.size();
     }
 
+    @Transactional(readOnly = true)
+    public List<NotificationResponse> getRecentAnnouncements() {
+        return notificationRepository.findByTypeOrderByCreatedAtDesc(NotificationType.ANNOUNCEMENT)
+                .stream()
+                .limit(10)
+                .map(this::mapToNotificationResponse)
+                .toList();
+    }
+
     private NotificationResponse mapToNotificationResponse(Notification notification) {
         return NotificationResponse.builder()
                 .id(notification.getId())

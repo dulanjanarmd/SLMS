@@ -180,17 +180,17 @@ const Login = () => {
               <img src={logo} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <div>
-              <div style={{ fontWeight: 900, fontSize: '1.8rem', lineHeight: 1 }}>LibraryHub</div>
-              <div style={{ opacity: 0.8, fontSize: '0.9rem', marginTop: 4 }}>University Library System</div>
+              <div style={{ fontWeight: 900, fontSize: '1.8rem', lineHeight: 1, color: 'white' }}>LibraryHub</div>
+              <div style={{ opacity: 0.8, fontSize: '0.9rem', marginTop: 4, color: 'white' }}>University Library System</div>
             </div>
           </div>
 
-          <h2 style={{ fontWeight: 800, fontSize: '2.5rem', lineHeight: 1.2, marginBottom: 20 }}>Your Gateway to Knowledge</h2>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9, lineHeight: 1.6, marginBottom: 40 }}>Access thousands of books, research papers, and digital resources from the university's library.</p>
+          <h2 style={{ fontWeight: 800, fontSize: '2.5rem', lineHeight: 1.2, marginBottom: 20, color: 'white' }}>Your Gateway to Knowledge</h2>
+          <p style={{ fontSize: '1.1rem', opacity: 0.9, lineHeight: 1.6, marginBottom: 40, color: 'white' }}>Access thousands of books, research papers, and digital resources from the university's library.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {['Access 10,000+ Books & eBooks', 'Smart due date reminders', 'Online reservations & renewals', 'Fine management & payments'].map(t => (
               <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 16, background: 'rgba(255,255,255,0.1)', padding: '16px 24px', borderRadius: 16, backdropFilter: 'blur(10px)' }}>
-                <span style={{ fontWeight: 600, fontSize: '1.05rem', letterSpacing: 0.5 }}>{t}</span>
+                <span style={{ fontWeight: 600, fontSize: '1.05rem', letterSpacing: 0.5, color: 'white' }}>{t}</span>
               </div>
             ))}
           </div>
@@ -261,30 +261,6 @@ const Login = () => {
               {loading ? <Spinner size="sm" /> : 'Sign In'}
             </button>
           </Form>
-
-          <hr style={{ margin: '32px 0', borderColor: '#f1f5f9' }} />
-
-          <div style={{ textAlign: 'center', color: '#64748b', fontSize: '0.95rem' }}>
-            Admin demo: <strong>admin@example.com</strong> / password
-          </div>
-
-          <p style={{ textAlign: 'center', marginTop: 20, color: '#64748b', fontSize: '0.95rem' }}>
-            Not an admin?{' '}
-            <button
-              type="button"
-              onClick={() => {
-                const targetUrl = `${window.location.protocol}//${window.location.hostname}:5173/login`;
-                window.location.href = targetUrl;
-              }}
-              style={{
-                color: '#ef5a24', fontWeight: 700, textDecoration: 'none',
-                border: 'none', background: 'none', cursor: 'pointer', padding: 0,
-                fontSize: '0.95rem', fontFamily: 'Poppins, sans-serif'
-              }}
-            >
-              Go to Library Portal
-            </button>
-          </p>
         </div>
       </div>
     </div>
