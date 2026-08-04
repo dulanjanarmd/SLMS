@@ -76,10 +76,15 @@ const Dashboard = () => {
   const [todayLoans, setTodayLoans] = useState([]);
   const [pendingReservations, setPendingReservations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (isManualRefresh = false) => {
+    if (isManualRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
     try {
       const [statsRes, overdueRes, todayLoansRes, pendingRes] = await Promise.allSettled([
@@ -89,6 +94,7 @@ const Dashboard = () => {
         reservationAPI.getPending(),
       ]);
       if (statsRes.status === 'fulfilled') setStats(statsRes.value.data);
+      else if (!stats) setError('Failed to load dashboard stats.');
       if (overdueRes.status === 'fulfilled') setOverdueLoans(overdueRes.value.data || []);
       if (todayLoansRes.status === 'fulfilled') setTodayLoans(todayLoansRes.value.data || []);
       if (pendingRes.status === 'fulfilled') setPendingReservations(pendingRes.value.data || []);
@@ -96,6 +102,7 @@ const Dashboard = () => {
       setError('Failed to load dashboard data.');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -173,16 +180,32 @@ const Dashboard = () => {
           </p>
         </div>
         <button
-          onClick={fetchData}
+          onClick={() => fetchData(true)}
+          disabled={refreshing}
           style={{
-            background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)',
-            color: 'white', borderRadius: 10, padding: '10px 20px', cursor: 'pointer',
+            background: refreshing ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.25)',
+            color: 'white', borderRadius: 10, padding: '10px 20px',
+            cursor: refreshing ? 'not-allowed' : 'pointer',
             fontWeight: 600, fontSize: '0.85rem', fontFamily: 'Poppins, sans-serif',
             position: 'relative', zIndex: 1, backdropFilter: 'blur(8px)',
+            display: 'flex', alignItems: 'center', gap: 8,
+            opacity: refreshing ? 0.75 : 1,
+            transition: 'all 0.2s',
           }}
         >
-          Refresh
+          <span
+            style={{
+              display: 'inline-block',
+              animation: refreshing ? 'spin 0.8s linear infinite' : 'none',
+              fontSize: '1rem',
+            }}
+          >
+            🔄
+          </span>
+          {refreshing ? 'Refreshing…' : 'Refresh'}
         </button>
+        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       </div>
 
       {/* Quick Actions */}
