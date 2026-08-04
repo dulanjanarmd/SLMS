@@ -83,13 +83,13 @@ public class EventController {
 
     @PutMapping("/librarian/events/{id}")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
-    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @Valid @RequestBody Event event) {
+    public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id, @RequestBody Event event) {
         return ResponseEntity.ok(eventService.update(id, event));
     }
 
     @PutMapping("/admin/events/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<EventResponse> updateEventAdmin(@PathVariable Long id, @Valid @RequestBody Event event) {
+    public ResponseEntity<EventResponse> updateEventAdmin(@PathVariable Long id, @RequestBody Event event) {
         return ResponseEntity.ok(eventService.update(id, event));
     }
 
