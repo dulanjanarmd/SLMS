@@ -116,6 +116,23 @@ const Home = () => {
     finally { setLoading(false); }
   };
 
+  const handleCreateAnnouncement = async (e) => {
+    e.preventDefault();
+    if (!newTitle.trim() || !newMessage.trim()) return;
+    setCreating(true); setCreateMsg('');
+    try {
+      await notificationAPI.sendBroadcast(newTitle, newMessage, targetRole || null);
+      setCreateMsg('Announcement posted successfully!');
+      setNewTitle(''); setNewMessage(''); setTargetRole('');
+      setTimeout(() => { setShowCreateModal(false); setCreateMsg(''); }, 1500);
+      fetchData();
+    } catch {
+      setCreateMsg('Failed to post announcement.');
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const handleReadOnline = async (ebook) => {
     try {
       setViewingEbook(ebook);
