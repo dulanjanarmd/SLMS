@@ -76,4 +76,11 @@ public class NotificationController {
     public ResponseEntity<List<NotificationResponse>> getPublicAnnouncements() {
         return ResponseEntity.ok(notificationService.getRecentAnnouncements());
     }
+
+    @DeleteMapping("/admin/notifications/clear-announcements")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('LIBRARIAN')")
+    public ResponseEntity<?> clearAllAnnouncements() {
+        notificationService.clearAllAnnouncements();
+        return ResponseEntity.ok(java.util.Map.of("message", "All announcements cleared."));
+    }
 }

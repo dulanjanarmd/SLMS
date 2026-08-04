@@ -172,6 +172,7 @@ export const notificationAPI = {
     api.post('/admin/notifications/broadcast', null, { params: { title, message, targetRole } }),
   sendUserMessage: (userId, title, message) =>
     api.post('/admin/notifications/send-user', null, { params: { userId, title, message } }),
+  clearAnnouncements: () => api.delete('/admin/notifications/clear-announcements'),
 };
 
 export const configAPI = {

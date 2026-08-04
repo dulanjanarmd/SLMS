@@ -95,7 +95,7 @@ public class NotificationService {
     public void sendDirectNotification(Long userId, String title, String message) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        sendNotification(user, NotificationType.ANNOUNCEMENT, title, message);
+        sendNotification(user, NotificationType.PERSONAL_MESSAGE, title, message);
     }
 
     @Transactional(readOnly = true)
@@ -112,6 +112,11 @@ public class NotificationService {
                 .limit(10)
                 .map(this::mapToNotificationResponse)
                 .toList();
+    }
+
+    @Transactional
+    public void clearAllAnnouncements() {
+        notificationRepository.deleteByType(NotificationType.ANNOUNCEMENT);
     }
 
     private NotificationResponse mapToNotificationResponse(Notification notification) {

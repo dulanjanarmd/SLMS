@@ -61,6 +61,17 @@ const AnnouncementManagement = () => {
     fontSize: '0.88rem', fontFamily: 'Poppins, sans-serif', outline: 'none', background: '#f8fafc',
   };
 
+  const handleClearAll = async () => {
+    if (!window.confirm('Are you sure you want to clear all system announcements?')) return;
+    try {
+      await notificationAPI.clearAnnouncements();
+      setHistory([]);
+      setSuccessMsg('All announcements cleared successfully.');
+    } catch {
+      setErrorMsg('Failed to clear announcements.');
+    }
+  };
+
   return (
     <div style={{ padding: '40px 20px 24px 20px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
       {/* Banner */}
@@ -90,7 +101,7 @@ const AnnouncementManagement = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Target Audience</label>
+                <label style={{ fontSize: '0.82rem', fontWeight 700, color: '#475569', marginBottom: 6, display: 'block' }}>Target Audience</label>
                 <select value={targetRole} onChange={e => setTargetRole(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
                   <option value="">All Users (Students & Staff)</option>
                   <option value="STUDENT">Students Only</option>
@@ -129,7 +140,21 @@ const AnnouncementManagement = () => {
 
         {/* Broadcast History */}
         <div style={{ background: 'white', borderRadius: 18, padding: 26, border: '1px solid #e2e8f0', boxShadow: '0 4px 16px rgba(0,0,0,0.03)' }}>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a2e', marginBottom: 18 }}>Sent Announcements</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a2e', margin: 0 }}>Sent Announcements</h3>
+            {history.length > 0 && (
+              <button
+                onClick={handleClearAll}
+                style={{
+                  background: '#fee2e2', color: '#ef4444', border: 'none',
+                  borderRadius: 8, padding: '6px 12px', fontSize: '0.75rem',
+                  fontWeight: 700, cursor: 'pointer', fontFamily: 'Poppins, sans-serif',
+                }}
+              >
+                Clear All
+              </button>
+            )}
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxHeight: 420, overflowY: 'auto' }}>
             {history.length === 0 ? (
               <div style={{ color: '#94a3b8', fontSize: '0.88rem', textAlign: 'center', padding: '30px 0' }}>No announcements dispatched yet.</div>

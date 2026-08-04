@@ -132,6 +132,7 @@ export const notificationAPI = {
   getPublicAnnouncements: () => api.get('/notifications/announcements/public'),
   sendBroadcast: (title, message, targetRole) =>
     api.post('/admin/notifications/broadcast', null, { params: { title, message, targetRole } }),
+  clearAnnouncements: () => api.delete('/admin/notifications/clear-announcements'),
 };
 
 export const reportAPI = {
