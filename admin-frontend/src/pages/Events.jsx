@@ -267,16 +267,9 @@ const Events = () => {
               transform: 'translate(25%, -25%)',
             }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
-              <div style={{
-                width: 42, height: 42, borderRadius: 12,
-                background: `linear-gradient(135deg, ${s.c}, ${s.c}cc)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontSize: '1.15rem',
-                boxShadow: `0 6px 16px ${s.c}40`,
-              }}>{s.i}</div>
-              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.3 }}>{s.l}</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>{s.l}</span>
             </div>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1a1a2e', marginTop: 10, position: 'relative', zIndex: 1 }}>{s.v}</div>
+            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#1a1a2e', marginTop: 6, position: 'relative', zIndex: 1 }}>{s.v}</div>
           </div>
         ))}
       </div>
@@ -393,12 +386,12 @@ const Events = () => {
               >
                 {/* Date chip */}
                 <div style={{
-                  borderRadius: 14,
-                  background: `linear-gradient(180deg, ${ev.color || '#ef5a24'}, ${ev.color || '#ef5a24'}cc)`,
-                  color: 'white', textAlign: 'center',
+                  borderRadius: 12,
+                  background: '#f1f5f9',
+                  border: '1px solid #e2e8f0',
+                  color: '#1a1a2e', textAlign: 'center',
                   padding: '10px 0',
-                  boxShadow: `0 4px 12px ${ev.color || '#ef5a24'}40`,
-                  opacity: past ? 0.55 : 1,
+                  opacity: past ? 0.6 : 1,
                 }}>
                   <div style={{ fontSize: '1.5rem', fontWeight: 800, lineHeight: 1 }}>{fd.day}</div>
                   <div style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: 0.5 }}>{fd.month}</div>

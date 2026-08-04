@@ -48,4 +48,17 @@ public class NotificationController {
         notificationService.markAllAsRead(userId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/admin/notifications/broadcast")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> sendBroadcast(
+            @RequestParam String title,
+            @RequestParam String message,
+            @RequestParam(required = false) com.sliit.library.entity.Role targetRole) {
+        int count = notificationService.sendBroadcastNotification(title, message, targetRole);
+        return ResponseEntity.ok(java.util.Map.of(
+                "message", "Broadcast announcement sent successfully.",
+                "recipientCount", count
+        ));
+    }
 }

@@ -75,6 +75,22 @@ public class NotificationService {
         notificationRepository.saveAll(unread);
     }
 
+    @Transactional
+    public int sendBroadcastNotification(String title, String message, Role targetRole) {
+        List<User> targetUsers;
+        if (targetRole != null) {
+            targetUsers = userRepository.findByRole(targetRole);
+        } else {
+            targetUsers = userRepository.findAll();
+        }
+
+        for (User u : targetUsers) {
+            sendNotification(u, NotificationType.ANNOUNCEMENT, title, message);
+        }
+
+        return targetUsers.size();
+    }
+
     private NotificationResponse mapToNotificationResponse(Notification notification) {
         return NotificationResponse.builder()
                 .id(notification.getId())

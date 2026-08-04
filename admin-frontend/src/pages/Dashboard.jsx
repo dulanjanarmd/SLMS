@@ -177,7 +177,7 @@ const Dashboard = () => {
 
       {/* Primary KPI Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 20, marginBottom: 28 }}>
-        <StatCard value={stats?.totalUsers} label="Total Registered Users" subtext={`${stats?.totalStudents || 0} Students`} color="blue" />
+        <StatCard value={stats?.totalCategories} label="Total Book Categories" subtext={`${stats?.totalUsers || 0} Users`} color="blue" />
         <StatCard value={stats?.totalBooks} label="Physical Catalog Books" color="orange" />
         <StatCard value={stats?.totalEBooks} label="Digital eBooks" color="green" />
         <StatCard value={stats?.totalPastPapers} label="Past Exam Papers" color="teal" />
