@@ -34,6 +34,7 @@ import EventManagement from './pages/EventManagement';
 import EventDetail from './pages/EventDetail';
 import LibraryHoursManagement from './pages/LibraryHoursManagement';
 import ContactInfoManagement from './pages/ContactInfoManagement';
+import AnnouncementManagement from './pages/AnnouncementManagement';
 import NotFound from './pages/NotFound';
 
 class ErrorBoundary extends React.Component {
@@ -104,6 +105,7 @@ function App() {
           <Route path="/librarian/events" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><EventManagement /></div></PrivateRoute>} />
           <Route path="/librarian/library-hours" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><LibraryHoursManagement /></div></PrivateRoute>} />
           <Route path="/librarian/contact-info" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><ContactInfoManagement /></div></PrivateRoute>} />
+          <Route path="/librarian/announcements" element={<PrivateRoute allowedRoles={['LIBRARIAN']}><AppNavbar /><div className="pt-3"><AnnouncementManagement /></div></PrivateRoute>} />
           <Route path="/events" element={<PrivateRoute><AppNavbar /><div className="pt-3"><Events /></div></PrivateRoute>} />
           <Route path="/events/:id" element={<PrivateRoute><AppNavbar /><div className="pt-3"><EventDetail /></div></PrivateRoute>} />
           <Route path="/student/dashboard" element={<PrivateRoute allowedRoles={['STUDENT']}><AppNavbar /><div className="pt-3"><StudentDashboard /></div></PrivateRoute>} />
