@@ -6,8 +6,30 @@ import { Spinner } from 'react-bootstrap';
 const emptyEbookForm = { title: '', author: '', isbn: '', description: '', publisher: '', publicationYear: '', language: 'English' };
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
 
-const DownloadBtn = ({ onClick, children }) => (
-  <button onClick={onClick} style={{ flex: 1, background: 'linear-gradient(135deg, #4c1d95, #6d28d9)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif' }}>
+const ActionBtn = ({ onClick, color, bg, border, children, disabled }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    style={{
+      flex: 1,
+      minWidth: 0,
+      padding: '9px 8px',
+      background: bg,
+      color: color,
+      border: border || 'none',
+      borderRadius: 10,
+      fontWeight: 700,
+      fontSize: '0.8rem',
+      fontFamily: 'Poppins, sans-serif',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      transition: 'all 0.18s',
+      whiteSpace: 'nowrap',
+      textAlign: 'center',
+      opacity: disabled ? 0.6 : 1,
+    }}
+    onMouseEnter={e => { if (!disabled) e.currentTarget.style.filter = 'brightness(1.08)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+    onMouseLeave={e => { e.currentTarget.style.filter = ''; e.currentTarget.style.transform = ''; }}
+  >
     {children}
   </button>
 );
@@ -26,6 +48,12 @@ const EBooks = () => {
   const [pdfFile, setPdfFile] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  const [showEdit, setShowEdit] = useState(false);
+  const [editingEbook, setEditingEbook] = useState(null);
+  const [editForm, setEditForm] = useState({ title: '', author: '', isbn: '', description: '', publisher: '', publicationYear: '', language: '', isPublic: true });
+  const [editError, setEditError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const [viewing, setViewing] = useState(null);
   const [viewBlobUrl, setViewBlobUrl] = useState(null);
@@ -81,6 +109,50 @@ const EBooks = () => {
     if (!window.confirm('Delete this eBook?')) return;
     try { await ebookAPI.delete(id); setSuccess('eBook deleted.'); fetchEBooks(); setTimeout(() => setSuccess(''), 4000); }
     catch { setError('Delete failed.'); }
+  };
+
+  const openEdit = (ebook) => {
+    setEditingEbook(ebook);
+    setEditForm({
+      title: ebook.title || '',
+      author: ebook.author || '',
+      isbn: ebook.isbn || '',
+      description: ebook.description || '',
+      publisher: ebook.publisher || '',
+      publicationYear: ebook.publicationYear?.toString() || '',
+      language: ebook.language || '',
+      isPublic: ebook.isPublic !== false,
+    });
+    setEditError('');
+    setShowEdit(true);
+  };
+
+  const handleEditSave = async (e) => {
+    e.preventDefault();
+    if (!editingEbook) return;
+    if (!editForm.title.trim()) { setEditError('Title is required.'); return; }
+    if (!editForm.author.trim()) { setEditError('Author is required.'); return; }
+    setSaving(true); setEditError('');
+    try {
+      const payload = {
+        title: editForm.title.trim(),
+        author: editForm.author.trim(),
+        isbn: editForm.isbn.trim() || null,
+        description: editForm.description.trim() || null,
+        publisher: editForm.publisher.trim() || null,
+        publicationYear: editForm.publicationYear ? parseInt(editForm.publicationYear, 10) : null,
+        language: editForm.language.trim() || null,
+        isPublic: editForm.isPublic,
+      };
+      await ebookAPI.update(editingEbook.id, payload);
+      setSuccess('eBook updated successfully.');
+      setShowEdit(false);
+      fetchEBooks();
+      setTimeout(() => setSuccess(''), 4000);
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data || err.message || 'Update failed. Please try again.';
+      setEditError(typeof msg === 'string' ? msg : 'Update failed.');
+    } finally { setSaving(false); }
   };
 
   const handleDownload = async (id, title) => {
@@ -181,13 +253,43 @@ const EBooks = () => {
                   <div><div style={{ fontSize: '0.7rem', color: '#9ca3af' }}>Format</div><div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#374151' }}>{ebook.fileFormat || 'PDF'}</div></div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  <button onClick={() => handleViewOnline(ebook)} style={{ flex: 1, background: 'linear-gradient(135deg, #ef5a24, #ff8c5a)', color: 'white', border: 'none', borderRadius: 10, padding: '10px', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', fontFamily: 'Poppins, sans-serif', boxShadow: '0 4px 12px rgba(239,90,36,0.25)' }}>
+                {/* Action Buttons — unified grid */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: isLibrarian ? '1fr 1fr' : '1fr 1fr',
+                  gap: 8,
+                }}>
+                  <ActionBtn
+                    onClick={() => handleViewOnline(ebook)}
+                    bg="linear-gradient(135deg, #ef5a24, #ff8c5a)"
+                    color="white"
+                  >
                     Read Online
-                  </button>
-                  <DownloadBtn onClick={() => handleDownload(ebook.id, ebook.title)}>Download</DownloadBtn>
+                  </ActionBtn>
+                  <ActionBtn
+                    onClick={() => handleDownload(ebook.id, ebook.title)}
+                    bg="linear-gradient(135deg, #4c1d95, #6d28d9)"
+                    color="white"
+                  >
+                    Download
+                  </ActionBtn>
                   {isLibrarian && (
-                    <button onClick={() => handleDelete(ebook.id)} style={{ padding: '0 14px', background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1.5px solid rgba(239,68,68,0.2)', borderRadius: 10, fontWeight: 700, cursor: 'pointer' }}>Delete</button>
+                    <>
+                      <ActionBtn
+                        onClick={() => openEdit(ebook)}
+                        bg="linear-gradient(135deg, #3730a3, #6366f1)"
+                        color="white"
+                      >
+                        Edit
+                      </ActionBtn>
+                      <ActionBtn
+                        onClick={() => handleDelete(ebook.id)}
+                        bg="linear-gradient(135deg, #b91c1c, #ef4444)"
+                        color="white"
+                      >
+                        Delete
+                      </ActionBtn>
+                    </>
                   )}
                 </div>
               </div>
@@ -291,6 +393,90 @@ const EBooks = () => {
               </div>
             )}
             {viewBlobUrl && <iframe src={viewBlobUrl} style={{ width: '100%', height: '100%', border: 'none' }} title="PDF Viewer" />}
+          </div>
+        </div>
+      )}
+
+      {/* Edit EBook Modal */}
+      {showEdit && editingEbook && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)', padding: 20 }}
+          onClick={e => { if (e.target === e.currentTarget) { setShowEdit(false); setEditError(''); } }}>
+          <div style={{ background: 'white', borderRadius: 24, width: '100%', maxWidth: 640, maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 80px rgba(0,0,0,0.18)' }}>
+            {/* Modal Header */}
+            <div style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #2d1b69 50%, #6366f1 100%)', padding: '24px 30px', borderRadius: '24px 24px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ margin: 0, color: 'white', fontWeight: 800, fontSize: '1.2rem', fontFamily: 'Poppins, sans-serif' }}>Edit E-Book</h3>
+                <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.7)', fontSize: '0.82rem', fontFamily: 'Poppins, sans-serif' }}>Update metadata for "{editingEbook.title}"</p>
+              </div>
+              <button onClick={() => { setShowEdit(false); setEditError(''); }} style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 10, width: 38, height: 38, cursor: 'pointer', fontSize: '1.1rem', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>×</button>
+            </div>
+
+            {editError && <div style={{ margin: '16px 30px 0', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '10px 16px', color: '#b91c1c', fontSize: '0.87rem', fontWeight: 500 }}>{editError}</div>}
+
+            <form onSubmit={handleEditSave} style={{ padding: '24px 30px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6, fontFamily: 'Poppins, sans-serif' }}>Title *</label>
+                  <input required value={editForm.title} onChange={e => setEditForm({ ...editForm, title: e.target.value })} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6, fontFamily: 'Poppins, sans-serif' }}>Author *</label>
+                  <input required value={editForm.author} onChange={e => setEditForm({ ...editForm, author: e.target.value })} style={inputStyle} />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6, fontFamily: 'Poppins, sans-serif' }}>Description</label>
+                <textarea rows="3" value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} style={{ ...inputStyle, resize: 'vertical' }} />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6, fontFamily: 'Poppins, sans-serif' }}>ISBN</label>
+                  <input value={editForm.isbn} onChange={e => setEditForm({ ...editForm, isbn: e.target.value })} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6, fontFamily: 'Poppins, sans-serif' }}>Publisher</label>
+                  <input value={editForm.publisher} onChange={e => setEditForm({ ...editForm, publisher: e.target.value })} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6, fontFamily: 'Poppins, sans-serif' }}>Year</label>
+                  <input type="number" value={editForm.publicationYear} onChange={e => setEditForm({ ...editForm, publicationYear: e.target.value })} min="1000" max={new Date().getFullYear()} style={inputStyle} />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+                <div>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: '0.8rem', color: '#374151', marginBottom: 6, fontFamily: 'Poppins, sans-serif' }}>Language</label>
+                  <input value={editForm.language} onChange={e => setEditForm({ ...editForm, language: e.target.value })} style={inputStyle} />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', padding: '12px 16px', background: editForm.isPublic ? 'rgba(16,185,129,0.08)' : 'rgba(100,116,139,0.08)', border: `1.5px solid ${editForm.isPublic ? 'rgba(16,185,129,0.3)' : 'rgba(100,116,139,0.3)'}`, borderRadius: 10, transition: 'all 0.2s', userSelect: 'none' }}>
+                    <input type="checkbox" checked={editForm.isPublic} onChange={e => setEditForm({ ...editForm, isPublic: e.target.checked })} style={{ width: 16, height: 16, accentColor: '#10b981', cursor: 'pointer' }} />
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.82rem', color: editForm.isPublic ? '#065f46' : '#475569', fontFamily: 'Poppins, sans-serif' }}>
+                        {editForm.isPublic ? '✓ Publicly Visible' : 'Hidden from Public'}
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: '#9ca3af', fontFamily: 'Poppins, sans-serif' }}>Toggle visibility</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* File info (read-only) */}
+              <div style={{ background: '#f8fafc', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', gap: 20, fontSize: '0.82rem', color: '#64748b', fontFamily: 'Poppins, sans-serif' }}>
+                <div><span style={{ fontWeight: 600, color: '#374151' }}>Format:</span> {editingEbook.fileFormat || 'PDF'}</div>
+                <div><span style={{ fontWeight: 600, color: '#374151' }}>Size:</span> {editingEbook.fileSize ? `${(editingEbook.fileSize / 1024 / 1024).toFixed(1)} MB` : '—'}</div>
+                <div style={{ color: '#9ca3af', fontStyle: 'italic' }}>To replace the file, delete and re-upload.</div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button type="button" onClick={() => { setShowEdit(false); setEditError(''); }} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}>Cancel</button>
+                <button type="submit" disabled={saving} style={{ flex: 2, padding: '12px', background: 'linear-gradient(135deg, #4c1d95, #6366f1)', color: 'white', border: 'none', borderRadius: 10, fontFamily: 'Poppins, sans-serif', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                  {saving ? <><Spinner size="sm" /> Saving…</> : 'Save Changes'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

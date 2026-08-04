@@ -90,6 +90,14 @@ public class EBookController {
                 title, author, isbn, description, publisher, publicationYear, language, file, coverImage));
     }
 
+    @PutMapping("/librarian/ebooks/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
+    public ResponseEntity<EBookResponse> updateEBook(
+            @PathVariable Long id,
+            @RequestBody com.sliit.library.dto.EBookUpdateRequest request) {
+        return ResponseEntity.ok(eBookService.updateEBook(id, request));
+    }
+
     @DeleteMapping("/librarian/ebooks/{id}")
     @PreAuthorize("hasRole('LIBRARIAN') or hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> deleteEBook(@PathVariable Long id) {

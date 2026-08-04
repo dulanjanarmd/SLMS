@@ -129,6 +129,32 @@ public class EBookService {
     }
 
     @Transactional
+    public EBookResponse updateEBook(Long id, com.sliit.library.dto.EBookUpdateRequest request) {
+        EBook eBook = eBookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("eBook not found"));
+
+        if (request.getTitle() != null && !request.getTitle().isBlank())
+            eBook.setTitle(request.getTitle());
+        if (request.getAuthor() != null && !request.getAuthor().isBlank())
+            eBook.setAuthor(request.getAuthor());
+        if (request.getIsbn() != null)
+            eBook.setIsbn(request.getIsbn().isBlank() ? null : request.getIsbn());
+        if (request.getDescription() != null)
+            eBook.setDescription(request.getDescription().isBlank() ? null : request.getDescription());
+        if (request.getPublisher() != null)
+            eBook.setPublisher(request.getPublisher().isBlank() ? null : request.getPublisher());
+        if (request.getPublicationYear() != null)
+            eBook.setPublicationYear(request.getPublicationYear());
+        if (request.getLanguage() != null)
+            eBook.setLanguage(request.getLanguage().isBlank() ? null : request.getLanguage());
+        if (request.getIsPublic() != null)
+            eBook.setIsPublic(request.getIsPublic());
+
+        eBookRepository.save(eBook);
+        return mapToEBookResponse(eBook);
+    }
+
+    @Transactional
     public byte[] downloadEBook(Long id) throws IOException {
         EBook eBook = eBookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("eBook not found"));

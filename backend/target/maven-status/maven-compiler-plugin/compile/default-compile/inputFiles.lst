@@ -3,6 +3,7 @@ C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\enti
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\NotificationController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\service\UserStatsService.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\MemberTypeRepository.java
+C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\dto\EBookUpdateRequest.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\entity\ResearchPaper.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\controller\LibraryHoursController.java
 C:\Users\damin\Documents\LibraryHub\backend\src\main\java\com\sliit\library\repository\EventRepository.java

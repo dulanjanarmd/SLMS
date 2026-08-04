@@ -101,6 +101,7 @@ com\sliit\library\controller\ReservationController.class
 com\sliit\library\dto\DashboardStats$DashboardStatsBuilder.class
 com\sliit\library\entity\MemberType.class
 com\sliit\library\service\FineService.class
+com\sliit\library\dto\EBookUpdateRequest.class
 com\sliit\library\security\AuthTokenFilter.class
 com\sliit\library\repository\FacultyRepository.class
 com\sliit\library\controller\LibraryHoursController.class

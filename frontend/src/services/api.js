@@ -153,6 +153,7 @@ export const ebookAPI = {
     api.post('/librarian/ebooks/upload', formData, {
       headers: { 'Content-Type': undefined },
     }),
+  update: (id, data) => api.put(`/librarian/ebooks/${id}`, data),
   delete: (id) => api.delete(`/librarian/ebooks/${id}`),
 };
 
