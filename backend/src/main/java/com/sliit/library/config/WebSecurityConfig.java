@@ -94,6 +94,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/config/**").permitAll()
                         .requestMatchers("/api/admin/dashboard/**").hasAnyRole("LIBRARIAN", "ADMIN")
                         .requestMatchers("/api/admin/reports/**").hasAnyRole("LIBRARIAN", "ADMIN")
+                        .requestMatchers("/api/admin/notifications/**").hasAnyRole("LIBRARIAN", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/librarian/**").hasAnyRole("LIBRARIAN", "ADMIN")
                         .requestMatchers("/api/faculty/**").hasAnyRole("FACULTY", "LIBRARIAN", "ADMIN")

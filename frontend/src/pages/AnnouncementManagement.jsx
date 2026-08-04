@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { notificationAPI } from '../services/api';
 
 const AnnouncementManagement = () => {
@@ -11,7 +11,13 @@ const AnnouncementManagement = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [history, setHistory] = useState([]);
 
-  React.useEffect(() => {
+  // Edit Modal State
+  const [editingItem, setEditingItem] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editMessage, setEditMessage] = useState('');
+  const [updating, setUpdating] = useState(false);
+
+  const fetchAnnouncements = () => {
     notificationAPI.getPublicAnnouncements().then(res => {
       setHistory((res.data || []).map(n => ({
         id: n.id,
@@ -19,9 +25,12 @@ const AnnouncementManagement = () => {
         message: n.message,
         role: 'ALL',
         sentAt: n.sentAt ? new Date(n.sentAt).toLocaleString() : 'Recent',
-        count: '-',
       })));
     }).catch(err => console.error('Failed to load history', err));
+  };
+
+  useEffect(() => {
+    fetchAnnouncements();
   }, []);
 
   const handleSendBroadcast = async (e) => {
@@ -35,30 +44,13 @@ const AnnouncementManagement = () => {
       const res = await notificationAPI.sendBroadcast(title, message, targetRole || null);
       const recipientCount = res.data?.recipientCount || 0;
       setSuccessMsg(`Broadcast sent successfully to ${recipientCount} user(s).`);
-      
-      setHistory(prev => [
-        {
-          id: Date.now(),
-          title,
-          message,
-          role: targetRole || 'ALL',
-          sentAt: new Date().toLocaleString(),
-          count: recipientCount,
-        },
-        ...prev
-      ]);
-
       setTitle(''); setMessage(''); setTargetRole('');
+      fetchAnnouncements();
     } catch (err) {
       setErrorMsg('Failed to send broadcast announcement.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const inputStyle = {
-    width: '100%', padding: '12px 16px', borderRadius: 12, border: '1.5px solid #e2e8f0',
-    fontSize: '0.88rem', fontFamily: 'Poppins, sans-serif', outline: 'none', background: '#f8fafc',
   };
 
   const handleClearAll = async () => {
@@ -72,6 +64,44 @@ const AnnouncementManagement = () => {
     }
   };
 
+  const handleDeleteOne = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this announcement?')) return;
+    try {
+      await notificationAPI.deleteAnnouncement(id);
+      setSuccessMsg('Announcement deleted successfully.');
+      fetchAnnouncements();
+    } catch {
+      setErrorMsg('Failed to delete announcement.');
+    }
+  };
+
+  const openEditModal = (item) => {
+    setEditingItem(item);
+    setEditTitle(item.title);
+    setEditMessage(item.message);
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (!editTitle.trim() || !editMessage.trim()) return;
+    setUpdating(true);
+    try {
+      await notificationAPI.updateAnnouncement(editingItem.id, editTitle, editMessage);
+      setSuccessMsg('Announcement updated successfully.');
+      setEditingItem(null);
+      fetchAnnouncements();
+    } catch {
+      setErrorMsg('Failed to update announcement.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const inputStyle = {
+    width: '100%', padding: '12px 16px', borderRadius: 12, border: '1.5px solid #e2e8f0',
+    fontSize: '0.88rem', fontFamily: 'Poppins, sans-serif', outline: 'none', background: '#f8fafc',
+  };
+
   return (
     <div style={{ padding: '40px 20px 24px 20px', maxWidth: 1200, margin: '0 auto', fontFamily: 'Poppins, sans-serif' }}>
       {/* Banner */}
@@ -82,7 +112,7 @@ const AnnouncementManagement = () => {
       }}>
         <div>
           <h1 style={{ fontWeight: 800, fontSize: '1.8rem', margin: 0, marginBottom: 8, color: 'white' }}>Librarian Announcement Dashboard</h1>
-          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem', color: 'white' }}>Dispatch system-wide notices to library members, students, and faculty</p>
+          <p style={{ opacity: 0.75, margin: 0, fontSize: '0.9rem', color: 'white' }}>Dispatch, edit, or delete system-wide notices to library members, students, and faculty</p>
         </div>
       </div>
 
@@ -101,7 +131,7 @@ const AnnouncementManagement = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <label style={{ fontSize: '0.82rem', fontWeight 700, color: '#475569', marginBottom: 6, display: 'block' }}>Target Audience</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Target Audience</label>
                 <select value={targetRole} onChange={e => setTargetRole(e.target.value)} style={{ ...inputStyle, cursor: 'pointer' }}>
                   <option value="">All Users (Students & Staff)</option>
                   <option value="STUDENT">Students Only</option>
@@ -163,9 +193,17 @@ const AnnouncementManagement = () => {
                 <div key={item.id} style={{ padding: 16, borderRadius: 12, background: '#f8fafc', border: '1px solid #f1f5f9' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                     <span style={{ fontWeight: 700, fontSize: '0.92rem', color: '#1a1a2e' }}>{item.title}</span>
-                    <span style={{ background: '#e0e7ff', color: '#4338ca', padding: '2px 8px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 700 }}>
-                      {item.role}
-                    </span>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <span style={{ background: '#e0e7ff', color: '#4338ca', padding: '2px 8px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 700 }}>
+                        {item.role}
+                      </span>
+                      <button onClick={() => openEditModal(item)} style={{ border: 'none', background: '#e0f2fe', color: '#0284c7', borderRadius: 6, padding: '2px 8px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}>
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeleteOne(item.id)} style={{ border: 'none', background: '#fee2e2', color: '#dc2626', borderRadius: 6, padding: '2px 8px', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer' }}>
+                        Delete
+                      </button>
+                    </div>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: '#475569', margin: 0, marginBottom: 8, lineHeight: 1.4 }}>{item.message}</p>
                   <div style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'flex', justifyContent: 'space-between' }}>
@@ -177,6 +215,36 @@ const AnnouncementManagement = () => {
           </div>
         </div>
       </div>
+
+      {/* Edit Announcement Modal */}
+      {editingItem && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div style={{ background: 'white', borderRadius: 20, maxWidth: 500, width: '100%', padding: 28, fontFamily: 'Poppins, sans-serif' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#1a1a2e' }}>Edit Announcement</h3>
+              <button onClick={() => setEditingItem(null)} style={{ border: 'none', background: 'none', fontSize: '1.4rem', cursor: 'pointer', color: '#64748b' }}>×</button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Title *</label>
+                <input value={editTitle} onChange={e => setEditTitle(e.target.value)} required style={inputStyle} />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#475569', marginBottom: 6, display: 'block' }}>Message *</label>
+                <textarea rows={4} value={editMessage} onChange={e => setEditMessage(e.target.value)} required style={{ ...inputStyle, resize: 'vertical' }} />
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+                <button type="button" onClick={() => setEditingItem(null)} style={{ padding: '10px 20px', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" disabled={updating} style={{ padding: '10px 22px', borderRadius: 10, border: 'none', background: '#ef5a24', color: 'white', fontWeight: 700, fontSize: '0.85rem', cursor: updating ? 'not-allowed' : 'pointer' }}>
+                  {updating ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
